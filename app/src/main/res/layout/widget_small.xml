@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp"
+    android:background="@drawable/widget_background_standard">
+
+    <TextView
+        android:id="@+id/widget_timer_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/widget_text_light"
+        android:text="0:00" />
+
+    <TextView
+        android:id="@+id/widget_state_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/widget_timer_text"
+        android:layout_centerHorizontal="true"
+        android:textSize="12sp"
+        android:textColor="@color/widget_text_light"
+        android:text="Not fasting" />
+
+</RelativeLayout> 
