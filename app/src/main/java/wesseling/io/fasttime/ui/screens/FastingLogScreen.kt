@@ -381,7 +381,7 @@ fun FastingLogItem(
     onDelete: () -> Unit,
     onShare: () -> Unit
 ) {
-    val context = LocalContext.current
+    val fastingStateColor = getColorForFastingState(fast.maxFastingState)
     
     Card(
         modifier = Modifier
@@ -391,7 +391,11 @@ fun FastingLogItem(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
         ),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(16.dp),
+        border = BorderStroke(
+            width = 2.dp,
+            color = fastingStateColor
+        )
     ) {
         Column(
             modifier = Modifier
@@ -427,7 +431,7 @@ fun FastingLogItem(
                     modifier = Modifier
                         .size(12.dp)
                         .clip(CircleShape)
-                        .background(getColorForFastingState(fast.maxFastingState))
+                        .background(fastingStateColor)
                 )
                 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -501,16 +505,29 @@ fun FastDetailsDialog(
     fast: CompletedFast,
     onDismiss: () -> Unit
 ) {
-    val context = LocalContext.current
+    val fastingStateColor = getColorForFastingState(fast.maxFastingState)
     
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text(
-                text = "Fasting Details",
-                style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(16.dp)
+                        .clip(CircleShape)
+                        .background(fastingStateColor)
+                )
+                
+                Spacer(modifier = Modifier.width(8.dp))
+                
+                Text(
+                    text = "Fasting Details",
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
         },
         text = {
             Column(
@@ -540,7 +557,8 @@ fun FastDetailsDialog(
                 
                 DetailItem(
                     label = "Fasting State Reached",
-                    value = fast.maxFastingState.displayName
+                    value = fast.maxFastingState.displayName,
+                    valueColor = fastingStateColor
                 )
                 
                 if (!fast.note.isNullOrBlank()) {
@@ -570,6 +588,10 @@ fun FastDetailsDialog(
                         .padding(vertical = 8.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    ),
+                    border = BorderStroke(
+                        width = 1.dp,
+                        color = fastingStateColor.copy(alpha = 0.7f)
                     )
                 ) {
                     Column(
@@ -581,7 +603,7 @@ fun FastDetailsDialog(
                             Icon(
                                 imageVector = Icons.Filled.Star,
                                 contentDescription = "Achievement",
-                                tint = MaterialTheme.colorScheme.primary,
+                                tint = fastingStateColor,
                                 modifier = Modifier.size(24.dp)
                             )
                             
@@ -613,6 +635,10 @@ fun FastDetailsDialog(
                         .padding(vertical = 8.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    ),
+                    border = BorderStroke(
+                        width = 1.dp,
+                        color = fastingStateColor.copy(alpha = 0.5f)
                     )
                 ) {
                     Column(
@@ -624,7 +650,7 @@ fun FastDetailsDialog(
                             Icon(
                                 imageVector = Icons.Filled.AccessTime,
                                 contentDescription = "Health Benefits",
-                                tint = MaterialTheme.colorScheme.primary,
+                                tint = fastingStateColor,
                                 modifier = Modifier.size(24.dp)
                             )
                             
@@ -650,7 +676,10 @@ fun FastDetailsDialog(
         },
         confirmButton = {
             TextButton(
-                onClick = onDismiss
+                onClick = onDismiss,
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = fastingStateColor
+                )
             ) {
                 Text("Close")
             }
@@ -662,7 +691,8 @@ fun FastDetailsDialog(
 @Composable
 fun DetailItem(
     label: String,
-    value: String
+    value: String,
+    valueColor: Color = MaterialTheme.colorScheme.onSurface
 ) {
     Column(
         modifier = Modifier
@@ -680,7 +710,7 @@ fun DetailItem(
         Text(
             text = value,
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface
+            color = valueColor
         )
         
         Divider(
