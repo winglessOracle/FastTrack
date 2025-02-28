@@ -1,5 +1,8 @@
 package wesseling.io.fasttime.ui.screens
 
+import android.content.Context
+import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,8 +18,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -61,9 +66,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import android.content.Intent
-import android.util.Log
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.launch
 import wesseling.io.fasttime.model.CompletedFast
@@ -242,7 +244,8 @@ fun FastingLogScreen(
                         Text(
                             text = "Your completed fasts",
                             style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                         
                         IconButton(
@@ -263,6 +266,7 @@ fun FastingLogScreen(
                         items(visibleFasts) { fast ->
                             FastingLogItem(
                                 fast = fast,
+                                context = context,
                                 onClick = { selectedFast = fast },
                                 onDelete = {
                                     try {
@@ -281,7 +285,7 @@ fun FastingLogScreen(
                                 onShare = {
                                     val shareIntent = Intent().apply {
                                         action = Intent.ACTION_SEND
-                                        putExtra(Intent.EXTRA_TEXT, fast.toShareText())
+                                        putExtra(Intent.EXTRA_TEXT, fast.toShareText(context))
                                         type = "text/plain"
                                     }
                                     ContextCompat.startActivity(
@@ -302,7 +306,11 @@ fun FastingLogScreen(
                                     },
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(16.dp)
+                                        .padding(16.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.primary,
+                                        contentColor = MaterialTheme.colorScheme.onPrimary
+                                    )
                                 ) {
                                     Text("Load more")
                                 }
@@ -349,7 +357,10 @@ fun FastingLogScreen(
                                 snackbarHostState.showSnackbar("Failed to delete fasts")
                             }
                         }
-                    }
+                    },
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = MaterialTheme.colorScheme.error
+                    )
                 ) {
                     Text("Delete All")
                 }
@@ -369,6 +380,7 @@ fun FastingLogScreen(
     selectedFast?.let { fast ->
         FastDetailsDialog(
             fast = fast,
+            context = context,
             onDismiss = { selectedFast = null }
         )
     }
@@ -377,6 +389,7 @@ fun FastingLogScreen(
 @Composable
 fun FastingLogItem(
     fast: CompletedFast,
+    context: Context,
     onClick: () -> Unit,
     onDelete: () -> Unit,
     onShare: () -> Unit
@@ -395,6 +408,9 @@ fun FastingLogItem(
         border = BorderStroke(
             width = 2.dp,
             color = fastingStateColor
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 2.dp
         )
     ) {
         Column(
@@ -409,7 +425,7 @@ fun FastingLogItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = fast.getFormattedStartTime(),
+                    text = fast.getFormattedStartTime(context),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -470,7 +486,7 @@ fun FastingLogItem(
                     Icon(
                         imageVector = Icons.Filled.Share,
                         contentDescription = "Share",
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = fastingStateColor
                     )
                 }
                 
@@ -481,7 +497,7 @@ fun FastingLogItem(
                     Icon(
                         imageVector = Icons.Filled.Delete,
                         contentDescription = "Delete",
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = MaterialTheme.colorScheme.error
                     )
                 }
                 
@@ -492,7 +508,7 @@ fun FastingLogItem(
                     Icon(
                         imageVector = Icons.Filled.Info,
                         contentDescription = "Details",
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = fastingStateColor
                     )
                 }
             }
@@ -503,6 +519,7 @@ fun FastingLogItem(
 @Composable
 fun FastDetailsDialog(
     fast: CompletedFast,
+    context: Context,
     onDismiss: () -> Unit
 ) {
     val fastingStateColor = getColorForFastingState(fast.maxFastingState)
@@ -534,25 +551,27 @@ fun FastDetailsDialog(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp)
+                    .verticalScroll(rememberScrollState())
             ) {
                 DetailItem(
                     label = "Date",
-                    value = fast.getFormattedStartTime()
+                    value = fast.getFormattedStartTime(context)
                 )
                 
                 DetailItem(
                     label = "Duration",
-                    value = fast.getFormattedDuration()
+                    value = fast.getFormattedDuration(),
+                    valueColor = fastingStateColor
                 )
                 
                 DetailItem(
                     label = "Started",
-                    value = fast.getFormattedStartTime()
+                    value = fast.getFormattedStartTime(context)
                 )
                 
                 DetailItem(
                     label = "Ended",
-                    value = fast.getFormattedEndTime()
+                    value = fast.getFormattedEndTime(context)
                 )
                 
                 DetailItem(
@@ -592,6 +611,9 @@ fun FastDetailsDialog(
                     border = BorderStroke(
                         width = 1.dp,
                         color = fastingStateColor.copy(alpha = 0.7f)
+                    ),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 1.dp
                     )
                 ) {
                     Column(
@@ -639,6 +661,9 @@ fun FastDetailsDialog(
                     border = BorderStroke(
                         width = 1.dp,
                         color = fastingStateColor.copy(alpha = 0.5f)
+                    ),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 1.dp
                     )
                 ) {
                     Column(
@@ -684,7 +709,8 @@ fun FastDetailsDialog(
                 Text("Close")
             }
         },
-        containerColor = MaterialTheme.colorScheme.surface
+        containerColor = MaterialTheme.colorScheme.surface,
+        shape = RoundedCornerShape(16.dp)
     )
 }
 
@@ -710,26 +736,30 @@ fun DetailItem(
         Text(
             text = value,
             style = MaterialTheme.typography.bodyLarge,
-            color = valueColor
+            color = valueColor,
+            fontWeight = if (valueColor != MaterialTheme.colorScheme.onSurface) FontWeight.SemiBold else FontWeight.Normal
         )
         
         Divider(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp),
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+            thickness = 0.5.dp
         )
     }
 }
 
 // Helper functions
 private fun getAchievementText(fast: CompletedFast): String {
+    val hours = fast.durationMillis / (1000 * 60 * 60)
+    
     return when (fast.maxFastingState) {
-        FastingState.NOT_FASTING -> "You completed a feeding period."
-        FastingState.EARLY_FAST -> "You started the fasting process."
-        FastingState.KETOSIS -> "You reached ketosis! Your body is now burning fat for energy."
-        FastingState.AUTOPHAGY -> "You achieved autophagy! Your body is cleaning out damaged cells."
-        FastingState.DEEP_FASTING -> "You reached deep fasting! Maximum cellular regeneration achieved."
+        FastingState.NOT_FASTING -> "You completed a feeding period of ${hours}h. This is important for nutrient intake and energy replenishment."
+        FastingState.EARLY_FAST -> "You started the fasting process and maintained it for ${hours}h. This is the first step toward metabolic benefits."
+        FastingState.KETOSIS -> "You reached ketosis and maintained it for ${hours - FastingState.KETOSIS.hourThreshold}h! Your body has switched to burning fat for energy."
+        FastingState.AUTOPHAGY -> "You achieved autophagy for ${hours - FastingState.AUTOPHAGY.hourThreshold}h! Your body is actively cleaning out damaged cells and regenerating new ones."
+        FastingState.DEEP_FASTING -> "You reached deep fasting for ${hours - FastingState.DEEP_FASTING.hourThreshold}h! This is where maximum cellular regeneration and metabolic benefits occur."
     }
 }
 
@@ -737,24 +767,31 @@ private fun getHealthBenefitsText(fast: CompletedFast): String {
     val hours = fast.durationMillis / (1000 * 60 * 60)
     
     return when {
-        hours < 12 -> "Short fasting periods help regulate blood sugar and give your digestive system a rest."
-        hours < 18 -> "At this stage, your body has depleted glycogen stores and is beginning to switch to fat burning."
-        hours < 24 -> "Your insulin levels have dropped significantly, making stored body fat more accessible for energy."
-        hours < 48 -> "Autophagy is beginning, where your body cleans out damaged cells and regenerates new ones."
-        hours < 72 -> "Growth hormone levels increase, protecting lean muscle mass and metabolic health."
-        else -> "Extended fasting provides deep cellular cleanup, enhanced mental clarity, and significant metabolic benefits."
+        hours < 12 -> "Short fasting periods help regulate blood sugar levels, reduce insulin resistance, and give your digestive system a much-needed rest. Even brief fasts can improve metabolic health."
+        hours < 18 -> "At this stage, your body has depleted glycogen stores and is beginning to switch to fat burning. Growth hormone levels start to increase, and insulin levels drop significantly."
+        hours < 24 -> "Your insulin levels have dropped significantly, making stored body fat more accessible for energy. Cellular repair processes are beginning, and fat oxidation is increasing."
+        hours < 48 -> "Autophagy is in full swing, where your body cleans out damaged cells and regenerates new ones. Ketone levels are elevated, providing a clean energy source for your brain and reducing inflammation."
+        hours < 72 -> "Growth hormone levels have increased substantially, protecting lean muscle mass and metabolic health. Your body is experiencing enhanced fat burning and cellular cleanup."
+        else -> "Extended fasting provides deep cellular cleanup, enhanced mental clarity, and significant metabolic benefits. Your body is in a state of profound renewal with increased stem cell production and immune system regeneration."
     }
 }
 
 // Extension function to format CompletedFast for sharing
-private fun CompletedFast.toShareText(): String {
+private fun CompletedFast.toShareText(context: Context): String {
     return """
         I completed a ${getFormattedDuration()} fast using FastTrack!
         
-        🕒 Started: ${getFormattedStartTime()}
-        🏁 Ended: ${getFormattedEndTime()}
+        🕒 Started: ${getFormattedStartTime(context)}
+        🏁 Ended: ${getFormattedEndTime(context)}
         ✨ Reached: ${maxFastingState.displayName}
+        💪 Benefits: ${when (maxFastingState) {
+            FastingState.NOT_FASTING -> "Nutrient replenishment"
+            FastingState.EARLY_FAST -> "Beginning fat burning"
+            FastingState.KETOSIS -> "Fat burning mode"
+            FastingState.AUTOPHAGY -> "Cellular cleanup"
+            FastingState.DEEP_FASTING -> "Maximum regeneration"
+        }}
         
-        #FastTrack #Fasting #IntermittentFasting
+        #FastTrack #Fasting #IntermittentFasting #${maxFastingState.displayName.replace(" ", "")}
     """.trimIndent()
 } 
