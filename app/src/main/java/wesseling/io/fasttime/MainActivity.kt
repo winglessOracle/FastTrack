@@ -52,14 +52,14 @@ class MainActivity : ComponentActivity() {
         
         setContent {
             FastTrackTheme {
-                FastTimeApp()
+                FastTrackApp()
             }
         }
     }
 }
 
 @Composable
-fun FastTimeApp() {
+fun FastTrackApp() {
     var currentScreen by remember { mutableStateOf("main") }
     
     when (currentScreen) {

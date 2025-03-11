@@ -2,6 +2,9 @@ package wesseling.io.fasttime.ui.screens
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import androidx.core.content.FileProvider
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -51,6 +54,7 @@ import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -72,6 +76,10 @@ import wesseling.io.fasttime.model.CompletedFast
 import wesseling.io.fasttime.model.FastingState
 import wesseling.io.fasttime.repository.FastingRepository
 import wesseling.io.fasttime.ui.theme.getColorForFastingState
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -79,7 +87,7 @@ fun FastingLogScreen(
     onBackPressed: () -> Unit
 ) {
     val context = LocalContext.current
-    val repository = remember { FastingRepository(context) }
+    val repository = remember { FastingRepository.getInstance(context) }
     var allFasts by remember { mutableStateOf(emptyList<CompletedFast>()) }
     var showDeleteAllDialog by remember { mutableStateOf(false) }
     var selectedFast by remember { mutableStateOf<CompletedFast?>(null) }
@@ -121,7 +129,7 @@ fun FastingLogScreen(
         } catch (e: Exception) {
             Log.e("FastingLogScreen", "Error loading initial data", e)
             coroutineScope.launch {
-                snackbarHostState.showSnackbar("Failed to load fasting data")
+            snackbarHostState.showSnackbar("Failed to load fasting data")
             }
         }
     }
@@ -134,6 +142,67 @@ fun FastingLogScreen(
     }
     
     val pullRefreshState = rememberPullRefreshState(refreshing, { refreshData() })
+    
+    // Function to export all fasts to CSV
+    fun exportAllFasts() {
+        try {
+            val fasts = repository.getAllFasts()
+            if (fasts.isEmpty()) {
+                coroutineScope.launch {
+                    snackbarHostState.showSnackbar("No fasting logs to export")
+                }
+                return
+            }
+
+            // Create CSV content with formatted dates and durations
+            val csvContent = StringBuilder()
+            csvContent.append("Start Time,End Time,Duration (hours),Fasting State\n")
+            fasts.forEach { fast ->
+                val startDate = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date(fast.startTimeMillis))
+                val endDate = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date(fast.endTimeMillis))
+                val durationHours = (fast.endTimeMillis - fast.startTimeMillis) / (1000.0 * 60 * 60)
+                csvContent.append("$startDate,$endDate,%.1f,${fast.maxFastingState}\n".format(durationHours))
+            }
+            val fullContent = csvContent.toString()
+
+            // Create file in app's cache directory
+            val fileName = "fasting_log_${SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.getDefault()).format(Date())}.csv"
+                .replace(":", "-")  // Make filename safe
+                .replace(" ", "_")
+            val file = File(context.cacheDir, fileName)
+            file.writeText(fullContent)
+
+            // Create share intent
+            val intent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/csv"
+                putExtra(Intent.EXTRA_SUBJECT, "FastTrack Fasting Log")
+                putExtra(Intent.EXTRA_TEXT, "Here's my fasting log from FastTrack!")
+                putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(
+                    context,
+                    "${context.packageName}.provider",
+                    file
+                ))
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+
+            // Start share activity
+            ContextCompat.startActivity(
+                context,
+                Intent.createChooser(intent, "Share Fasting Log"),
+                null
+            )
+
+            // Show success message
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar("Fasting log exported successfully")
+            }
+        } catch (e: Exception) {
+            Log.e("FastingLogScreen", "Error exporting all fasts", e)
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar("Failed to export fasting logs")
+            }
+        }
+    }
     
     Scaffold(
         topBar = {
@@ -149,6 +218,26 @@ fun FastingLogScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back"
+                        )
+                    }
+                },
+                actions = {
+                    // Export button
+                    IconButton(
+                        onClick = { exportAllFasts() }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.FileDownload,
+                            contentDescription = "Export All"
+                        )
+                    }
+                    // Delete all button
+                    IconButton(
+                        onClick = { showDeleteAllDialog = true }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.DeleteSweep,
+                            contentDescription = "Delete All"
                         )
                     }
                 },
@@ -247,16 +336,6 @@ fun FastingLogScreen(
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onBackground
                         )
-                        
-                        IconButton(
-                            onClick = { showDeleteAllDialog = true }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.DeleteSweep,
-                                contentDescription = "Delete all fasts",
-                                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
-                            )
-                        }
                     }
                     
                     LazyColumn(
@@ -321,57 +400,57 @@ fun FastingLogScreen(
             }
             
             // Pull to refresh indicator
-            PullRefreshIndicator(
-                refreshing = refreshing,
-                state = pullRefreshState,
+                    PullRefreshIndicator(
+                        refreshing = refreshing,
+                        state = pullRefreshState,
                 modifier = Modifier.align(Alignment.TopCenter),
                 backgroundColor = MaterialTheme.colorScheme.surface,
                 contentColor = MaterialTheme.colorScheme.primary
-            )
-        }
-    }
-    
-    // Delete all confirmation dialog
-    if (showDeleteAllDialog) {
-        AlertDialog(
-            onDismissRequest = { showDeleteAllDialog = false },
-            title = {
+                    )
+                }
+            }
+            
+            // Delete all confirmation dialog
+            if (showDeleteAllDialog) {
+                AlertDialog(
+                    onDismissRequest = { showDeleteAllDialog = false },
+                    title = { 
                 Text("Delete all fasts?")
-            },
-            text = {
+                    },
+                    text = { 
                 Text("This will permanently delete all your recorded fasting sessions. This action cannot be undone.")
-            },
-            confirmButton = {
+                    },
+                    confirmButton = {
                 TextButton(
-                    onClick = {
-                        try {
-                            repository.deleteAllFasts()
-                            allFasts = emptyList()
-                            showDeleteAllDialog = false
+                            onClick = {
+                                try {
+                                    repository.deleteAllFasts()
+                                    allFasts = emptyList()
+                                    showDeleteAllDialog = false
                             coroutineScope.launch {
                                 snackbarHostState.showSnackbar("All fasts deleted")
                             }
-                        } catch (e: Exception) {
-                            Log.e("FastingLogScreen", "Error deleting all fasts", e)
-                            coroutineScope.launch {
+                                } catch (e: Exception) {
+                                    Log.e("FastingLogScreen", "Error deleting all fasts", e)
+                                    coroutineScope.launch {
                                 snackbarHostState.showSnackbar("Failed to delete fasts")
-                            }
-                        }
-                    },
+                                    }
+                                }
+                            },
                     colors = ButtonDefaults.textButtonColors(
                         contentColor = MaterialTheme.colorScheme.error
-                    )
-                ) {
-                    Text("Delete All")
-                }
-            },
-            dismissButton = {
+                            )
+                        ) {
+                            Text("Delete All")
+                        }
+                    },
+                    dismissButton = {
                 TextButton(
                     onClick = { showDeleteAllDialog = false }
                 ) {
-                    Text("Cancel")
-                }
-            },
+                            Text("Cancel")
+                        }
+                    },
             containerColor = MaterialTheme.colorScheme.surface
         )
     }
@@ -452,7 +531,7 @@ fun FastingLogItem(
                 
                 Spacer(modifier = Modifier.width(8.dp))
                 
-                Text(
+                        Text(
                     text = "Reached: ${fast.maxFastingState.displayName}",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface
@@ -463,7 +542,7 @@ fun FastingLogItem(
             if (!fast.note.isNullOrBlank()) {
                 Spacer(modifier = Modifier.height(8.dp))
                 
-                Text(
+                            Text(
                     text = "Note: ${fast.note}",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface,
@@ -493,8 +572,8 @@ fun FastingLogItem(
                 IconButton(
                     onClick = onDelete,
                     modifier = Modifier.size(40.dp)
-                ) {
-                    Icon(
+                    ) {
+                        Icon(
                         imageVector = Icons.Filled.Delete,
                         contentDescription = "Delete",
                         tint = MaterialTheme.colorScheme.error
@@ -527,19 +606,19 @@ fun FastDetailsDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
                         .size(16.dp)
-                        .clip(CircleShape)
+                            .clip(CircleShape)
                         .background(fastingStateColor)
-                )
-                
-                Spacer(modifier = Modifier.width(8.dp))
-                
-                Text(
+                    )
+                    
+                    Spacer(modifier = Modifier.width(8.dp))
+                    
+                    Text(
                     text = "Fasting Details",
                     style = MaterialTheme.typography.headlineMedium,
                     color = MaterialTheme.colorScheme.onSurface
@@ -583,7 +662,7 @@ fun FastDetailsDialog(
                 if (!fast.note.isNullOrBlank()) {
                     Spacer(modifier = Modifier.height(16.dp))
                     
-                    Text(
+                Text(
                         text = "Note",
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
@@ -602,7 +681,7 @@ fun FastDetailsDialog(
                 Spacer(modifier = Modifier.height(16.dp))
                 
                 Card(
-                    modifier = Modifier
+                        modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp),
                     colors = CardDefaults.cardColors(
@@ -649,8 +728,8 @@ fun FastDetailsDialog(
                 }
                 
                 // Health benefits section
-                Spacer(modifier = Modifier.height(8.dp))
-                
+            Spacer(modifier = Modifier.height(8.dp))
+            
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -669,28 +748,28 @@ fun FastDetailsDialog(
                     Column(
                         modifier = Modifier.padding(16.dp)
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.AccessTime,
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.AccessTime,
                                 contentDescription = "Health Benefits",
                                 tint = fastingStateColor,
                                 modifier = Modifier.size(24.dp)
                             )
                             
                             Spacer(modifier = Modifier.width(8.dp))
-                            
-                            Text(
+                
+                Text(
                                 text = "Health Benefits",
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                         }
                         
-                        Spacer(modifier = Modifier.height(8.dp))
-                        
-                        Text(
+                Spacer(modifier = Modifier.height(8.dp))
+                    
+                    Text(
                             text = getHealthBenefitsText(fast),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant

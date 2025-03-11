@@ -2,23 +2,30 @@ package wesseling.io.fasttime.timer
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import wesseling.io.fasttime.model.CompletedFast
 import wesseling.io.fasttime.model.FastingState
+import wesseling.io.fasttime.notifications.NotificationHelper
+import wesseling.io.fasttime.settings.PreferencesManager
 import java.util.concurrent.TimeUnit
 import wesseling.io.fasttime.util.DateTimeFormatter
 
 /**
  * Manages the fasting timer functionality
  */
-class FastingTimer(private val context: Context) {
+class FastingTimer(private val appContext: Context) : DefaultLifecycleObserver {
     // Timer state
     var isRunning by mutableStateOf(false)
         private set
@@ -36,44 +43,62 @@ class FastingTimer(private val context: Context) {
         private set
     
     private var timerJob: Job? = null
-    private val coroutineScope = CoroutineScope(Dispatchers.Main)
+    private val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     
     // Start time in system millis
     private var startTimeMillis: Long = 0
     
     // Shared preferences for persistence
-    private val prefs: SharedPreferences = context.getSharedPreferences(
+    private val prefs: SharedPreferences = appContext.getSharedPreferences(
         PREFS_NAME, 
         Context.MODE_PRIVATE
     )
     
     init {
-        // Initialize from shared preferences
-        val savedIsRunning = prefs.getBoolean(KEY_IS_RUNNING, false)
-        if (savedIsRunning) {
-            val savedStartTime = prefs.getLong(KEY_START_TIME, 0)
-            if (savedStartTime > 0) {
-                isRunning = true
-                startTimeMillis = savedStartTime
-                elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis
+        try {
+            // Initialize from shared preferences
+            val savedIsRunning = prefs.getBoolean(KEY_IS_RUNNING, false)
+            if (savedIsRunning) {
+                val savedStartTime = prefs.getLong(KEY_START_TIME, 0)
+                if (savedStartTime > 0) {
+                    isRunning = true
+                    startTimeMillis = savedStartTime
+                    elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis
+                    updateFastingState()
+                    
+                    // Restore max fasting state
+                    val savedMaxState = prefs.getInt(KEY_MAX_FASTING_STATE, 0)
+                    maxFastingState = FastingState.values()[savedMaxState]
+                    
+                    // Start the timer if it's running
+                    startTimerFromSavedState()
+                }
+            } else {
+                // If not running, get the saved elapsed time
+                elapsedTimeMillis = prefs.getLong(KEY_ELAPSED_TIME, 0)
                 updateFastingState()
                 
                 // Restore max fasting state
                 val savedMaxState = prefs.getInt(KEY_MAX_FASTING_STATE, 0)
                 maxFastingState = FastingState.values()[savedMaxState]
-                
-                // Start the timer if it's running
-                startTimerFromSavedState()
             }
-        } else {
-            // If not running, get the saved elapsed time
-            elapsedTimeMillis = prefs.getLong(KEY_ELAPSED_TIME, 0)
-            updateFastingState()
-            
-            // Restore max fasting state
-            val savedMaxState = prefs.getInt(KEY_MAX_FASTING_STATE, 0)
-            maxFastingState = FastingState.values()[savedMaxState]
+        } catch (e: Exception) {
+            Log.e(TAG, "Error initializing timer", e)
+            // Reset to safe state
+            isRunning = false
+            elapsedTimeMillis = 0
+            currentFastingState = FastingState.NOT_FASTING
+            maxFastingState = FastingState.NOT_FASTING
         }
+    }
+    
+    override fun onPause(owner: LifecycleOwner) {
+        saveState()
+    }
+    
+    override fun onDestroy(owner: LifecycleOwner) {
+        stopTimer()
+        coroutineScope.cancel()
     }
     
     /**
@@ -90,9 +115,14 @@ class FastingTimer(private val context: Context) {
         
         timerJob = coroutineScope.launch {
             while (isRunning) {
-                elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis
-                updateFastingState()
-                delay(1000) // Update every second
+                try {
+                    elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis
+                    updateFastingState()
+                    delay(1000) // Update every second
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error in timer loop", e)
+                    break
+                }
             }
         }
     }
@@ -103,9 +133,14 @@ class FastingTimer(private val context: Context) {
     private fun startTimerFromSavedState() {
         timerJob = coroutineScope.launch {
             while (isRunning) {
-                elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis
-                updateFastingState()
-                delay(1000) // Update every second
+                try {
+                    elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis
+                    updateFastingState()
+                    delay(1000) // Update every second
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error in saved state timer loop", e)
+                    break
+                }
             }
         }
     }
@@ -188,14 +223,18 @@ class FastingTimer(private val context: Context) {
      * Check if notifications are enabled and send a notification for the current fasting state
      */
     private fun checkAndSendFastingStateNotification() {
-        // Get preferences manager to check if notifications are enabled
-        val preferencesManager = wesseling.io.fasttime.settings.PreferencesManager.getInstance(context)
-        val notificationsEnabled = preferencesManager.dateTimePreferences.enableFastingStateNotifications
-        
-        if (notificationsEnabled) {
-            // Create and send notification
-            val notificationHelper = wesseling.io.fasttime.notifications.NotificationHelper(context)
-            notificationHelper.sendFastingStateNotification(currentFastingState)
+        try {
+            // Get preferences manager to check if notifications are enabled
+            val preferencesManager = PreferencesManager.getInstance(appContext)
+            val notificationsEnabled = preferencesManager.dateTimePreferences.enableFastingStateNotifications
+            
+            if (notificationsEnabled) {
+                // Create and send notification
+                val notificationHelper = NotificationHelper(appContext)
+                notificationHelper.sendFastingStateNotification(currentFastingState)
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error sending notification", e)
         }
     }
     
@@ -241,21 +280,33 @@ class FastingTimer(private val context: Context) {
      * Save timer state to shared preferences
      */
     private fun saveState() {
-        prefs.edit().apply {
-            putBoolean(KEY_IS_RUNNING, isRunning)
-            putLong(KEY_START_TIME, startTimeMillis)
-            putLong(KEY_ELAPSED_TIME, elapsedTimeMillis)
-            putInt(KEY_MAX_FASTING_STATE, maxFastingState.ordinal)
-            apply()
+        try {
+            prefs.edit().apply {
+                putBoolean(KEY_IS_RUNNING, isRunning)
+                putLong(KEY_START_TIME, startTimeMillis)
+                putLong(KEY_ELAPSED_TIME, elapsedTimeMillis)
+                putInt(KEY_MAX_FASTING_STATE, maxFastingState.ordinal)
+            }.commit()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error saving timer state", e)
         }
     }
     
     companion object {
-        // Shared preferences constants
-        const val PREFS_NAME = "wesseling.io.fasttime.TimerPrefs"
-        const val KEY_START_TIME = "start_time"
-        const val KEY_IS_RUNNING = "is_running"
-        const val KEY_ELAPSED_TIME = "elapsed_time"
-        const val KEY_MAX_FASTING_STATE = "max_fasting_state"
+        private const val TAG = "FastingTimer"
+        private const val PREFS_NAME = "wesseling.io.fasttime.fasting_timer"
+        private const val KEY_IS_RUNNING = "is_running"
+        private const val KEY_START_TIME = "start_time"
+        private const val KEY_ELAPSED_TIME = "elapsed_time"
+        private const val KEY_MAX_FASTING_STATE = "max_fasting_state"
+        
+        @Volatile
+        private var instance: FastingTimer? = null
+        
+        fun getInstance(context: Context): FastingTimer {
+            return instance ?: synchronized(this) {
+                instance ?: FastingTimer(context.applicationContext).also { instance = it }
+            }
+        }
     }
 } 

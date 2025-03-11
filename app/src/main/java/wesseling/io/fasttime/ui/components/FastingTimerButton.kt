@@ -64,8 +64,8 @@ fun FastingTimerButton(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val fastingTimer = remember { FastingTimer(context) }
-    val repository = remember { FastingRepository(context) }
+    val fastingTimer = remember { FastingTimer.getInstance(context) }
+    val repository = remember { FastingRepository.getInstance(context) }
     
     var showConfirmationDialog by remember { mutableStateOf(false) }
     var showSummaryDialog by remember { mutableStateOf(false) }
