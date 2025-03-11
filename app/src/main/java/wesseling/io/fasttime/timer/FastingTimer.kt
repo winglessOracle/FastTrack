@@ -3,6 +3,8 @@ package wesseling.io.fasttime.timer
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -323,20 +325,27 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
             val previousState = currentFastingState
             currentFastingState = FastingState.getStateForHours(elapsedHours.toInt())
             
+            // Check if the state has changed
+            val stateChanged = currentFastingState != previousState
+            
             // Update max fasting state if current state is higher
             if (currentFastingState.ordinal > _maxFastingState.ordinal) {
                 _maxFastingState = currentFastingState
                 saveState() // Save when max state changes
                 
                 // Check if we should send a notification for the new fasting state
-                if (currentFastingState != previousState && currentFastingState != FastingState.NOT_FASTING) {
+                if (stateChanged && currentFastingState != FastingState.NOT_FASTING) {
                     checkAndSendFastingStateNotification()
                 }
-                
-                // Update widgets when state changes
-                if (currentFastingState != previousState) {
-                    updateWidgets()
-                }
+            }
+            
+            // Always update widgets when state changes
+            if (stateChanged) {
+                Log.d(TAG, "Fasting state changed from ${previousState.name} to ${currentFastingState.name}, updating widgets")
+                updateWidgets(true) // Force update when state changes
+            } else if (isRunning) {
+                // Also update widgets periodically when running, but don't force update
+                updateWidgets(false)
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error updating fasting state", e)
@@ -436,10 +445,10 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
     /**
      * Update all widgets with the current timer state
      */
-    private fun updateWidgets() {
+    private fun updateWidgets(forceUpdate: Boolean = false) {
         try {
             // Use a more reliable approach to update widgets
-            Log.d(TAG, "Updating widgets with current state: running=$isRunning, state=${currentFastingState.name}")
+            Log.d(TAG, "Updating widgets with current state: running=$isRunning, state=${currentFastingState.name}, forceUpdate=$forceUpdate")
             
             // Send broadcast with current state information
             val widgetIntent = Intent("wesseling.io.fasttime.widget.ACTION_UPDATE_WIDGETS").apply {
@@ -449,18 +458,37 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
                 putExtra("CURRENT_STATE", currentFastingState.ordinal)
                 putExtra("ELAPSED_TIME", elapsedTimeMillis)
                 putExtra("TIMESTAMP", System.currentTimeMillis())
+                putExtra("FORCE_UPDATE", forceUpdate)
+                // Add flags to ensure delivery
+                flags = Intent.FLAG_INCLUDE_STOPPED_PACKAGES
             }
             appContext.sendBroadcast(widgetIntent)
             
             // Also directly update widgets as a fallback
             try {
                 val widgetProviderClass = Class.forName("wesseling.io.fasttime.widget.FastingWidgetProvider")
-                val updateMethod = widgetProviderClass.getDeclaredMethod("updateAllWidgets", Context::class.java)
-                updateMethod.invoke(null, appContext)
+                val updateMethod = widgetProviderClass.getDeclaredMethod("updateAllWidgets", Context::class.java, Boolean::class.java)
+                updateMethod.invoke(null, appContext, forceUpdate)
+                Log.d(TAG, "Direct widget update succeeded")
             } catch (e: Exception) {
                 // This is just a fallback, so log but don't throw
                 Log.d(TAG, "Direct widget update failed: ${e.message}")
             }
+            
+            // Schedule a delayed update to ensure the widget is updated
+            Handler(Looper.getMainLooper()).postDelayed({
+                try {
+                    Log.d(TAG, "Performing delayed widget update")
+                    val delayedIntent = Intent("wesseling.io.fasttime.widget.ACTION_UPDATE_WIDGETS").apply {
+                        setPackage(appContext.packageName)
+                        putExtra("DELAYED_UPDATE", true)
+                        putExtra("FORCE_UPDATE", forceUpdate)
+                    }
+                    appContext.sendBroadcast(delayedIntent)
+                } catch (e: Exception) {
+                    Log.d(TAG, "Delayed widget update failed: ${e.message}")
+                }
+            }, 500) // 500ms delay
         } catch (e: Exception) {
             // Widget provider might not be available, ignore
             Log.d(TAG, "Could not update widgets: ${e.message}")

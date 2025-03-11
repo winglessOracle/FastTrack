@@ -22,7 +22,7 @@ FastTime is a simple yet powerful app designed to help you track your intermitte
 2. **Monitoring Your Fast**
    - The app displays your current fasting duration in hours
    - The fasting state changes automatically based on your fasting duration:
-     - **Not Fasting** (Red): When you're not in a fasting period
+     - **Not Fasting** (Gray): When you're not in a fasting period
      - **Early Fast** (Yellow): First few hours of fasting (0-12 hours)
      - **Ketosis** (Blue): When your body starts burning fat (12-18 hours)
      - **Autophagy** (Green): Cell repair and cleanup begins (18-24 hours)

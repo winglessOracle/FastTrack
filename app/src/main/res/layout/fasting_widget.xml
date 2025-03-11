@@ -3,7 +3,7 @@
     android:id="@+id/widget_background"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="4dp"
+    android:padding="6dp"
     android:background="@drawable/widget_background">
 
     <LinearLayout
@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:padding="4dp">
+        android:padding="6dp">
 
         <!-- Left section: Hours and state -->
         <LinearLayout
@@ -27,7 +27,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0"
-                android:textSize="18sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 android:textColor="#FFFFFF"
                 android:shadowColor="#80000000"
@@ -39,7 +39,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="hrs"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:textColor="#FFFFFF"
                 android:alpha="0.9"
                 android:layout_marginStart="2dp"
@@ -53,15 +53,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Not Fasting"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:textColor="#FFFFFF"
                 android:alpha="1.0"
                 android:background="@drawable/state_pill_background"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:paddingTop="2dp"
-                android:paddingBottom="2dp"
-                android:layout_marginStart="12dp" />
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:layout_marginStart="12dp"
+                android:gravity="center" />
         </LinearLayout>
 
         <!-- Right section: Buttons -->
@@ -75,18 +76,18 @@
             <Button
                 android:id="@+id/widget_start_button"
                 android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:minWidth="65dp"
+                android:layout_height="32dp"
+                android:minWidth="70dp"
                 android:text="Start"
-                android:textSize="13sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
                 android:background="@drawable/widget_button_pill"
                 android:clickable="true"
                 android:focusable="true"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
                 android:paddingTop="2dp"
                 android:paddingBottom="2dp"
                 android:gravity="center"
@@ -95,18 +96,18 @@
             <Button
                 android:id="@+id/widget_reset_button"
                 android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:minWidth="65dp"
+                android:layout_height="32dp"
+                android:minWidth="70dp"
                 android:text="Reset"
-                android:textSize="13sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
                 android:background="@drawable/widget_button_pill_red"
                 android:clickable="true"
                 android:focusable="true"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
                 android:paddingTop="2dp"
                 android:paddingBottom="2dp"
                 android:gravity="center"

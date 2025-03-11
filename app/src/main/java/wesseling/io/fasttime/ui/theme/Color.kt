@@ -30,7 +30,7 @@ val TextDark = Color(0xFFE1E1E1) // Light text for dark theme
 val TextSecondaryDark = Color(0xFFAAAAAA) // Secondary text for dark theme
 
 // Fasting state colors - Updated distinctive palette
-val NotFastingRed = Color(0xFFEF4444)
+val NotFastingGray = Color(0xFF757575)
 val EarlyFastingYellow = Color(0xFFF59E0B)
 val KetosisBlue = Color(0xFF3B82F6)
 val AutophagyGreen = Color(0xFF059669)

@@ -36,16 +36,22 @@ class FastingWidgetProvider : AppWidgetProvider() {
         /**
          * Update all active widgets
          */
-        fun updateAllWidgets(context: Context) {
+        fun updateAllWidgets(context: Context, forceUpdate: Boolean = false) {
             try {
-                Log.d(TAG, "updateAllWidgets called")
+                Log.d(TAG, "updateAllWidgets called, forceUpdate=$forceUpdate")
             val appWidgetManager = AppWidgetManager.getInstance(context)
-            val appWidgetIds = appWidgetManager.getAppWidgetIds(
-                ComponentName(context, FastingWidgetProvider::class.java)
-            )
+                val appWidgetIds = appWidgetManager.getAppWidgetIds(
+                    ComponentName(context, FastingWidgetProvider::class.java)
+                )
                 
                 if (appWidgetIds.isNotEmpty()) {
                     Log.d(TAG, "Updating ${appWidgetIds.size} widgets")
+                    
+                    if (forceUpdate) {
+                        // Force update by notifying the AppWidgetManager
+                        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_background)
+                    }
+                    
                     updateAppWidgets(context, appWidgetManager, appWidgetIds)
                 } else {
                     Log.d(TAG, "No widgets to update")
@@ -120,7 +126,7 @@ class FastingWidgetProvider : AppWidgetProvider() {
         }
         
         /**
-         * Update the widget background based on fasting state
+         * Update widget background based on fasting state
          */
         private fun updateWidgetBackground(
             context: Context,
@@ -129,33 +135,32 @@ class FastingWidgetProvider : AppWidgetProvider() {
             isRunning: Boolean
         ) {
             try {
-                // Try to create a dynamic background
-                val backgroundPath = WidgetBackgroundHelper.createBackgroundDrawable(context, currentState, isRunning)
-                if (backgroundPath != null) {
-                    views.setImageViewUri(R.id.widget_background, Uri.parse("file://$backgroundPath"))
-                } else {
-                    // Fallback to static background
-                    val backgroundResId = if (isRunning) {
-                        // Use combined background with running border
-                        when (currentState) {
-                            FastingState.NOT_FASTING -> R.drawable.widget_background_not_fasting_running
-                            FastingState.EARLY_FAST -> R.drawable.widget_background_early_fast_running
-                            FastingState.KETOSIS -> R.drawable.widget_background_ketosis_running
-                            FastingState.AUTOPHAGY -> R.drawable.widget_background_autophagy_running
-                            FastingState.DEEP_FASTING -> R.drawable.widget_background_deep_fasting_running
-                        }
-                    } else {
-                        // Use regular state background
-                        when (currentState) {
-                            FastingState.NOT_FASTING -> R.drawable.widget_background_not_fasting
-                            FastingState.EARLY_FAST -> R.drawable.widget_background_early_fast
-                            FastingState.KETOSIS -> R.drawable.widget_background_ketosis
-                            FastingState.AUTOPHAGY -> R.drawable.widget_background_autophagy
-                            FastingState.DEEP_FASTING -> R.drawable.widget_background_deep_fasting
-                        }
+                Log.d(TAG, "Setting widget background for state: ${currentState.name}, running: $isRunning")
+                
+                // Get the appropriate background resource based on fasting state
+                val backgroundResId = if (isRunning) {
+                    // Use combined background with running border
+                    when (currentState) {
+                        FastingState.NOT_FASTING -> R.drawable.widget_background_not_fasting_running
+                        FastingState.EARLY_FAST -> R.drawable.widget_background_early_fast_running
+                        FastingState.KETOSIS -> R.drawable.widget_background_ketosis_running
+                        FastingState.AUTOPHAGY -> R.drawable.widget_background_autophagy_running
+                        FastingState.DEEP_FASTING -> R.drawable.widget_background_deep_fasting_running
                     }
-                    views.setInt(R.id.widget_background, "setBackgroundResource", backgroundResId)
+                } else {
+                    // Use regular state background
+                    when (currentState) {
+                        FastingState.NOT_FASTING -> R.drawable.widget_background_not_fasting
+                        FastingState.EARLY_FAST -> R.drawable.widget_background_early_fast
+                        FastingState.KETOSIS -> R.drawable.widget_background_ketosis
+                        FastingState.AUTOPHAGY -> R.drawable.widget_background_autophagy
+                        FastingState.DEEP_FASTING -> R.drawable.widget_background_deep_fasting
+                    }
                 }
+                
+                // Set the background resource directly on the widget_background RelativeLayout
+                views.setInt(R.id.widget_background, "setBackgroundResource", backgroundResId)
+                Log.d(TAG, "Set background resource: $backgroundResId for state: ${currentState.name}")
             } catch (e: Exception) {
                 Log.e(TAG, "Error setting background", e)
                 // Fallback to a safe default
@@ -218,73 +223,64 @@ class FastingWidgetProvider : AppWidgetProvider() {
         }
     }
 
-    override fun onUpdate(
-        context: Context,
-        appWidgetManager: AppWidgetManager,
-        appWidgetIds: IntArray
-    ) {
-        Log.d(TAG, "onUpdate called for ${appWidgetIds.size} widgets")
-        
-        // Update each widget
-        updateAppWidgets(context, appWidgetManager, appWidgetIds)
-        
-        // Ensure the update service is running
-        ensureUpdateServiceRunning(context)
+    override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+        try {
+            Log.d(TAG, "onUpdate called for ${appWidgetIds.size} widgets")
+            
+            // Update all widgets
+            updateAppWidgets(context, appWidgetManager, appWidgetIds)
+            
+            // Schedule the next update
+            scheduleNextUpdate(context)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error in onUpdate", e)
+        }
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        super.onReceive(context, intent)
-
-        Log.d(TAG, "onReceive: action=${intent.action}, extras=${intent.extras}")
+        try {
+            Log.d(TAG, "onReceive: ${intent.action}")
 
         when (intent.action) {
             ACTION_START_TIMER -> {
-                Log.d(TAG, "Start timer action received")
-                try {
-                    // Start the timer
+                    Log.d(TAG, "Starting timer from widget")
                     val fastingTimer = FastingTimer.getInstance(context)
                     fastingTimer.startTimer()
-                    Log.d(TAG, "Timer started successfully")
-                    
-                    // Show feedback to the user
-                    try {
-                        val toast = android.widget.Toast.makeText(
-                            context,
-                            "Timer started",
-                            android.widget.Toast.LENGTH_SHORT
-                        )
-                        toast.show()
-                    } catch (e: Exception) {
-                        Log.e(TAG, "Error showing toast", e)
-                    }
-                    
-                    // Update widgets
                     updateAllWidgets(context)
-                } catch (e: Exception) {
-                    Log.e(TAG, "Error starting timer from widget", e)
-                }
             }
-            
             ACTION_RESET_TIMER -> {
-                Log.d(TAG, "Reset timer action received")
-                // Show confirmation dialog
+                    Log.d(TAG, "Reset timer action received")
+                    // Show confirmation dialog
                 val confirmIntent = Intent(context, WidgetConfirmationActivity::class.java)
                 confirmIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 context.startActivity(confirmIntent)
             }
-            
-            ACTION_UPDATE_WIDGETS -> {
-                // Update all widgets
-                updateAllWidgets(context)
-            }
-            
-            AppWidgetManager.ACTION_APPWIDGET_UPDATE -> {
-                // Update widgets
-                val appWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS)
-                if (appWidgetIds != null) {
-                    onUpdate(context, AppWidgetManager.getInstance(context), appWidgetIds)
+                ACTION_UPDATE_WIDGETS -> {
+                    Log.d(TAG, "Updating widgets from broadcast")
+                    // Extract state information if available (for debugging)
+                    if (intent.hasExtra("IS_RUNNING")) {
+                        val isRunning = intent.getBooleanExtra("IS_RUNNING", false)
+                        val stateOrdinal = intent.getIntExtra("CURRENT_STATE", 0)
+                        val elapsedTime = intent.getLongExtra("ELAPSED_TIME", 0L)
+                        Log.d(TAG, "Widget update broadcast with state: running=$isRunning, state=$stateOrdinal, elapsed=$elapsedTime")
+                    }
+                    
+                    // Force update to ensure background is refreshed
+                    val forceUpdate = intent.getBooleanExtra("FORCE_UPDATE", false)
+                    updateAllWidgets(context, forceUpdate)
                 }
+                AppWidgetManager.ACTION_APPWIDGET_UPDATE -> {
+                    Log.d(TAG, "Widget update requested")
+                    super.onReceive(context, intent)
+                    
+                    // Also force update our widgets to ensure they have the correct background
+                    updateAllWidgets(context, true)
+                }
+                else -> super.onReceive(context, intent)
             }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error in onReceive", e)
+            super.onReceive(context, intent)
         }
     }
     

@@ -816,7 +816,8 @@ fun AchievementItem(
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(stateColor.copy(alpha = 0.2f))
+                .background(stateColor.copy(alpha = 0.2f)),
+            contentAlignment = Alignment.Center
         ) {
             Text(
                 text = count.toString(),

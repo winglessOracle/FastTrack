@@ -123,7 +123,7 @@ fun BasicsTab() {
         HelpSection(
             title = "Understanding Fasting States",
             items = listOf(
-                "Not Fasting (Red): When you're not in a fasting period",
+                "Not Fasting (Gray): When you're not in a fasting period",
                 "Early Fast (Yellow): First 12 hours of fasting",
                 "Ketosis (Blue): 12-18 hours, fat burning begins",
                 "Autophagy (Green): 18-24 hours, cell repair starts",

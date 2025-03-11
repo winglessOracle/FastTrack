@@ -37,7 +37,7 @@ import wesseling.io.fasttime.ui.theme.AutophagyGreen
 import wesseling.io.fasttime.ui.theme.DeepFastingPurple
 import wesseling.io.fasttime.ui.theme.EarlyFastingYellow
 import wesseling.io.fasttime.ui.theme.KetosisBlue
-import wesseling.io.fasttime.ui.theme.NotFastingRed
+import wesseling.io.fasttime.ui.theme.NotFastingGray
 
 /**
  * A component that displays a legend explaining the different fasting states,
@@ -94,7 +94,7 @@ fun FastingLegend(
             
             LegendItem(
                 state = FastingState.NOT_FASTING,
-                color = NotFastingRed,
+                color = NotFastingGray,
                 timeRange = "0-12 hours",
                 onClick = { selectedState = FastingState.NOT_FASTING }
             )

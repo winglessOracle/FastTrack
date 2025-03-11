@@ -24,8 +24,8 @@ object WidgetBackgroundHelper {
      */
     fun getColorForFastingState(state: FastingState): Int {
         return when (state) {
-            FastingState.NOT_FASTING -> Color.parseColor("#EF4444") // Red
-            FastingState.EARLY_FAST -> Color.parseColor("#F59E0B") // Yellow
+            FastingState.NOT_FASTING -> Color.parseColor("#757575") // Neutral gray
+            FastingState.EARLY_FAST -> Color.parseColor("#F59E0B") // Amber
             FastingState.KETOSIS -> Color.parseColor("#3B82F6") // Blue
             FastingState.AUTOPHAGY -> Color.parseColor("#059669") // Green
             FastingState.DEEP_FASTING -> Color.parseColor("#8B5CF6") // Purple
@@ -39,10 +39,18 @@ object WidgetBackgroundHelper {
     fun createBackgroundDrawable(context: Context, state: FastingState, isRunning: Boolean = false): String? {
         try {
             val color = getColorForFastingState(state)
+            val darkerColor = darkenColor(color, 0.2f)
+            
             val bitmap = if (isRunning) {
-                createRoundedRectBitmapWithBorder(300, 40, 16f, color, Color.parseColor("#4CAF50"), 3f)
+                // When running, add a green border
+                createRoundedRectBitmapWithGradient(
+                    300, 40, 16f, 
+                    color, darkerColor,
+                    Color.parseColor("#4CAF50"), 3f
+                )
             } else {
-                createRoundedRectBitmap(300, 40, 16f, color)
+                // Normal state with gradient
+                createRoundedRectBitmapWithGradient(300, 40, 16f, color, darkerColor)
             }
             
             // Save bitmap to file
@@ -64,14 +72,26 @@ object WidgetBackgroundHelper {
     }
     
     /**
-     * Create a bitmap with rounded corners
+     * Create a bitmap with rounded corners and gradient
      */
-    private fun createRoundedRectBitmap(width: Int, height: Int, cornerRadius: Float, color: Int): Bitmap {
+    private fun createRoundedRectBitmapWithGradient(
+        width: Int, 
+        height: Int, 
+        cornerRadius: Float, 
+        startColor: Int,
+        endColor: Int
+    ): Bitmap {
         val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
+        
+        // Create gradient paint
         val paint = Paint().apply {
             isAntiAlias = true
-            this.color = color
+            shader = android.graphics.LinearGradient(
+                0f, 0f, 0f, height.toFloat(),
+                startColor, endColor,
+                android.graphics.Shader.TileMode.CLAMP
+            )
             style = Paint.Style.FILL
         }
         
@@ -81,36 +101,41 @@ object WidgetBackgroundHelper {
         // Add a subtle white stroke
         val strokePaint = Paint().apply {
             isAntiAlias = true
-            this.color = Color.WHITE
+            color = Color.WHITE
             style = Paint.Style.STROKE
-            strokeWidth = 1f
-            alpha = 51 // 20% opacity
+            strokeWidth = 1.5f
+            alpha = 60 // 24% opacity
         }
         
-        val strokeRect = RectF(0.5f, 0.5f, width - 0.5f, height - 0.5f)
-        canvas.drawRoundRect(strokeRect, cornerRadius, cornerRadius, strokePaint)
+        val strokeRect = RectF(0.75f, 0.75f, width - 0.75f, height - 0.75f)
+        canvas.drawRoundRect(strokeRect, cornerRadius - 0.75f, cornerRadius - 0.75f, strokePaint)
         
         return bitmap
     }
     
     /**
-     * Create a bitmap with rounded corners and a colored border
+     * Create a bitmap with rounded corners, gradient and a colored border
      */
-    private fun createRoundedRectBitmapWithBorder(
+    private fun createRoundedRectBitmapWithGradient(
         width: Int, 
         height: Int, 
         cornerRadius: Float, 
-        fillColor: Int,
+        startColor: Int,
+        endColor: Int,
         borderColor: Int,
         borderWidth: Float
     ): Bitmap {
         val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         
-        // Draw the fill
+        // Draw the fill with gradient
         val fillPaint = Paint().apply {
             isAntiAlias = true
-            color = fillColor
+            shader = android.graphics.LinearGradient(
+                0f, 0f, 0f, height.toFloat(),
+                startColor, endColor,
+                android.graphics.Shader.TileMode.CLAMP
+            )
             style = Paint.Style.FILL
         }
         
@@ -139,6 +164,17 @@ object WidgetBackgroundHelper {
         canvas.drawRoundRect(borderRect, cornerRadius, cornerRadius, borderPaint)
         
         return bitmap
+    }
+    
+    /**
+     * Darken a color by a given factor
+     */
+    private fun darkenColor(color: Int, factor: Float): Int {
+        val a = Color.alpha(color)
+        val r = Math.max(Color.red(color) * (1 - factor), 0f).toInt()
+        val g = Math.max(Color.green(color) * (1 - factor), 0f).toInt()
+        val b = Math.max(Color.blue(color) * (1 - factor), 0f).toInt()
+        return Color.argb(a, r, g, b)
     }
     
     /**

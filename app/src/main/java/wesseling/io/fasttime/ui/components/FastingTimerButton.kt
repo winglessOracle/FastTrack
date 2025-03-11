@@ -58,7 +58,7 @@ import wesseling.io.fasttime.ui.theme.AutophagyGreen
 import wesseling.io.fasttime.ui.theme.DeepFastingPurple
 import wesseling.io.fasttime.ui.theme.EarlyFastingYellow
 import wesseling.io.fasttime.ui.theme.KetosisBlue
-import wesseling.io.fasttime.ui.theme.NotFastingRed
+import wesseling.io.fasttime.ui.theme.NotFastingGray
 import wesseling.io.fasttime.ui.theme.getColorForFastingState
 
 /**
