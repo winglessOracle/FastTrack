@@ -91,6 +91,7 @@ fun FastingLogScreen(
     var allFasts by remember { mutableStateOf(emptyList<CompletedFast>()) }
     var showDeleteAllDialog by remember { mutableStateOf(false) }
     var selectedFast by remember { mutableStateOf<CompletedFast?>(null) }
+    var fastToDelete by remember { mutableStateOf<CompletedFast?>(null) }
     
     // Pagination state
     val pageSize = 20
@@ -348,18 +349,7 @@ fun FastingLogScreen(
                                 context = context,
                                 onClick = { selectedFast = fast },
                                 onDelete = {
-                                    try {
-                                        repository.deleteFast(fast.id)
-                                        allFasts = repository.getAllFasts()
-                                        coroutineScope.launch {
-                                            snackbarHostState.showSnackbar("Fast deleted")
-                                        }
-                                    } catch (e: Exception) {
-                                        Log.e("FastingLogScreen", "Error deleting fast", e)
-                                        coroutineScope.launch {
-                                            snackbarHostState.showSnackbar("Failed to delete fast")
-                                        }
-                                    }
+                                    fastToDelete = fast
                                 },
                                 onShare = {
                                     val shareIntent = Intent().apply {
@@ -447,6 +437,50 @@ fun FastingLogScreen(
                     dismissButton = {
                 TextButton(
                     onClick = { showDeleteAllDialog = false }
+                ) {
+                            Text("Cancel")
+                        }
+                    },
+            containerColor = MaterialTheme.colorScheme.surface
+                )
+            }
+            
+    // Delete confirmation dialog for individual fast
+    fastToDelete?.let { fast ->
+                AlertDialog(
+            onDismissRequest = { fastToDelete = null },
+            title = { Text("Delete Fast?") },
+                    text = { 
+                Text("Are you sure you want to delete this fasting session from ${fast.getFormattedStartTime(context)}? This action cannot be undone.")
+                    },
+                    confirmButton = {
+                TextButton(
+                            onClick = {
+                                try {
+                            repository.deleteFast(fast.id)
+                                        allFasts = repository.getAllFasts()
+                            coroutineScope.launch {
+                                snackbarHostState.showSnackbar("Fast deleted")
+                                    }
+                                } catch (e: Exception) {
+                                    Log.e("FastingLogScreen", "Error deleting fast", e)
+                                    coroutineScope.launch {
+                                snackbarHostState.showSnackbar("Failed to delete fast")
+                                    }
+                        } finally {
+                            fastToDelete = null
+                                }
+                            },
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = MaterialTheme.colorScheme.error
+                            )
+                        ) {
+                            Text("Delete")
+                        }
+                    },
+                    dismissButton = {
+                TextButton(
+                    onClick = { fastToDelete = null }
                 ) {
                             Text("Cancel")
                         }

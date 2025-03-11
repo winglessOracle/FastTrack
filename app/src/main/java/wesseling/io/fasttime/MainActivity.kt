@@ -42,10 +42,15 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import wesseling.io.fasttime.model.CompletedFast
+import wesseling.io.fasttime.model.FastingState
+import wesseling.io.fasttime.repository.FastingRepository
 import wesseling.io.fasttime.timer.FastingTimer
 import wesseling.io.fasttime.ui.components.FastingLegend
+import wesseling.io.fasttime.ui.components.FastingSummaryDialog
 import wesseling.io.fasttime.ui.components.FastingTimerButton
 import wesseling.io.fasttime.ui.screens.FastingLogScreen
+import wesseling.io.fasttime.ui.screens.HelpScreen
 import wesseling.io.fasttime.ui.screens.SettingsScreen
 import wesseling.io.fasttime.ui.theme.FastTrackTheme
 
@@ -61,8 +66,60 @@ class MainActivity : ComponentActivity() {
         // Enable edge-to-edge display
         WindowCompat.setDecorFitsSystemWindows(window, false)
         
+        // Check if we need to show a completed fast from the widget
+        val showCompletedFast = intent.getBooleanExtra("SHOW_COMPLETED_FAST", false)
+        var completedFast: CompletedFast? = null
+        
+        if (showCompletedFast) {
+            try {
+                val startTime = intent.getLongExtra("START_TIME", 0)
+                val endTime = intent.getLongExtra("END_TIME", 0)
+                val duration = intent.getLongExtra("DURATION", 0)
+                val maxStateOrdinal = intent.getIntExtra("MAX_STATE", 0)
+                
+                if (duration > 0) {
+                    val maxState = if (maxStateOrdinal >= 0 && maxStateOrdinal < FastingState.values().size) {
+                        FastingState.values()[maxStateOrdinal]
+                    } else {
+                        FastingState.NOT_FASTING
+                    }
+                    
+                    completedFast = CompletedFast(
+                        startTimeMillis = startTime,
+                        endTimeMillis = endTime,
+                        durationMillis = duration,
+                        maxFastingState = maxState
+                    )
+                    
+                    Log.d(TAG, "Received completed fast from widget: $completedFast")
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error processing completed fast from intent", e)
+            }
+        }
+        
         setContent {
             FastTrackTheme {
+                val finalCompletedFast = completedFast
+                
+                if (finalCompletedFast != null) {
+                    val repository = remember { FastingRepository.getInstance(this) }
+                    var showDialog by remember { mutableStateOf(true) }
+                    
+                    if (showDialog) {
+                        FastingSummaryDialog(
+                            completedFast = finalCompletedFast,
+                            onSave = { fast ->
+                                repository.saveFast(fast)
+                                showDialog = false
+                            },
+                            onDismiss = {
+                                showDialog = false
+                            }
+                        )
+                    }
+                }
+                
                 FastTrackApp()
             }
         }
@@ -122,12 +179,16 @@ fun FastTrackApp() {
     when (currentScreen) {
         "main" -> MainScreen(
             onNavigateToLog = { currentScreen = "log" },
-            onNavigateToSettings = { currentScreen = "settings" }
+            onNavigateToSettings = { currentScreen = "settings" },
+            onNavigateToHelp = { currentScreen = "help" }
         )
         "log" -> FastingLogScreen(
             onBackPressed = { currentScreen = "main" }
         )
         "settings" -> SettingsScreen(
+            onBackPressed = { currentScreen = "main" }
+        )
+        "help" -> HelpScreen(
             onBackPressed = { currentScreen = "main" }
         )
     }
@@ -137,7 +198,8 @@ fun FastTrackApp() {
 @Composable
 fun MainScreen(
     onNavigateToLog: () -> Unit,
-    onNavigateToSettings: () -> Unit
+    onNavigateToSettings: () -> Unit,
+    onNavigateToHelp: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -219,6 +281,14 @@ fun MainScreen(
                     modifier = Modifier.fillMaxWidth(0.8f)
                 ) {
                     Text("Settings")
+                }
+                
+                // Help button
+                Button(
+                    onClick = onNavigateToHelp,
+                    modifier = Modifier.fillMaxWidth(0.8f)
+                ) {
+                    Text("How to Use FastTrack")
                 }
                 
                 Spacer(modifier = Modifier.height(16.dp))

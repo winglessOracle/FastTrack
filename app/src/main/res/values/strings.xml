@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">FastTrack</string>
+    <string name="stop_timer">Stop Timer</string>
+    <string name="stop_timer_confirmation">Are you sure you want to stop the fasting timer?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_background"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="4dp"
+    android:background="@drawable/widget_background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="4dp">
+
+        <!-- Left section: Hours and state -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginStart="4dp">
+
+            <TextView
+                android:id="@+id/widget_hours"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:shadowColor="#80000000"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="1" />
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="hrs"
+                android:textSize="12sp"
+                android:textColor="#FFFFFF"
+                android:alpha="0.9"
+                android:layout_marginStart="2dp"
+                android:shadowColor="#80000000"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="1" />
+
+            <TextView
+                android:id="@+id/widget_state"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Not Fasting"
+                android:textSize="12sp"
+                android:textColor="#FFFFFF"
+                android:alpha="1.0"
+                android:background="@drawable/state_pill_background"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
+                android:layout_marginStart="12dp" />
+        </LinearLayout>
+
+        <!-- Right section: Buttons -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end|center_vertical"
+            android:layout_marginEnd="4dp">
+
+            <Button
+                android:id="@+id/widget_start_button"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:minWidth="65dp"
+                android:text="Start"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/rounded_button"
+                android:visibility="visible" />
+
+            <Button
+                android:id="@+id/widget_reset_button"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:minWidth="65dp"
+                android:text="Reset"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/rounded_button_red"
+                android:visibility="gone" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout> 

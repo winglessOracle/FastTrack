@@ -4,6 +4,8 @@
 
     <!-- Add notification permission -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Add foreground service permission for widget updates -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:name=".FastTimeApplication"
@@ -31,6 +33,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:label="@string/app_name"
             android:theme="@style/Theme.FastTrack">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -42,7 +45,28 @@
         <activity
             android:name=".widget.WidgetConfirmationActivity"
             android:exported="false"
-            android:theme="@style/Theme.FastTrack" />
+            android:theme="@style/Theme.FastTrack.Dialog" />
+            
+        <!-- Widget provider -->
+        <receiver
+            android:name=".widget.FastingWidgetProvider"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="wesseling.io.fasttime.widget.ACTION_TOGGLE_TIMER" />
+                <action android:name="wesseling.io.fasttime.widget.ACTION_UPDATE_WIDGETS" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/fasting_widget_info" />
+        </receiver>
+        
+        <!-- Widget update service -->
+        <service
+            android:name=".widget.FastingWidgetUpdateService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
     </application>
 
 </manifest>

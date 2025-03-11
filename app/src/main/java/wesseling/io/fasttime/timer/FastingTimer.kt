@@ -1,6 +1,7 @@
 package wesseling.io.fasttime.timer
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -194,6 +195,9 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
             
             // Save state to preferences
             saveState()
+            
+            // Update widgets
+            updateWidgets()
         } catch (e: Exception) {
             Log.e(TAG, "Error starting timer", e)
             resetToSafeState()
@@ -260,6 +264,9 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
             
             // Save state to preferences
             saveState()
+            
+            // Update widgets
+            updateWidgets()
         } catch (e: Exception) {
             Log.e(TAG, "Error stopping timer", e)
             resetToSafeState()
@@ -285,6 +292,10 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
             }
             
             resetToSafeState()
+            
+            // Update widgets
+            updateWidgets()
+            
             return completedFast
         } catch (e: Exception) {
             Log.e(TAG, "Error resetting timer", e)
@@ -327,6 +338,11 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
                 // Check if we should send a notification for the new fasting state
                 if (currentFastingState != previousState && currentFastingState != FastingState.NOT_FASTING) {
                     checkAndSendFastingStateNotification()
+                }
+                
+                // Update widgets when state changes
+                if (currentFastingState != previousState) {
+                    updateWidgets()
                 }
             }
         } catch (e: Exception) {
@@ -421,6 +437,21 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error saving timer state", e)
+        }
+    }
+    
+    /**
+     * Update all widgets with the current timer state
+     */
+    private fun updateWidgets() {
+        try {
+            // Use a safer approach to update widgets
+            val widgetIntent = Intent("wesseling.io.fasttime.widget.ACTION_UPDATE_WIDGETS")
+            widgetIntent.setPackage(appContext.packageName)
+            appContext.sendBroadcast(widgetIntent)
+        } catch (e: Exception) {
+            // Widget provider might not be available, ignore
+            Log.d(TAG, "Could not update widgets: ${e.message}")
         }
     }
     
