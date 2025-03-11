@@ -1,6 +1,7 @@
 package wesseling.io.fasttime.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,6 +20,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -30,9 +32,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,6 +42,7 @@ import java.util.concurrent.TimeUnit
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import wesseling.io.fasttime.model.DateTimePreferences
 import wesseling.io.fasttime.settings.PreferencesManager
 import wesseling.io.fasttime.util.DateTimeFormatter
 
@@ -267,7 +270,10 @@ fun AdjustStartTimeDialog(
             ) {
                 Text("Cancel")
             }
-        }
+        },
+        containerColor = MaterialTheme.colorScheme.surface,
+        titleContentColor = MaterialTheme.colorScheme.onSurface,
+        textContentColor = MaterialTheme.colorScheme.onSurfaceVariant
     )
 }
 
@@ -280,11 +286,7 @@ private fun formatHours(hours: Float): String {
     val m = totalMinutes % 60
     
     return if (h > 0) {
-        if (m > 0) {
-            "$h hours $m minutes"
-        } else {
-            "$h hours"
-        }
+        if (m > 0) "$h hours $m minutes" else "$h hours"
     } else {
         "$m minutes"
     }

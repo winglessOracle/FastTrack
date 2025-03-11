@@ -99,7 +99,7 @@ class FastingWidgetProvider : AppWidgetProvider() {
                         val views = RemoteViews(context.packageName, R.layout.fasting_widget)
                         
                         // Set background color based on fasting state
-                        updateWidgetBackground(context, views, currentState, isRunning)
+                        updateWidgetBackground(views, currentState, isRunning)
                         
                         // Set hours text
                         views.setTextViewText(R.id.widget_hours, "${elapsedHours}")
@@ -129,7 +129,6 @@ class FastingWidgetProvider : AppWidgetProvider() {
          * Update widget background based on fasting state
          */
         private fun updateWidgetBackground(
-            context: Context,
             views: RemoteViews,
             currentState: FastingState,
             isRunning: Boolean

@@ -36,6 +36,7 @@ fun SettingsScreen(
     }
     
     Scaffold(
+        modifier = Modifier.systemBarsPadding(),
         topBar = {
             TopAppBar(
                 title = { Text("Settings") },

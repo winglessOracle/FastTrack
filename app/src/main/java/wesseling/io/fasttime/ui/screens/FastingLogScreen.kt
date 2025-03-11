@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -179,6 +180,7 @@ fun FastingLogScreen(
     }
     
     Scaffold(
+        modifier = Modifier.systemBarsPadding(),
         topBar = {
             TopAppBar(
                 title = { 
@@ -779,8 +781,8 @@ fun FastingLogSummary(
 fun StatisticItem(
     label: String,
     value: String,
-    valueColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    valueColor: Color = MaterialTheme.colorScheme.onSurfaceVariant
 ) {
     Column(
         modifier = modifier,
@@ -838,16 +840,16 @@ fun AchievementItem(
 }
 
 fun shareFast(context: Context, fast: CompletedFast) {
-    val shareText = fast.toShareText(context)
-        val shareIntent = Intent().apply {
-            action = Intent.ACTION_SEND
+    val shareText = fast.toShareText()
+    val shareIntent = Intent().apply {
+        action = Intent.ACTION_SEND
         putExtra(Intent.EXTRA_TEXT, shareText)
-            type = "text/plain"
+        type = "text/plain"
     }
     context.startActivity(Intent.createChooser(shareIntent, "Share Fasting Achievement"))
 }
 
-fun CompletedFast.toShareText(context: Context): String {
+fun CompletedFast.toShareText(): String {
     val preferences = DateTimePreferences()
     val startDate = DateTimeFormatter.formatDateTime(startTimeMillis, preferences)
     val duration = DateTimeFormatter.formatDuration(durationMillis)

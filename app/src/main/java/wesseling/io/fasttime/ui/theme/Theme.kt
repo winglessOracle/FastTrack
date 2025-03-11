@@ -92,8 +92,13 @@ fun FastTrackTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !useDarkTheme
+            // Make status bar transparent to avoid content being drawn under it
+            window.statusBarColor = Color.Transparent.toArgb()
+            
+            // Set the appearance of the status bar icons based on the theme
+            WindowCompat.getInsetsController(window, view).apply {
+                isAppearanceLightStatusBars = !useDarkTheme
+            }
         }
     }
 
