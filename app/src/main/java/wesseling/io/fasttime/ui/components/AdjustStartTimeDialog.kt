@@ -1,5 +1,9 @@
 package wesseling.io.fasttime.ui.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,16 +12,22 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
@@ -25,22 +35,27 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.util.Calendar
+import java.util.Date
 import java.util.concurrent.TimeUnit
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 import wesseling.io.fasttime.model.DateTimePreferences
 import wesseling.io.fasttime.settings.PreferencesManager
@@ -63,15 +78,32 @@ fun AdjustStartTimeDialog(
     // Calculate current start time
     val currentStartTimeMillis = System.currentTimeMillis() - currentElapsedTimeMillis
     
-    // State for the adjustment in hours
-    var adjustmentHours by remember { mutableFloatStateOf(0f) }
+    // Extract hours and minutes from the start time
+    val calendar = Calendar.getInstance().apply {
+        timeInMillis = currentStartTimeMillis
+    }
+    
+    // Initialize time picker with the start time
+    var selectedHour by remember { mutableIntStateOf(calendar.get(Calendar.HOUR_OF_DAY)) }
+    var selectedMinute by remember { mutableIntStateOf(calendar.get(Calendar.MINUTE)) }
+    
+    // Current date components (year, month, day)
+    val year = calendar.get(Calendar.YEAR)
+    val month = calendar.get(Calendar.MONTH)
+    val day = calendar.get(Calendar.DAY_OF_MONTH)
+    
+    // Calculate the new start time based on selected hour and minute
+    val newStartCalendar = Calendar.getInstance().apply {
+        set(year, month, day, selectedHour, selectedMinute, 0)
+        set(Calendar.MILLISECOND, 0)
+    }
+    val newStartTimeMillis = newStartCalendar.timeInMillis
     
     // Calculate adjustment in milliseconds
-    val adjustmentMillis = (adjustmentHours * 60 * 60 * 1000).toLong()
+    val adjustmentMillis = currentStartTimeMillis - newStartTimeMillis
     
-    // Calculate new elapsed time and start time
+    // Calculate new elapsed time
     val newElapsedTimeMillis = currentElapsedTimeMillis + adjustmentMillis
-    val newStartTimeMillis = currentStartTimeMillis - adjustmentMillis
     
     // Format times for display
     val currentFormattedTime = DateTimeFormatter.formatElapsedTime(currentElapsedTimeMillis)
@@ -80,6 +112,9 @@ fun AdjustStartTimeDialog(
     // Format start times as actual dates
     val currentStartTimeFormatted = DateTimeFormatter.formatDateTime(currentStartTimeMillis, preferences)
     val newStartTimeFormatted = DateTimeFormatter.formatDateTime(newStartTimeMillis, preferences)
+    
+    // Determine if the adjustment is valid (not in the future)
+    val isValidAdjustment = newStartTimeMillis <= System.currentTimeMillis()
     
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -158,42 +193,56 @@ fun AdjustStartTimeDialog(
                 
                 Spacer(modifier = Modifier.height(16.dp))
                 
-                // Adjustment slider
+                // Time picker
                 Column(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Adjust by ${formatHours(adjustmentHours)}",
+                        text = "Set New Start Time",
                         style = MaterialTheme.typography.titleMedium,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth(),
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     
-                    Spacer(modifier = Modifier.height(8.dp))
-                    
-                    Slider(
-                        value = adjustmentHours,
-                        onValueChange = { adjustmentHours = it },
-                        valueRange = 0f..24f,
-                        steps = 47, // 30-minute increments
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    Spacer(modifier = Modifier.height(16.dp))
                     
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = "0h",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        // Hour picker
+                        NumberPicker(
+                            value = selectedHour,
+                            onValueChange = { selectedHour = it },
+                            range = 0..23,
+                            format = { "%02d".format(it) }
                         )
                         
                         Text(
-                            text = "24h",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            text = ":",
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(horizontal = 8.dp)
+                        )
+                        
+                        // Minute picker
+                        NumberPicker(
+                            value = selectedMinute,
+                            onValueChange = { selectedMinute = it },
+                            range = 0..59,
+                            format = { "%02d".format(it) }
+                        )
+                    }
+                    
+                    if (!isValidAdjustment) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Start time cannot be in the future",
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodyMedium
                         )
                     }
                 }
@@ -250,7 +299,7 @@ fun AdjustStartTimeDialog(
                     onAdjustTime(adjustmentMillis)
                     onDismiss()
                 },
-                enabled = adjustmentHours > 0f,
+                enabled = isValidAdjustment && adjustmentMillis != 0L,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary,
@@ -275,6 +324,71 @@ fun AdjustStartTimeDialog(
         titleContentColor = MaterialTheme.colorScheme.onSurface,
         textContentColor = MaterialTheme.colorScheme.onSurfaceVariant
     )
+}
+
+/**
+ * A number picker component that allows scrolling through numbers
+ */
+@Composable
+private fun NumberPicker(
+    value: Int,
+    onValueChange: (Int) -> Unit,
+    range: IntRange,
+    format: (Int) -> String = { it.toString() }
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .width(60.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
+            .padding(vertical = 8.dp)
+    ) {
+        // Up arrow
+        IconButton(
+            onClick = {
+                val newValue = if (value >= range.last) range.first else value + 1
+                onValueChange(newValue)
+            },
+            modifier = Modifier.size(36.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.ArrowDropUp,
+                contentDescription = "Increase",
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
+        
+        // Current value
+        Box(
+            modifier = Modifier
+                .height(40.dp)
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = format(value),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+        
+        // Down arrow
+        IconButton(
+            onClick = {
+                val newValue = if (value <= range.first) range.last else value - 1
+                onValueChange(newValue)
+            },
+            modifier = Modifier.size(36.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.ArrowDropDown,
+                contentDescription = "Decrease",
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
+    }
 }
 
 /**

@@ -95,35 +95,35 @@ fun FastingLegend(
             LegendItem(
                 state = FastingState.NOT_FASTING,
                 color = NotFastingGray,
-                timeRange = "0-12 hours",
+                timeRange = "0-5 hours",
                 onClick = { selectedState = FastingState.NOT_FASTING }
             )
             
             LegendItem(
                 state = FastingState.EARLY_FAST,
                 color = EarlyFastingYellow,
-                timeRange = "12-18 hours",
+                timeRange = "5-13 hours",
                 onClick = { selectedState = FastingState.EARLY_FAST }
             )
             
             LegendItem(
                 state = FastingState.KETOSIS,
                 color = KetosisBlue,
-                timeRange = "18-24 hours",
+                timeRange = "13-17 hours",
                 onClick = { selectedState = FastingState.KETOSIS }
             )
             
             LegendItem(
                 state = FastingState.AUTOPHAGY,
                 color = AutophagyGreen,
-                timeRange = "24-72 hours",
+                timeRange = "17-25 hours",
                 onClick = { selectedState = FastingState.AUTOPHAGY }
             )
             
             LegendItem(
                 state = FastingState.DEEP_FASTING,
                 color = DeepFastingPurple,
-                timeRange = "72+ hours",
+                timeRange = "25+ hours",
                 onClick = { selectedState = FastingState.DEEP_FASTING }
             )
         }

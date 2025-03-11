@@ -25,13 +25,13 @@ object FastingDocumentation {
             )
             
             FastingState.EARLY_FAST -> FastingStateInfo(
-                title = "Early Fasting (4-12 hours)",
+                title = "Early Fasting (5-13 hours)",
                 benefits = listOf(
                     "Blood glucose and insulin levels begin to drop",
                     "Your body starts to transition from using glucose to fat for energy",
                     "Digestive system gets a break, reducing inflammation"
                 ),
-                scientificDetails = "After 4-6 hours without food, your liver glycogen (stored glucose) begins to be depleted. As insulin levels fall, your body gradually shifts toward using stored fat for energy through a process called lipolysis.",
+                scientificDetails = "After 5-6 hours without food, your liver glycogen (stored glucose) begins to be depleted. As insulin levels fall, your body gradually shifts toward using stored fat for energy through a process called lipolysis.",
                 warnings = listOf(
                     "You may experience hunger pangs as your body adjusts",
                     "Blood sugar fluctuations may cause mild irritability or difficulty concentrating for some people"
@@ -39,14 +39,14 @@ object FastingDocumentation {
             )
             
             FastingState.KETOSIS -> FastingStateInfo(
-                title = "Ketosis (12-16 hours)",
+                title = "Ketosis (13-17 hours)",
                 benefits = listOf(
                     "Fat burning accelerates as liver glycogen is depleted",
                     "Your liver produces ketone bodies, an alternative fuel source for your brain",
                     "Improved mental clarity and focus for many people",
                     "Reduced inflammation markers"
                 ),
-                scientificDetails = "After 12+ hours of fasting, liver glycogen is significantly depleted, and your body increases fat oxidation. The liver converts fatty acids into ketone bodies (acetoacetate, beta-hydroxybutyrate, and acetone), which serve as an efficient alternative fuel source for the brain and other organs.",
+                scientificDetails = "After 13+ hours of fasting, liver glycogen is significantly depleted, and your body increases fat oxidation. The liver converts fatty acids into ketone bodies (acetoacetate, beta-hydroxybutyrate, and acetone), which serve as an efficient alternative fuel source for the brain and other organs.",
                 warnings = listOf(
                     "Initial adaptation to ketosis may cause temporary fatigue or 'keto flu' symptoms",
                     "People with certain medical conditions (like type 1 diabetes) should consult healthcare providers before pursuing ketosis",
@@ -55,7 +55,7 @@ object FastingDocumentation {
             )
             
             FastingState.AUTOPHAGY -> FastingStateInfo(
-                title = "Autophagy (16-24 hours)",
+                title = "Autophagy (17-25 hours)",
                 benefits = listOf(
                     "Cellular 'self-eating' process removes damaged components",
                     "Recycling of old and dysfunctional proteins",
@@ -63,7 +63,7 @@ object FastingDocumentation {
                     "Potential anti-aging effects at cellular level",
                     "Enhanced cellular repair mechanisms"
                 ),
-                scientificDetails = "Autophagy is a cellular cleaning process where cells break down and recycle damaged components. Research suggests autophagy is significantly upregulated after 16-24 hours of fasting. This process is regulated by several nutrient-sensing pathways, including mTOR (inhibited during fasting) and AMPK (activated during fasting).",
+                scientificDetails = "Autophagy is a cellular cleaning process where cells break down and recycle damaged components. Research suggests autophagy is significantly upregulated after 17-25 hours of fasting. This process is regulated by several nutrient-sensing pathways, including mTOR (inhibited during fasting) and AMPK (activated during fasting).",
                 warnings = listOf(
                     "Extended fasting isn't recommended for pregnant or breastfeeding women",
                     "Those with medical conditions should consult healthcare providers before extended fasting",
@@ -72,7 +72,7 @@ object FastingDocumentation {
             )
             
             FastingState.DEEP_FASTING -> FastingStateInfo(
-                title = "Deep Fasting (24+ hours)",
+                title = "Deep Fasting (25+ hours)",
                 benefits = listOf(
                     "Significant increase in human growth hormone (HGH)",
                     "Enhanced fat breakdown and ketone production",
@@ -80,7 +80,7 @@ object FastingDocumentation {
                     "Profound autophagy throughout the body",
                     "Possible immune system 'reset' effects"
                 ),
-                scientificDetails = "After 24 hours, growth hormone secretion increases to preserve muscle mass and promote fat utilization. Studies show a 300-1000% increase in growth hormone levels. Extended fasting also activates stem cell production and may trigger immune system regeneration through a process called apoptosis of old immune cells.",
+                scientificDetails = "After 25 hours, growth hormone secretion increases to preserve muscle mass and promote fat utilization. Studies show a 300-1000% increase in growth hormone levels. Extended fasting also activates stem cell production and may trigger immune system regeneration through a process called apoptosis of old immune cells.",
                 warnings = listOf(
                     "Extended fasting should only be done with proper preparation and knowledge",
                     "Not recommended for those who are underweight or have eating disorders",

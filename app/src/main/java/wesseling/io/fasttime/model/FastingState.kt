@@ -9,10 +9,10 @@ enum class FastingState(
     val hourThreshold: Int
 ) {
     NOT_FASTING("Fed", "Not fasting", 0),
-    EARLY_FAST("Early Fast", "Fat burning begins", 4),
-    KETOSIS("Ketosis", "Fat burning accelerates", 12),
-    AUTOPHAGY("Autophagy", "Cell repair begins", 16),
-    DEEP_FASTING("Deep Fasting", "Growth hormone increases", 24);
+    EARLY_FAST("Early Fast", "Fat burning begins", 5),
+    KETOSIS("Ketosis", "Fat burning accelerates", 13),
+    AUTOPHAGY("Autophagy", "Cell repair begins", 17),
+    DEEP_FASTING("Deep Fasting", "Growth hormone increases", 25);
 
     companion object {
         /**
