@@ -39,13 +39,13 @@ class PreferencesManager(context: Context) {
      * Load preferences from SharedPreferences
      */
     private fun loadPreferences(): DateTimePreferences {
-        val dateFormatOrdinal = prefs.getInt(KEY_DATE_FORMAT, DateFormat.MDY_SLASH.ordinal)
+        val dateFormatOrdinal = prefs.getInt(KEY_DATE_FORMAT, DateFormat.DMY_SLASH.ordinal)
         val timeFormatOrdinal = prefs.getInt(KEY_TIME_FORMAT, TimeFormat.HOURS_24.ordinal)
         val showSeconds = prefs.getBoolean(KEY_SHOW_SECONDS, false)
         val themePreferenceOrdinal = prefs.getInt(KEY_THEME, ThemePreference.SYSTEM.ordinal)
         val enableNotifications = prefs.getBoolean(KEY_ENABLE_NOTIFICATIONS, false)
         
-        val dateFormat = DateFormat.values().getOrElse(dateFormatOrdinal) { DateFormat.MDY_SLASH }
+        val dateFormat = DateFormat.values().getOrElse(dateFormatOrdinal) { DateFormat.DMY_SLASH }
         val timeFormat = TimeFormat.values().getOrElse(timeFormatOrdinal) { TimeFormat.HOURS_24 }
         val themePreference = ThemePreference.values().getOrElse(themePreferenceOrdinal) { ThemePreference.SYSTEM }
         

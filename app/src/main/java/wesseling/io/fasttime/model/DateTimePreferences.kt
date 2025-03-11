@@ -31,7 +31,7 @@ enum class ThemePreference(val displayName: String) {
  * Data class to hold user preferences
  */
 data class DateTimePreferences(
-    val dateFormat: DateFormat = DateFormat.MDY_SLASH,
+    val dateFormat: DateFormat = DateFormat.DMY_SLASH,
     val timeFormat: TimeFormat = TimeFormat.HOURS_24,
     val showSeconds: Boolean = false,
     val themePreference: ThemePreference = ThemePreference.SYSTEM,

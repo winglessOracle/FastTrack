@@ -82,7 +82,14 @@
                 android:textStyle="bold"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
-                android:background="@drawable/rounded_button"
+                android:background="@drawable/widget_button_pill"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
+                android:gravity="center"
                 android:visibility="visible" />
 
             <Button
@@ -95,7 +102,14 @@
                 android:textStyle="bold"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
-                android:background="@drawable/rounded_button_red"
+                android:background="@drawable/widget_button_pill_red"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
+                android:gravity="center"
                 android:visibility="gone" />
         </LinearLayout>
     </LinearLayout>

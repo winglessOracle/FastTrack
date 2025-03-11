@@ -182,6 +182,7 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
     /**
      * Start or restart the timer
      */
+    @Synchronized
     fun startTimer() {
         if (isRunning) return
         
@@ -251,6 +252,7 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
     /**
      * Stop the timer
      */
+    @Synchronized
     fun stopTimer() {
         try {
             isRunning = false
@@ -277,6 +279,7 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
      * Reset the timer to zero and stop it
      * @return CompletedFast object if the timer was running, null otherwise
      */
+    @Synchronized
     fun resetTimer(): CompletedFast? {
         try {
             // Create a completed fast object if the timer was running
@@ -445,10 +448,29 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
      */
     private fun updateWidgets() {
         try {
-            // Use a safer approach to update widgets
-            val widgetIntent = Intent("wesseling.io.fasttime.widget.ACTION_UPDATE_WIDGETS")
-            widgetIntent.setPackage(appContext.packageName)
+            // Use a more reliable approach to update widgets
+            Log.d(TAG, "Updating widgets with current state: running=$isRunning, state=${currentFastingState.name}")
+            
+            // Send broadcast with current state information
+            val widgetIntent = Intent("wesseling.io.fasttime.widget.ACTION_UPDATE_WIDGETS").apply {
+                setPackage(appContext.packageName)
+                // Add state information to help debugging
+                putExtra("IS_RUNNING", isRunning)
+                putExtra("CURRENT_STATE", currentFastingState.ordinal)
+                putExtra("ELAPSED_TIME", elapsedTimeMillis)
+                putExtra("TIMESTAMP", System.currentTimeMillis())
+            }
             appContext.sendBroadcast(widgetIntent)
+            
+            // Also directly update widgets as a fallback
+            try {
+                val widgetProviderClass = Class.forName("wesseling.io.fasttime.widget.FastingWidgetProvider")
+                val updateMethod = widgetProviderClass.getDeclaredMethod("updateAllWidgets", Context::class.java)
+                updateMethod.invoke(null, appContext)
+            } catch (e: Exception) {
+                // This is just a fallback, so log but don't throw
+                Log.d(TAG, "Direct widget update failed: ${e.message}")
+            }
         } catch (e: Exception) {
             // Widget provider might not be available, ignore
             Log.d(TAG, "Could not update widgets: ${e.message}")

@@ -25,22 +25,19 @@ class FastingWidgetUpdateService : Service() {
     private val updateRunnable = object : Runnable {
         override fun run() {
             try {
+                Log.d(TAG, "Running widget update")
+                
                 // Update all widgets
                 FastingWidgetProvider.updateAllWidgets(this@FastingWidgetUpdateService)
                 
-                // Schedule next update
-                val fastingTimer = FastingTimer.getInstance(this@FastingWidgetUpdateService)
-                val updateInterval = if (fastingTimer.isRunning) {
-                    // Update more frequently when timer is running
-                    TimeUnit.MINUTES.toMillis(1)
-                } else {
-                    // Update less frequently when timer is not running
-                    TimeUnit.MINUTES.toMillis(15)
-                }
+                // Schedule next update with adaptive interval
+                scheduleNextUpdateWithAdaptiveInterval()
                 
-                handler.postDelayed(this, updateInterval)
+                Log.d(TAG, "Widget update completed")
             } catch (e: Exception) {
                 Log.e(TAG, "Error in update runnable", e)
+                // Try to recover by scheduling next update anyway
+                handler.postDelayed(this, TimeUnit.MINUTES.toMillis(5))
             }
         }
     }
@@ -74,14 +71,22 @@ class FastingWidgetUpdateService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(TAG, "Service started")
         
-        // Create a notification for the foreground service
-        val notification = createNotification()
-        
-        // Start as a foreground service
-        startForeground(NOTIFICATION_ID, notification)
-        
-        // Start the update loop
-        handler.post(updateRunnable)
+        try {
+            // Create a notification for the foreground service
+            val notification = createNotification()
+            
+            // Start as a foreground service with higher priority
+            startForeground(NOTIFICATION_ID, notification)
+            
+            // Start the update loop with immediate first update
+            handler.removeCallbacks(updateRunnable) // Remove any existing callbacks
+            handler.post(updateRunnable)
+            
+            // Schedule an immediate widget update
+            FastingWidgetProvider.updateAllWidgets(this)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error starting service", e)
+        }
         
         return START_STICKY
     }
@@ -116,4 +121,67 @@ class FastingWidgetUpdateService : Service() {
             )
         )
         .build()
+    
+    /**
+     * Schedule the next update with an adaptive interval based on fasting state
+     */
+    private fun scheduleNextUpdateWithAdaptiveInterval() {
+        try {
+            val fastingTimer = FastingTimer.getInstance(this)
+            
+            // Calculate appropriate update interval
+            val updateInterval = when {
+                // When timer is running, update more frequently
+                fastingTimer.isRunning -> {
+                    val elapsedHours = TimeUnit.MILLISECONDS.toHours(fastingTimer.elapsedTimeMillis).toInt()
+                    
+                    // Update more frequently near state transitions
+                    when {
+                        // Near state transitions (within 10 minutes), update more frequently
+                        isNearStateTransition(elapsedHours) -> TimeUnit.SECONDS.toMillis(30)
+                        
+                        // First hour of fasting, update every minute
+                        elapsedHours < 1 -> TimeUnit.MINUTES.toMillis(1)
+                        
+                        // After 24 hours, update less frequently
+                        elapsedHours >= 24 -> TimeUnit.MINUTES.toMillis(5)
+                        
+                        // Default update interval when running
+                        else -> TimeUnit.MINUTES.toMillis(2)
+                    }
+                }
+                
+                // When not running, update infrequently to save battery
+                else -> TimeUnit.MINUTES.toMillis(15)
+            }
+            
+            Log.d(TAG, "Next update scheduled in ${updateInterval/1000} seconds")
+            
+            // Ensure we don't have multiple callbacks
+            handler.removeCallbacks(updateRunnable)
+            handler.postDelayed(updateRunnable, updateInterval)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error scheduling next update", e)
+            // Fallback to a safe interval
+            handler.postDelayed(updateRunnable, TimeUnit.MINUTES.toMillis(5))
+        }
+    }
+    
+    /**
+     * Check if the current elapsed time is near a state transition
+     */
+    private fun isNearStateTransition(elapsedHours: Int): Boolean {
+        // State transitions occur at 0, 12, 18, and 24 hours
+        val stateTransitions = listOf(0, 12, 18, 24)
+        
+        // Check if we're within 10 minutes of any transition
+        for (transition in stateTransitions) {
+            val minutesToTransition = Math.abs((elapsedHours * 60) - (transition * 60))
+            if (minutesToTransition <= 10) {
+                return true
+            }
+        }
+        
+        return false
+    }
 } 

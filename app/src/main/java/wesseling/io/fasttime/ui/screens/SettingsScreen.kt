@@ -278,19 +278,19 @@ fun SettingsScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                     
                     Text(
-                        text = "FastTime",
+                        text = "FastTrack",
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = "Version 1.0.0",
+                        text = "Version 1.0",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "A simple intermittent fasting timer app to track your fasting periods and progress.",
+                        text = "A simple fasting timer app to track your fasting periods and progress.",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface
                     )

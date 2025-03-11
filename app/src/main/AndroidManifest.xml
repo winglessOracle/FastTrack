@@ -53,7 +53,8 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="wesseling.io.fasttime.widget.ACTION_TOGGLE_TIMER" />
+                <action android:name="wesseling.io.fasttime.widget.ACTION_START_TIMER" />
+                <action android:name="wesseling.io.fasttime.widget.ACTION_RESET_TIMER" />
                 <action android:name="wesseling.io.fasttime.widget.ACTION_UPDATE_WIDGETS" />
             </intent-filter>
             <meta-data
