@@ -45,9 +45,9 @@ class PreferencesManager(context: Context) {
         val themePreferenceOrdinal = prefs.getInt(KEY_THEME, ThemePreference.SYSTEM.ordinal)
         val enableNotifications = prefs.getBoolean(KEY_ENABLE_NOTIFICATIONS, false)
         
-        val dateFormat = DateFormat.values().getOrElse(dateFormatOrdinal) { DateFormat.DMY_SLASH }
-        val timeFormat = TimeFormat.values().getOrElse(timeFormatOrdinal) { TimeFormat.HOURS_24 }
-        val themePreference = ThemePreference.values().getOrElse(themePreferenceOrdinal) { ThemePreference.SYSTEM }
+        val dateFormat = DateFormat.entries.getOrElse(dateFormatOrdinal) { DateFormat.DMY_SLASH }
+        val timeFormat = TimeFormat.entries.getOrElse(timeFormatOrdinal) { TimeFormat.HOURS_24 }
+        val themePreference = ThemePreference.entries.getOrElse(themePreferenceOrdinal) { ThemePreference.SYSTEM }
         
         return DateTimePreferences(
             dateFormat = dateFormat, 

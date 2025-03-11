@@ -11,10 +11,10 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import wesseling.io.fasttime.timer.FastingTimer
 
 /**
- * Custom Application class for FastTime app
+ * Custom Application class for FastTrack app
  * Handles global initialization and cleanup of singletons
  */
-class FastTimeApplication : Application(), LifecycleEventObserver {
+class FastTrackApplication : Application(), LifecycleEventObserver {
     
     override fun onCreate() {
         super.onCreate()
@@ -102,6 +102,6 @@ class FastTimeApplication : Application(), LifecycleEventObserver {
     }
     
     companion object {
-        private const val TAG = "FastTimeApplication"
+        private const val TAG = "FastTrackApplication"
     }
 } 

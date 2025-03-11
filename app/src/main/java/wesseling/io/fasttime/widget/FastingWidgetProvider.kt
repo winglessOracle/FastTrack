@@ -39,10 +39,10 @@ class FastingWidgetProvider : AppWidgetProvider() {
         fun updateAllWidgets(context: Context) {
             try {
                 Log.d(TAG, "updateAllWidgets called")
-                val appWidgetManager = AppWidgetManager.getInstance(context)
-                val appWidgetIds = appWidgetManager.getAppWidgetIds(
-                    ComponentName(context, FastingWidgetProvider::class.java)
-                )
+            val appWidgetManager = AppWidgetManager.getInstance(context)
+            val appWidgetIds = appWidgetManager.getAppWidgetIds(
+                ComponentName(context, FastingWidgetProvider::class.java)
+            )
                 
                 if (appWidgetIds.isNotEmpty()) {
                     Log.d(TAG, "Updating ${appWidgetIds.size} widgets")
@@ -171,7 +171,7 @@ class FastingWidgetProvider : AppWidgetProvider() {
                 if (isRunning) {
                     views.setViewVisibility(R.id.widget_start_button, android.view.View.GONE)
                     views.setViewVisibility(R.id.widget_reset_button, android.view.View.VISIBLE)
-                } else {
+            } else {
                     views.setViewVisibility(R.id.widget_start_button, android.view.View.VISIBLE)
                     views.setViewVisibility(R.id.widget_reset_button, android.view.View.GONE)
                 }
@@ -231,12 +231,12 @@ class FastingWidgetProvider : AppWidgetProvider() {
         // Ensure the update service is running
         ensureUpdateServiceRunning(context)
     }
-    
+
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
-        
+
         Log.d(TAG, "onReceive: action=${intent.action}, extras=${intent.extras}")
-        
+
         when (intent.action) {
             ACTION_START_TIMER -> {
                 Log.d(TAG, "Start timer action received")
@@ -304,7 +304,7 @@ class FastingWidgetProvider : AppWidgetProvider() {
             
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(intent)
-            } else {
+                } else {
                 context.startService(intent)
             }
         } catch (e: Exception) {

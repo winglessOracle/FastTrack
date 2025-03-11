@@ -78,8 +78,8 @@ class MainActivity : ComponentActivity() {
                 val maxStateOrdinal = intent.getIntExtra("MAX_STATE", 0)
                 
                 if (duration > 0) {
-                    val maxState = if (maxStateOrdinal >= 0 && maxStateOrdinal < FastingState.values().size) {
-                        FastingState.values()[maxStateOrdinal]
+                    val maxState = if (maxStateOrdinal >= 0 && maxStateOrdinal < FastingState.entries.size) {
+                        FastingState.entries[maxStateOrdinal]
                     } else {
                         FastingState.NOT_FASTING
                     }

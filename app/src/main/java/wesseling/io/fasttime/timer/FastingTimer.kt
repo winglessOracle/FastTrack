@@ -40,8 +40,9 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
         private set
     
     // Maximum fasting state reached
-    var maxFastingState by mutableStateOf(FastingState.NOT_FASTING)
-        private set
+    private var _maxFastingState by mutableStateOf(FastingState.NOT_FASTING)
+    val maxFastingState: FastingState
+        get() = _maxFastingState
     
     private var timerJob: Job? = null
     private val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
@@ -113,17 +114,17 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
 
             // Set max fasting state
             try {
-                val states = FastingState.values()
+                val states = FastingState.entries
                 if (savedMaxState in states.indices) {
-                    maxFastingState = states[savedMaxState]
-                    Log.d(TAG, "Set max fasting state: ${maxFastingState.name}")
+                    _maxFastingState = states[savedMaxState]
+                    Log.d(TAG, "Set max fasting state: ${_maxFastingState.name}")
                 } else {
                     Log.e(TAG, "Invalid max fasting state index: $savedMaxState")
-                    maxFastingState = FastingState.NOT_FASTING
+                    _maxFastingState = FastingState.NOT_FASTING
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Error setting max fasting state", e)
-                maxFastingState = FastingState.NOT_FASTING
+                _maxFastingState = FastingState.NOT_FASTING
             }
             
             // Save the validated state
@@ -147,7 +148,7 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
         elapsedTimeMillis = 0
         startTimeMillis = 0
         currentFastingState = FastingState.NOT_FASTING
-        maxFastingState = FastingState.NOT_FASTING
+        _maxFastingState = FastingState.NOT_FASTING
         
         // Clear saved state
         try {
@@ -288,7 +289,7 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
                     startTimeMillis = startTimeMillis,
                     endTimeMillis = System.currentTimeMillis(),
                     durationMillis = elapsedTimeMillis,
-                    maxFastingState = maxFastingState
+                    maxFastingState = _maxFastingState
                 )
             } else {
                 null
@@ -308,17 +309,6 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
     }
     
     /**
-     * Toggle the timer state (start/stop)
-     */
-    fun toggleTimer() {
-        if (isRunning) {
-            stopTimer()
-        } else {
-            startTimer()
-        }
-    }
-    
-    /**
      * Update the fasting state based on elapsed time
      */
     private fun updateFastingState() {
@@ -334,8 +324,8 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
             currentFastingState = FastingState.getStateForHours(elapsedHours.toInt())
             
             // Update max fasting state if current state is higher
-            if (currentFastingState.ordinal > maxFastingState.ordinal) {
-                maxFastingState = currentFastingState
+            if (currentFastingState.ordinal > _maxFastingState.ordinal) {
+                _maxFastingState = currentFastingState
                 saveState() // Save when max state changes
                 
                 // Check if we should send a notification for the new fasting state
@@ -430,7 +420,7 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
             editor.putBoolean(KEY_IS_RUNNING, isRunning)
             editor.putLong(KEY_START_TIME, startTimeMillis)
             editor.putLong(KEY_ELAPSED_TIME, elapsedTimeMillis)
-            editor.putInt(KEY_MAX_FASTING_STATE, maxFastingState.ordinal)
+            editor.putInt(KEY_MAX_FASTING_STATE, _maxFastingState.ordinal)
             
             Log.d(TAG, "Saving state: running=$isRunning, startTime=$startTimeMillis, elapsed=$elapsedTimeMillis")
             

@@ -82,7 +82,7 @@ fun SettingsScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     
-                    ThemePreference.values().forEach { theme ->
+                    ThemePreference.entries.forEach { theme ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -126,7 +126,7 @@ fun SettingsScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     
-                    DateFormat.values().forEach { dateFormat ->
+                    DateFormat.entries.forEach { dateFormat ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -177,7 +177,7 @@ fun SettingsScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     
-                    TimeFormat.values().forEach { timeFormat ->
+                    TimeFormat.entries.forEach { timeFormat ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
