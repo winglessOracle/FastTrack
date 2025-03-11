@@ -25,7 +25,7 @@ import wesseling.io.fasttime.util.DateTimeFormatter
 /**
  * Manages the fasting timer functionality
  */
-class FastingTimer(private val appContext: Context) : DefaultLifecycleObserver {
+class FastingTimer private constructor(private val appContext: Context) : DefaultLifecycleObserver {
     // Timer state
     var isRunning by mutableStateOf(false)
         private set
@@ -55,50 +55,127 @@ class FastingTimer(private val appContext: Context) : DefaultLifecycleObserver {
     )
     
     init {
+        initializeState()
+    }
+
+    private fun initializeState() {
         try {
+            Log.d(TAG, "Initializing timer state")
+            
             // Initialize from shared preferences
             val savedIsRunning = prefs.getBoolean(KEY_IS_RUNNING, false)
+            val savedStartTime = prefs.getLong(KEY_START_TIME, 0)
+            val savedElapsedTime = prefs.getLong(KEY_ELAPSED_TIME, 0)
+            val savedMaxState = prefs.getInt(KEY_MAX_FASTING_STATE, 0)
+            
+            Log.d(TAG, "Loaded state: running=$savedIsRunning, startTime=$savedStartTime, elapsed=$savedElapsedTime")
+
+            // Validate saved data
+            if (savedStartTime > System.currentTimeMillis() || savedElapsedTime < 0) {
+                Log.e(TAG, "Invalid saved state detected: startTime=$savedStartTime, elapsedTime=$savedElapsedTime")
+                resetToSafeState()
+                return
+            }
+
+            // Check for inconsistent state
+            if (savedIsRunning && savedStartTime <= 0) {
+                Log.e(TAG, "Inconsistent state: running but no start time")
+                resetToSafeState()
+                return
+            }
+
             if (savedIsRunning) {
-                val savedStartTime = prefs.getLong(KEY_START_TIME, 0)
-                if (savedStartTime > 0) {
-                    isRunning = true
-                    startTimeMillis = savedStartTime
-                    elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis
-                    updateFastingState()
-                    
-                    // Restore max fasting state
-                    val savedMaxState = prefs.getInt(KEY_MAX_FASTING_STATE, 0)
-                    maxFastingState = FastingState.values()[savedMaxState]
-                    
-                    // Start the timer if it's running
-                    startTimerFromSavedState()
-                }
-            } else {
-                // If not running, get the saved elapsed time
-                elapsedTimeMillis = prefs.getLong(KEY_ELAPSED_TIME, 0)
-                updateFastingState()
+                isRunning = true
+                startTimeMillis = savedStartTime
                 
-                // Restore max fasting state
-                val savedMaxState = prefs.getInt(KEY_MAX_FASTING_STATE, 0)
-                maxFastingState = FastingState.values()[savedMaxState]
+                // Calculate current elapsed time
+                val calculatedElapsedTime = System.currentTimeMillis() - startTimeMillis
+                
+                // Validate calculated elapsed time
+                if (calculatedElapsedTime < 0 || calculatedElapsedTime > TimeUnit.DAYS.toMillis(30)) {
+                    Log.e(TAG, "Invalid elapsed time calculated: $calculatedElapsedTime")
+                    resetToSafeState()
+                    return
+                }
+                
+                elapsedTimeMillis = calculatedElapsedTime
+                Log.d(TAG, "Resuming timer with elapsed time: $elapsedTimeMillis ms")
+                
+                updateFastingState()
+                startTimerFromSavedState()
+            } else {
+                isRunning = false
+                elapsedTimeMillis = savedElapsedTime
+                Log.d(TAG, "Timer not running, elapsed time: $elapsedTimeMillis ms")
+                updateFastingState()
+            }
+
+            // Set max fasting state
+            try {
+                val states = FastingState.values()
+                if (savedMaxState in states.indices) {
+                    maxFastingState = states[savedMaxState]
+                    Log.d(TAG, "Set max fasting state: ${maxFastingState.name}")
+                } else {
+                    Log.e(TAG, "Invalid max fasting state index: $savedMaxState")
+                    maxFastingState = FastingState.NOT_FASTING
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error setting max fasting state", e)
+                maxFastingState = FastingState.NOT_FASTING
+            }
+            
+            // Save the validated state
+            saveState()
+            
+        } catch (e: Exception) {
+            Log.e(TAG, "Error initializing timer state", e)
+            resetToSafeState()
+        }
+    }
+
+    private fun resetToSafeState() {
+        Log.d(TAG, "Resetting to safe state")
+        
+        // Cancel any existing timer job
+        timerJob?.cancel()
+        timerJob = null
+        
+        // Reset all state variables
+        isRunning = false
+        elapsedTimeMillis = 0
+        startTimeMillis = 0
+        currentFastingState = FastingState.NOT_FASTING
+        maxFastingState = FastingState.NOT_FASTING
+        
+        // Clear saved state
+        try {
+            val editor = prefs.edit()
+            editor.clear()
+            val success = editor.commit()
+            if (!success) {
+                Log.e(TAG, "Failed to clear preferences")
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Error initializing timer", e)
-            // Reset to safe state
-            isRunning = false
-            elapsedTimeMillis = 0
-            currentFastingState = FastingState.NOT_FASTING
-            maxFastingState = FastingState.NOT_FASTING
+            Log.e(TAG, "Error clearing preferences", e)
         }
     }
     
     override fun onPause(owner: LifecycleOwner) {
-        saveState()
+        try {
+            saveState()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error in onPause", e)
+        }
     }
     
     override fun onDestroy(owner: LifecycleOwner) {
-        stopTimer()
-        coroutineScope.cancel()
+        try {
+            stopTimer()
+            coroutineScope.cancel()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error in onDestroy", e)
+        }
     }
     
     /**
@@ -107,23 +184,19 @@ class FastingTimer(private val appContext: Context) : DefaultLifecycleObserver {
     fun startTimer() {
         if (isRunning) return
         
-        isRunning = true
-        startTimeMillis = System.currentTimeMillis() - elapsedTimeMillis
-        
-        // Save state to preferences
-        saveState()
-        
-        timerJob = coroutineScope.launch {
-            while (isRunning) {
-                try {
-                    elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis
-                    updateFastingState()
-                    delay(1000) // Update every second
-                } catch (e: Exception) {
-                    Log.e(TAG, "Error in timer loop", e)
-                    break
-                }
-            }
+        try {
+            // Calculate new start time based on any existing elapsed time
+            startTimeMillis = System.currentTimeMillis() - elapsedTimeMillis
+            isRunning = true
+            
+            // Start the timer loop
+            startTimerFromSavedState()
+            
+            // Save state to preferences
+            saveState()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error starting timer", e)
+            resetToSafeState()
         }
     }
     
@@ -131,17 +204,43 @@ class FastingTimer(private val appContext: Context) : DefaultLifecycleObserver {
      * Start the timer from a saved state
      */
     private fun startTimerFromSavedState() {
-        timerJob = coroutineScope.launch {
-            while (isRunning) {
-                try {
-                    elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis
-                    updateFastingState()
-                    delay(1000) // Update every second
-                } catch (e: Exception) {
-                    Log.e(TAG, "Error in saved state timer loop", e)
-                    break
+        try {
+            // Cancel any existing job first
+            timerJob?.cancel()
+            
+            timerJob = coroutineScope.launch {
+                var lastUpdateTime = System.currentTimeMillis()
+                
+                while (isRunning) {
+                    try {
+                        val currentTime = System.currentTimeMillis()
+                        val expectedElapsed = currentTime - startTimeMillis
+                        
+                        // Check for time inconsistencies
+                        if (currentTime < lastUpdateTime || expectedElapsed < 0) {
+                            Log.e(TAG, "Time inconsistency detected")
+                            resetToSafeState()
+                            break
+                        }
+                        
+                        elapsedTimeMillis = expectedElapsed
+                        updateFastingState()
+                        
+                        lastUpdateTime = currentTime
+                        delay(1000) // Update every second
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error in timer loop", e)
+                        // Only reset if it's not a cancellation
+                        if (e !is kotlinx.coroutines.CancellationException) {
+                            resetToSafeState()
+                        }
+                        break
+                    }
                 }
             }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error starting timer from saved state", e)
+            resetToSafeState()
         }
     }
     
@@ -149,12 +248,22 @@ class FastingTimer(private val appContext: Context) : DefaultLifecycleObserver {
      * Stop the timer
      */
     fun stopTimer() {
-        isRunning = false
-        timerJob?.cancel()
-        timerJob = null
-        
-        // Save state to preferences
-        saveState()
+        try {
+            isRunning = false
+            timerJob?.cancel()
+            timerJob = null
+            
+            // Ensure elapsed time is accurate before saving
+            if (startTimeMillis > 0) {
+                elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis
+            }
+            
+            // Save state to preferences
+            saveState()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error stopping timer", e)
+            resetToSafeState()
+        }
     }
     
     /**
@@ -162,30 +271,26 @@ class FastingTimer(private val appContext: Context) : DefaultLifecycleObserver {
      * @return CompletedFast object if the timer was running, null otherwise
      */
     fun resetTimer(): CompletedFast? {
-        // Create a completed fast object if the timer was running
-        val completedFast = if (isRunning || elapsedTimeMillis > 0) {
-            CompletedFast(
-                startTimeMillis = startTimeMillis,
-                endTimeMillis = System.currentTimeMillis(),
-                durationMillis = elapsedTimeMillis,
-                maxFastingState = maxFastingState
-            )
-        } else {
-            null
+        try {
+            // Create a completed fast object if the timer was running
+            val completedFast = if (isRunning || elapsedTimeMillis > 0) {
+                CompletedFast(
+                    startTimeMillis = startTimeMillis,
+                    endTimeMillis = System.currentTimeMillis(),
+                    durationMillis = elapsedTimeMillis,
+                    maxFastingState = maxFastingState
+                )
+            } else {
+                null
+            }
+            
+            resetToSafeState()
+            return completedFast
+        } catch (e: Exception) {
+            Log.e(TAG, "Error resetting timer", e)
+            resetToSafeState()
+            return null
         }
-        
-        // Stop the timer
-        stopTimer()
-        
-        // Reset timer values
-        elapsedTimeMillis = 0
-        currentFastingState = FastingState.NOT_FASTING
-        maxFastingState = FastingState.NOT_FASTING
-        
-        // Save state to preferences
-        saveState()
-        
-        return completedFast
     }
     
     /**
@@ -203,19 +308,29 @@ class FastingTimer(private val appContext: Context) : DefaultLifecycleObserver {
      * Update the fasting state based on elapsed time
      */
     private fun updateFastingState() {
-        val elapsedHours = TimeUnit.MILLISECONDS.toHours(elapsedTimeMillis)
-        val previousState = currentFastingState
-        currentFastingState = FastingState.getStateForHours(elapsedHours.toInt())
-        
-        // Update max fasting state if current state is higher
-        if (currentFastingState.ordinal > maxFastingState.ordinal) {
-            maxFastingState = currentFastingState
-            saveState() // Save when max state changes
-            
-            // Check if we should send a notification for the new fasting state
-            if (currentFastingState != previousState && currentFastingState != FastingState.NOT_FASTING) {
-                checkAndSendFastingStateNotification()
+        try {
+            val elapsedHours = TimeUnit.MILLISECONDS.toHours(elapsedTimeMillis)
+            if (elapsedHours < 0) {
+                Log.e(TAG, "Negative elapsed hours detected, resetting timer")
+                resetToSafeState()
+                return
             }
+
+            val previousState = currentFastingState
+            currentFastingState = FastingState.getStateForHours(elapsedHours.toInt())
+            
+            // Update max fasting state if current state is higher
+            if (currentFastingState.ordinal > maxFastingState.ordinal) {
+                maxFastingState = currentFastingState
+                saveState() // Save when max state changes
+                
+                // Check if we should send a notification for the new fasting state
+                if (currentFastingState != previousState && currentFastingState != FastingState.NOT_FASTING) {
+                    checkAndSendFastingStateNotification()
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error updating fasting state", e)
         }
     }
     
@@ -281,12 +396,29 @@ class FastingTimer(private val appContext: Context) : DefaultLifecycleObserver {
      */
     private fun saveState() {
         try {
-            prefs.edit().apply {
-                putBoolean(KEY_IS_RUNNING, isRunning)
-                putLong(KEY_START_TIME, startTimeMillis)
-                putLong(KEY_ELAPSED_TIME, elapsedTimeMillis)
-                putInt(KEY_MAX_FASTING_STATE, maxFastingState.ordinal)
-            }.commit()
+            // Validate state before saving
+            if (startTimeMillis > System.currentTimeMillis() && isRunning) {
+                Log.e(TAG, "Invalid state detected before saving: startTime=$startTimeMillis is in the future")
+                return
+            }
+            
+            if (elapsedTimeMillis < 0) {
+                Log.e(TAG, "Invalid elapsed time before saving: $elapsedTimeMillis")
+                return
+            }
+            
+            val editor = prefs.edit()
+            editor.putBoolean(KEY_IS_RUNNING, isRunning)
+            editor.putLong(KEY_START_TIME, startTimeMillis)
+            editor.putLong(KEY_ELAPSED_TIME, elapsedTimeMillis)
+            editor.putInt(KEY_MAX_FASTING_STATE, maxFastingState.ordinal)
+            
+            Log.d(TAG, "Saving state: running=$isRunning, startTime=$startTimeMillis, elapsed=$elapsedTimeMillis")
+            
+            val success = editor.commit()
+            if (!success) {
+                Log.e(TAG, "Failed to save timer state")
+            }
         } catch (e: Exception) {
             Log.e(TAG, "Error saving timer state", e)
         }
@@ -305,7 +437,45 @@ class FastingTimer(private val appContext: Context) : DefaultLifecycleObserver {
         
         fun getInstance(context: Context): FastingTimer {
             return instance ?: synchronized(this) {
-                instance ?: FastingTimer(context.applicationContext).also { instance = it }
+                Log.d(TAG, "Creating new FastingTimer instance")
+                instance ?: FastingTimer(context.applicationContext).also { newInstance ->
+                    instance = newInstance
+                    // If context is a LifecycleOwner, register the observer
+                    if (context is LifecycleOwner) {
+                        Log.d(TAG, "Registering lifecycle observer")
+                        context.lifecycle.addObserver(newInstance)
+                    }
+                }
+            }
+        }
+
+        fun destroyInstance() {
+            synchronized(this) {
+                Log.d(TAG, "Destroying FastingTimer instance")
+                val currentInstance = instance
+                if (currentInstance != null) {
+                    try {
+                        // Save state before destroying
+                        currentInstance.saveState()
+                        
+                        // Stop timer and cancel coroutines
+                        currentInstance.isRunning = false
+                        currentInstance.timerJob?.cancel()
+                        currentInstance.timerJob = null
+                        currentInstance.coroutineScope.cancel()
+                        
+                        // Remove observer if context was a LifecycleOwner
+                        val appContext = currentInstance.appContext
+                        if (appContext is LifecycleOwner) {
+                            Log.d(TAG, "Removing lifecycle observer")
+                            appContext.lifecycle.removeObserver(currentInstance)
+                        }
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error during instance destruction", e)
+                    }
+                }
+                instance = null
+                Log.d(TAG, "FastingTimer instance set to null")
             }
         }
     }

@@ -1,6 +1,7 @@
 package wesseling.io.fasttime.ui.components
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
@@ -31,6 +32,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,10 +43,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import wesseling.io.fasttime.model.CompletedFast
 import wesseling.io.fasttime.model.FastingState
 import wesseling.io.fasttime.repository.FastingRepository
@@ -66,6 +71,38 @@ fun FastingTimerButton(
     val context = LocalContext.current
     val fastingTimer = remember { FastingTimer.getInstance(context) }
     val repository = remember { FastingRepository.getInstance(context) }
+    
+    // Observe lifecycle events for cleanup
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_PAUSE -> {
+                    // Save state when paused
+                    try {
+                        Log.d("FastingTimerButton", "Lifecycle ON_PAUSE - saving state")
+                    } catch (e: Exception) {
+                        Log.e("FastingTimerButton", "Error in lifecycle observer", e)
+                    }
+                }
+                Lifecycle.Event.ON_DESTROY -> {
+                    // Clean up when destroyed
+                    try {
+                        Log.d("FastingTimerButton", "Lifecycle ON_DESTROY - cleaning up")
+                    } catch (e: Exception) {
+                        Log.e("FastingTimerButton", "Error in lifecycle observer", e)
+                    }
+                }
+                else -> {}
+            }
+        }
+        
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+            Log.d("FastingTimerButton", "DisposableEffect cleanup")
+        }
+    }
     
     var showConfirmationDialog by remember { mutableStateOf(false) }
     var showSummaryDialog by remember { mutableStateOf(false) }

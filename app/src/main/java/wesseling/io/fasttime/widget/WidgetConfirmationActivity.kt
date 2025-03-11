@@ -3,6 +3,7 @@ package wesseling.io.fasttime.widget
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -37,28 +38,37 @@ import wesseling.io.fasttime.ui.theme.FastTrackTheme
  * Activity that shows a confirmation dialog for resetting the fasting timer widget
  */
 class WidgetConfirmationActivity : ComponentActivity() {
+    private var fastingTimer: FastingTimer? = null
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        // Initialize FastingTimer
+        fastingTimer = FastingTimer.getInstance(this)
         
         setContent {
             FastTrackTheme {
                 Surface(color = MaterialTheme.colors.background) {
                     var showSummaryDialog by remember { mutableStateOf(false) }
                     var completedFast by remember { mutableStateOf<CompletedFast?>(null) }
-                    val repository = remember { FastingRepository(this) }
+                    val repository = remember { FastingRepository.getInstance(this) }
                     
                     ConfirmationDialog(
                         onConfirm = {
-                            // Reset the timer and get the completed fast
-                            val fastingTimer = FastingTimer(this)
-                            val fast = fastingTimer.resetTimer()
-                            
-                            // Show summary dialog if there was a fast
-                            if (fast != null && fast.durationMillis > 0) {
-                                completedFast = fast
-                                showSummaryDialog = true
-                            } else {
-                                // No fast to show, just finish the activity
+                            try {
+                                // Reset the timer and get the completed fast
+                                val fast = fastingTimer?.resetTimer()
+                                
+                                // Show summary dialog if there was a fast
+                                if (fast != null && fast.durationMillis > 0) {
+                                    completedFast = fast
+                                    showSummaryDialog = true
+                                } else {
+                                    // No fast to show, just finish the activity
+                                    finish()
+                                }
+                            } catch (e: Exception) {
+                                Log.e("WidgetConfirmation", "Error resetting timer", e)
                                 finish()
                             }
                         },
@@ -72,9 +82,14 @@ class WidgetConfirmationActivity : ComponentActivity() {
                         FastingSummaryDialog(
                             completedFast = completedFast!!,
                             onSave = { fast ->
-                                // Save the fast to the repository
-                                repository.saveFast(fast)
-                                finish()
+                                try {
+                                    // Save the fast to the repository
+                                    repository.saveFast(fast)
+                                } catch (e: Exception) {
+                                    Log.e("WidgetConfirmation", "Error saving fast", e)
+                                } finally {
+                                    finish()
+                                }
                             },
                             onDismiss = {
                                 finish()
@@ -84,6 +99,12 @@ class WidgetConfirmationActivity : ComponentActivity() {
                 }
             }
         }
+    }
+    
+    override fun onDestroy() {
+        super.onDestroy()
+        // Clean up references
+        fastingTimer = null
     }
 }
 

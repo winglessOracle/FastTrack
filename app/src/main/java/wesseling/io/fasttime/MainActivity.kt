@@ -1,6 +1,7 @@
 package wesseling.io.fasttime
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -27,16 +28,21 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import wesseling.io.fasttime.timer.FastingTimer
 import wesseling.io.fasttime.ui.components.FastingLegend
 import wesseling.io.fasttime.ui.components.FastingTimerButton
 import wesseling.io.fasttime.ui.screens.FastingLogScreen
@@ -44,8 +50,13 @@ import wesseling.io.fasttime.ui.screens.SettingsScreen
 import wesseling.io.fasttime.ui.theme.FastTrackTheme
 
 class MainActivity : ComponentActivity() {
+    companion object {
+        private const val TAG = "MainActivity"
+    }
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d(TAG, "onCreate")
         
         // Enable edge-to-edge display
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -56,11 +67,57 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+    
+    override fun onStart() {
+        super.onStart()
+        Log.d(TAG, "onStart")
+    }
+    
+    override fun onResume() {
+        super.onResume()
+        Log.d(TAG, "onResume")
+    }
+    
+    override fun onPause() {
+        super.onPause()
+        Log.d(TAG, "onPause")
+    }
+    
+    override fun onStop() {
+        super.onStop()
+        Log.d(TAG, "onStop")
+    }
+    
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, "onDestroy")
+    }
 }
 
 @Composable
 fun FastTrackApp() {
     var currentScreen by remember { mutableStateOf("main") }
+    
+    // Observe lifecycle events
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_STOP -> {
+                    Log.d("FastTrackApp", "Lifecycle ON_STOP")
+                }
+                Lifecycle.Event.ON_DESTROY -> {
+                    Log.d("FastTrackApp", "Lifecycle ON_DESTROY")
+                }
+                else -> {}
+            }
+        }
+        
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
     
     when (currentScreen) {
         "main" -> MainScreen(

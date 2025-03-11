@@ -280,7 +280,11 @@ private fun formatHours(hours: Float): String {
     val m = totalMinutes % 60
     
     return if (h > 0) {
-        if (m > 0) "$h hours $m minutes" else "$h hours"
+        if (m > 0) {
+            "$h hours $m minutes"
+        } else {
+            "$h hours"
+        }
     } else {
         "$m minutes"
     }
