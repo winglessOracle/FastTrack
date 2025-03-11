@@ -3,11 +3,9 @@ package wesseling.io.fasttime.ui.screens
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
-import androidx.core.content.FileProvider
 import android.util.Log
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,11 +19,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.DeleteSweep
+import androidx.compose.material.icons.filled.FileDownload
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -46,15 +49,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.AccessTime
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.DeleteSweep
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -70,137 +64,116 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import kotlinx.coroutines.launch
 import wesseling.io.fasttime.model.CompletedFast
+import wesseling.io.fasttime.model.DateTimePreferences
 import wesseling.io.fasttime.model.FastingState
 import wesseling.io.fasttime.repository.FastingRepository
 import wesseling.io.fasttime.ui.theme.getColorForFastingState
+import wesseling.io.fasttime.util.DateTimeFormatter
 import java.io.File
+import java.io.FileWriter
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun FastingLogScreen(
     onBackPressed: () -> Unit
 ) {
     val context = LocalContext.current
-    val repository = remember { FastingRepository.getInstance(context) }
-    var allFasts by remember { mutableStateOf(emptyList<CompletedFast>()) }
-    var showDeleteAllDialog by remember { mutableStateOf(false) }
-    var selectedFast by remember { mutableStateOf<CompletedFast?>(null) }
-    var fastToDelete by remember { mutableStateOf<CompletedFast?>(null) }
-    
-    // Pagination state
-    val pageSize = 20
-    var currentPage by remember { mutableStateOf(0) }
-    var hasMoreData by remember { mutableStateOf(true) }
-    
-    // Error handling
-    val snackbarHostState = remember { SnackbarHostState() }
+    val preferences = remember { DateTimePreferences() }
     val coroutineScope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
     
-    // Pull-to-refresh state
-    var refreshing by remember { mutableStateOf(false) }
+    var allFasts by remember { mutableStateOf<List<CompletedFast>>(emptyList()) }
+    var isLoading by remember { mutableStateOf(false) }
+    var showDeleteAllDialog by remember { mutableStateOf(false) }
+    var fastToDelete by remember { mutableStateOf<CompletedFast?>(null) }
+    var showFastDetails by remember { mutableStateOf<CompletedFast?>(null) }
+    
+    val repository = remember { FastingRepository.getInstance(context) }
     
     // Function to refresh data with error handling
-    val refreshData = {
-        refreshing = true
+    fun refreshData() {
+        isLoading = true
+        coroutineScope.launch {
         try {
             allFasts = repository.getAllFasts()
-            currentPage = 0
-            hasMoreData = allFasts.size > pageSize
         } catch (e: Exception) {
-            Log.e("FastingLogScreen", "Error refreshing data", e)
-            coroutineScope.launch {
+                Log.e("FastingLogScreen", "Error loading fasts", e)
                 snackbarHostState.showSnackbar("Failed to load fasting data")
-            }
         } finally {
-            refreshing = false
+                isLoading = false
+            }
         }
     }
     
-    // Load initial data
+    // Pull-to-refresh state
+    val pullRefreshState = rememberPullRefreshState(isLoading, ::refreshData)
+    
+    // Load data when screen is first displayed
     LaunchedEffect(key1 = repository) {
         try {
             allFasts = repository.getAllFasts()
-            hasMoreData = allFasts.size > pageSize
         } catch (e: Exception) {
-            Log.e("FastingLogScreen", "Error loading initial data", e)
-            coroutineScope.launch {
+            Log.e("FastingLogScreen", "Error loading fasts", e)
             snackbarHostState.showSnackbar("Failed to load fasting data")
-            }
         }
     }
     
-    // Calculate visible fasts based on pagination
-    val visibleFasts = remember(allFasts, currentPage, pageSize) {
-        val sortedFasts = allFasts.sortedByDescending { it.endTimeMillis }
-        val endIndex = minOf((currentPage + 1) * pageSize, sortedFasts.size)
-        sortedFasts.subList(0, endIndex)
-    }
-    
-    val pullRefreshState = rememberPullRefreshState(refreshing, { refreshData() })
-    
     // Function to export all fasts to CSV
     fun exportAllFasts() {
-        try {
-            val fasts = repository.getAllFasts()
-            if (fasts.isEmpty()) {
-                coroutineScope.launch {
-                    snackbarHostState.showSnackbar("No fasting logs to export")
+        coroutineScope.launch {
+            try {
+                val fasts = repository.getAllFasts()
+                if (fasts.isEmpty()) {
+                    coroutineScope.launch {
+                        snackbarHostState.showSnackbar("No fasting logs to export")
+                    }
+                    return@launch
                 }
-                return
-            }
-
-            // Create CSV content with formatted dates and durations
-            val csvContent = StringBuilder()
-            csvContent.append("Start Time,End Time,Duration (hours),Fasting State\n")
-            fasts.forEach { fast ->
-                val startDate = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date(fast.startTimeMillis))
-                val endDate = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date(fast.endTimeMillis))
-                val durationHours = (fast.endTimeMillis - fast.startTimeMillis) / (1000.0 * 60 * 60)
-                csvContent.append("$startDate,$endDate,%.1f,${fast.maxFastingState}\n".format(durationHours))
-            }
-            val fullContent = csvContent.toString()
-
-            // Create file in app's cache directory
-            val fileName = "fasting_log_${SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.getDefault()).format(Date())}.csv"
-                .replace(":", "-")  // Make filename safe
-                .replace(" ", "_")
-            val file = File(context.cacheDir, fileName)
-            file.writeText(fullContent)
-
-            // Create share intent
-            val intent = Intent(Intent.ACTION_SEND).apply {
-                type = "text/csv"
-                putExtra(Intent.EXTRA_SUBJECT, "FastTrack Fasting Log")
-                putExtra(Intent.EXTRA_TEXT, "Here's my fasting log from FastTrack!")
-                putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(
-                    context,
-                    "${context.packageName}.provider",
-                    file
-                ))
-                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            }
-
-            // Start share activity
-            ContextCompat.startActivity(
-                context,
-                Intent.createChooser(intent, "Share Fasting Log"),
-                null
-            )
-
-            // Show success message
-            coroutineScope.launch {
-                snackbarHostState.showSnackbar("Fasting log exported successfully")
-            }
-        } catch (e: Exception) {
-            Log.e("FastingLogScreen", "Error exporting all fasts", e)
-            coroutineScope.launch {
-                snackbarHostState.showSnackbar("Failed to export fasting logs")
+                
+                // Create CSV content
+                val csvContent = StringBuilder()
+                csvContent.append("Start Time,End Time,Duration,Max Fasting State\n")
+                
+                fasts.forEach { fast ->
+                    csvContent.append("${DateTimeFormatter.formatDateTime(fast.startTimeMillis, preferences)},")
+                    csvContent.append("${DateTimeFormatter.formatDateTime(fast.endTimeMillis, preferences)},")
+                    csvContent.append("${DateTimeFormatter.formatDuration(fast.durationMillis)},")
+                    csvContent.append("${fast.maxFastingState.displayName}\n")
+                }
+                
+                val fullContent = csvContent.toString()
+                
+                // Create file in app's cache directory
+                val fileName = "fasting_log_${SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.getDefault()).format(Date())}.csv"
+                val file = File(context.cacheDir, fileName)
+                FileWriter(file).use { it.write(fullContent) }
+                
+                // Share the file
+                val uri = Uri.fromFile(file)
+                val shareIntent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_STREAM, uri)
+                    putExtra(Intent.EXTRA_SUBJECT, "FastTrack Fasting Log")
+                    putExtra(Intent.EXTRA_TEXT, "Here's my fasting log from FastTrack!")
+                    type = "text/csv"
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+                
+                context.startActivity(Intent.createChooser(shareIntent, "Share Fasting Log"))
+                
+                coroutineScope.launch {
+                    snackbarHostState.showSnackbar("Fasting log exported successfully")
+                }
+            } catch (e: Exception) {
+                Log.e("FastingLogScreen", "Error exporting all fasts", e)
+                coroutineScope.launch {
+                    snackbarHostState.showSnackbar("Failed to export fasting logs")
+                }
             }
         }
     }
@@ -229,7 +202,7 @@ fun FastingLogScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.FileDownload,
-                            contentDescription = "Export All"
+                            contentDescription = "Export Fasting Log"
                         )
                     }
                     // Delete all button
@@ -238,163 +211,122 @@ fun FastingLogScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.DeleteSweep,
-                            contentDescription = "Delete All"
+                            contentDescription = "Delete All Fasts"
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-                    actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             )
         },
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-        containerColor = MaterialTheme.colorScheme.background
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(MaterialTheme.colorScheme.background)
+                .pullRefresh(pullRefreshState)
         ) {
             if (allFasts.isEmpty()) {
                 // Empty state
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .pullRefresh(pullRefreshState)
-                        .padding(16.dp)
-                        .background(MaterialTheme.colorScheme.background),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth(0.9f)
-                            .padding(16.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant
-                        ),
-                        shape = RoundedCornerShape(16.dp),
-                        border = BorderStroke(
-                            width = 1.dp,
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
-                        )
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .padding(24.dp),
+                        .padding(16.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.Info,
-                                contentDescription = "No fasts",
+                        contentDescription = null,
                                 modifier = Modifier.size(64.dp),
-                                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                        tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
                             )
                             
                             Spacer(modifier = Modifier.height(16.dp))
                             
                             Text(
                                 text = "No fasting sessions recorded yet",
-                                style = MaterialTheme.typography.headlineMedium,
+                        style = MaterialTheme.typography.titleLarge,
                                 textAlign = TextAlign.Center,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                             )
                             
                             Spacer(modifier = Modifier.height(8.dp))
                             
                             Text(
                                 text = "Complete a fast to see it in your log",
-                                style = MaterialTheme.typography.bodyLarge,
+                        style = MaterialTheme.typography.bodyLarge,
                                 textAlign = TextAlign.Center,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                            )
-                        }
-                    }
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                    )
                 }
             } else {
-                // Fasting log list
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .pullRefresh(pullRefreshState)
-                ) {
-                    // Header with delete all button
-                    Row(
+                    LazyColumn(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 8.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                            .fillMaxSize()
+                        .padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        Text(
-                            text = "Your completed fasts",
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onBackground
+                        item {
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                    
+                    // Summary section
+                    item {
+                        FastingLogSummary(
+                            fasts = allFasts,
+                            modifier = Modifier.fillMaxWidth()
                         )
                     }
                     
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = androidx.compose.foundation.layout.PaddingValues(bottom = 16.dp)
-                    ) {
-                        items(visibleFasts) { fast ->
-                            FastingLogItem(
-                                fast = fast,
-                                context = context,
-                                onClick = { selectedFast = fast },
-                                onDelete = {
-                                    fastToDelete = fast
-                                },
-                                onShare = {
-                                    val shareIntent = Intent().apply {
-                                        action = Intent.ACTION_SEND
-                                        putExtra(Intent.EXTRA_TEXT, fast.toShareText(context))
-                                        type = "text/plain"
-                                    }
-                                    ContextCompat.startActivity(
-                                        context,
-                                        Intent.createChooser(shareIntent, "Share your fast"),
-                                        null
-                                    )
-                                }
-                            )
-                        }
-                        
-                        // Load more item
-                        if (hasMoreData && !refreshing) {
+                    // Header with delete all button
                             item {
-                                Button(
-                                    onClick = {
-                                        currentPage++
-                                    },
+                        Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(16.dp),
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = MaterialTheme.colorScheme.primary,
-                                        contentColor = MaterialTheme.colorScheme.onPrimary
-                                    )
-                                ) {
-                                    Text("Load more")
-                                }
-                            }
+                                        .padding(vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Fasting History",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.weight(1f)
+                            )
+                                        
+                                        Text(
+                                text = "${allFasts.size} sessions",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                            )
                         }
                     }
-                }
-            }
-            
+                    
+                    // List of fasts
+                    items(allFasts) { fast ->
+                        FastingLogItem(
+                            fast = fast,
+                            preferences = preferences,
+                            onDeleteClick = { fastToDelete = fast },
+                            onShareClick = { shareFast(context, fast) },
+                            onInfoClick = { showFastDetails = fast }
+                        )
+                    }
+                    
+                    item {
+                            Spacer(modifier = Modifier.height(16.dp))
+                    }
+                        }
+                    }
+                    
             // Pull to refresh indicator
                     PullRefreshIndicator(
-                        refreshing = refreshing,
+                refreshing = isLoading,
                         state = pullRefreshState,
                 modifier = Modifier.align(Alignment.TopCenter),
-                backgroundColor = MaterialTheme.colorScheme.surface,
                 contentColor = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -404,28 +336,22 @@ fun FastingLogScreen(
             if (showDeleteAllDialog) {
                 AlertDialog(
                     onDismissRequest = { showDeleteAllDialog = false },
-                    title = { 
-                Text("Delete all fasts?")
-                    },
-                    text = { 
-                Text("This will permanently delete all your recorded fasting sessions. This action cannot be undone.")
-                    },
+            title = { Text("Delete All Fasting Logs") },
+            text = { Text("Are you sure you want to delete all your fasting logs? This action cannot be undone.") },
                     confirmButton = {
                 TextButton(
                             onClick = {
+                        coroutineScope.launch {
                                 try {
                                     repository.deleteAllFasts()
                                     allFasts = emptyList()
-                                    showDeleteAllDialog = false
-                            coroutineScope.launch {
-                                snackbarHostState.showSnackbar("All fasts deleted")
-                            }
+                                snackbarHostState.showSnackbar("All fasting logs deleted")
                                 } catch (e: Exception) {
                                     Log.e("FastingLogScreen", "Error deleting all fasts", e)
-                                    coroutineScope.launch {
-                                snackbarHostState.showSnackbar("Failed to delete fasts")
+                                snackbarHostState.showSnackbar("Failed to delete fasting logs")
                                     }
                                 }
+                        showDeleteAllDialog = false
                             },
                     colors = ButtonDefaults.textButtonColors(
                         contentColor = MaterialTheme.colorScheme.error
@@ -440,36 +366,30 @@ fun FastingLogScreen(
                 ) {
                             Text("Cancel")
                         }
-                    },
-            containerColor = MaterialTheme.colorScheme.surface
+            }
                 )
             }
             
-    // Delete confirmation dialog for individual fast
+            // Delete single fast confirmation dialog
     fastToDelete?.let { fast ->
                 AlertDialog(
             onDismissRequest = { fastToDelete = null },
-            title = { Text("Delete Fast?") },
-                    text = { 
-                Text("Are you sure you want to delete this fasting session from ${fast.getFormattedStartTime(context)}? This action cannot be undone.")
-                    },
+            title = { Text("Delete Fasting Log") },
+            text = { Text("Are you sure you want to delete this fasting log? This action cannot be undone.") },
                     confirmButton = {
                 TextButton(
                             onClick = {
+                        coroutineScope.launch {
                                 try {
-                            repository.deleteFast(fast.id)
+                                repository.deleteFast(fast.id)
                                         allFasts = repository.getAllFasts()
-                            coroutineScope.launch {
-                                snackbarHostState.showSnackbar("Fast deleted")
-                                    }
+                                snackbarHostState.showSnackbar("Fasting log deleted")
                                 } catch (e: Exception) {
                                     Log.e("FastingLogScreen", "Error deleting fast", e)
-                                    coroutineScope.launch {
                                 snackbarHostState.showSnackbar("Failed to delete fast")
                                     }
-                        } finally {
-                            fastToDelete = null
                                 }
+                        fastToDelete = null
                             },
                     colors = ButtonDefaults.textButtonColors(
                         contentColor = MaterialTheme.colorScheme.error
@@ -484,17 +404,16 @@ fun FastingLogScreen(
                 ) {
                             Text("Cancel")
                         }
-                    },
-            containerColor = MaterialTheme.colorScheme.surface
+            }
         )
     }
     
     // Fast details dialog
-    selectedFast?.let { fast ->
+    showFastDetails?.let { fast ->
         FastDetailsDialog(
             fast = fast,
-            context = context,
-            onDismiss = { selectedFast = null }
+            preferences = preferences,
+            onDismiss = { showFastDetails = null }
         )
     }
 }
@@ -502,90 +421,72 @@ fun FastingLogScreen(
 @Composable
 fun FastingLogItem(
     fast: CompletedFast,
-    context: Context,
-    onClick: () -> Unit,
-    onDelete: () -> Unit,
-    onShare: () -> Unit
+    preferences: DateTimePreferences,
+    onDeleteClick: () -> Unit,
+    onShareClick: () -> Unit,
+    onInfoClick: () -> Unit
 ) {
     val fastingStateColor = getColorForFastingState(fast.maxFastingState)
     
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .clip(RoundedCornerShape(16.dp)),
+            .clickable { onInfoClick() },
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
+            containerColor = MaterialTheme.colorScheme.surface
         ),
-        shape = RoundedCornerShape(16.dp),
-        border = BorderStroke(
-            width = 2.dp,
-            color = fastingStateColor
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 2.dp
-        )
+        shape = RoundedCornerShape(12.dp)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
+            modifier = Modifier.padding(16.dp)
         ) {
-            // Header with date and duration
+            // Date and duration row
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = fast.getFormattedStartTime(context),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+                Column(
+                    modifier = Modifier.weight(1f)
+        ) {
+            Text(
+                        text = DateTimeFormatter.formatDateTime(fast.startTimeMillis, preferences),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                    )
+                    
+                    Text(
+                        text = DateTimeFormatter.formatDuration(fast.durationMillis),
+                        style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                        color = fastingStateColor
+                    )
+                }
                 
-                Text(
-                    text = fast.getFormattedDuration(),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                )
+                // Fasting state indicator
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(12.dp)
+                            .clip(CircleShape)
+                            .background(fastingStateColor)
+                    )
+                    
+                    Spacer(modifier = Modifier.width(4.dp))
+                    
+                    Text(
+                        text = fast.maxFastingState.displayName,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = fastingStateColor
+                    )
+                }
             }
             
-            Spacer(modifier = Modifier.height(8.dp))
-            
-            // Fasting state indicator
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(12.dp)
-                        .clip(CircleShape)
-                        .background(fastingStateColor)
-                )
-                
-                Spacer(modifier = Modifier.width(8.dp))
-                
-                        Text(
-                    text = "Reached: ${fast.maxFastingState.displayName}",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
-            
-            // Note preview if available
-            if (!fast.note.isNullOrBlank()) {
-                Spacer(modifier = Modifier.height(8.dp))
-                
-                            Text(
-                    text = "Note: ${fast.note}",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 1,
-                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-                )
-            }
-            
-            Spacer(modifier = Modifier.height(12.dp))
+            Divider(
+                modifier = Modifier.padding(vertical = 8.dp),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+            )
             
             // Action buttons
             Row(
@@ -593,8 +494,8 @@ fun FastingLogItem(
                 horizontalArrangement = Arrangement.End
             ) {
                 IconButton(
-                    onClick = onShare,
-                    modifier = Modifier.size(40.dp)
+                    onClick = onShareClick,
+                    modifier = Modifier.size(36.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Share,
@@ -604,19 +505,18 @@ fun FastingLogItem(
                 }
                 
                 IconButton(
-                    onClick = onDelete,
-                    modifier = Modifier.size(40.dp)
-                    ) {
-                        Icon(
+                    onClick = onDeleteClick,
+                    modifier = Modifier.size(36.dp)
+                ) {
+                    Icon(
                         imageVector = Icons.Filled.Delete,
-                        contentDescription = "Delete",
-                        tint = MaterialTheme.colorScheme.error
+                        contentDescription = "Delete"
                     )
                 }
                 
                 IconButton(
-                    onClick = onClick,
-                    modifier = Modifier.size(40.dp)
+                    onClick = onInfoClick,
+                    modifier = Modifier.size(36.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Info,
@@ -632,7 +532,7 @@ fun FastingLogItem(
 @Composable
 fun FastDetailsDialog(
     fast: CompletedFast,
-    context: Context,
+    preferences: DateTimePreferences,
     onDismiss: () -> Unit
 ) {
     val fastingStateColor = getColorForFastingState(fast.maxFastingState)
@@ -640,190 +540,66 @@ fun FastDetailsDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
                         .size(16.dp)
-                            .clip(CircleShape)
+                        .clip(CircleShape)
                         .background(fastingStateColor)
-                    )
-                    
-                    Spacer(modifier = Modifier.width(8.dp))
-                    
-                    Text(
+                )
+                
+                Spacer(modifier = Modifier.width(8.dp))
+                
+                Text(
                     text = "Fasting Details",
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = MaterialTheme.colorScheme.onSurface
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
                 )
             }
         },
         text = {
             Column(
-                modifier = Modifier
+                    modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp)
-                    .verticalScroll(rememberScrollState())
             ) {
                 DetailItem(
-                    label = "Date",
-                    value = fast.getFormattedStartTime(context)
-                )
-                
-                DetailItem(
-                    label = "Duration",
-                    value = fast.getFormattedDuration(),
-                    valueColor = fastingStateColor
-                )
-                
-                DetailItem(
                     label = "Started",
-                    value = fast.getFormattedStartTime(context)
+                    value = DateTimeFormatter.formatDateTime(fast.startTimeMillis, preferences),
+                    valueColor = MaterialTheme.colorScheme.onSurface
                 )
                 
                 DetailItem(
                     label = "Ended",
-                    value = fast.getFormattedEndTime(context)
+                    value = DateTimeFormatter.formatDateTime(fast.endTimeMillis, preferences),
+                    valueColor = MaterialTheme.colorScheme.onSurface
                 )
                 
                 DetailItem(
-                    label = "Fasting State Reached",
-                    value = fast.maxFastingState.displayName,
+                    label = "Duration",
+                    value = DateTimeFormatter.formatDuration(fast.durationMillis),
                     valueColor = fastingStateColor
                 )
                 
-                if (!fast.note.isNullOrBlank()) {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    
-                Text(
-                        text = "Note",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                    )
-                    
-                    Spacer(modifier = Modifier.height(4.dp))
-                    
-                    Text(
-                        text = fast.note,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-                
-                // Achievement section
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                Card(
-                        modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant
-                    ),
-                    border = BorderStroke(
-                        width = 1.dp,
-                        color = fastingStateColor.copy(alpha = 0.7f)
-                    ),
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 1.dp
-                    )
-                ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.Star,
-                                contentDescription = "Achievement",
-                                tint = fastingStateColor,
-                                modifier = Modifier.size(24.dp)
-                            )
-                            
-                            Spacer(modifier = Modifier.width(8.dp))
-                            
-                            Text(
-                                text = "Achievement",
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                        
-                        Spacer(modifier = Modifier.height(8.dp))
-                        
-                        Text(
-                            text = getAchievementText(fast),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-                
-                // Health benefits section
-            Spacer(modifier = Modifier.height(8.dp))
-            
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant
-                    ),
-                    border = BorderStroke(
-                        width = 1.dp,
-                        color = fastingStateColor.copy(alpha = 0.5f)
-                    ),
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 1.dp
-                    )
-                ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.AccessTime,
-                                contentDescription = "Health Benefits",
-                                tint = fastingStateColor,
-                                modifier = Modifier.size(24.dp)
-                            )
-                            
-                            Spacer(modifier = Modifier.width(8.dp))
-                
-                Text(
-                                text = "Health Benefits",
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                        
-                Spacer(modifier = Modifier.height(8.dp))
-                    
-                    Text(
-                            text = getHealthBenefitsText(fast),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
+                DetailItem(
+                    label = "Fasting State",
+                    value = fast.maxFastingState.displayName,
+                    valueColor = fastingStateColor
+                )
             }
         },
         confirmButton = {
-            TextButton(
+            Button(
                 onClick = onDismiss,
-                colors = ButtonDefaults.textButtonColors(
-                    contentColor = fastingStateColor
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
                 )
             ) {
                 Text("Close")
             }
-        },
-        containerColor = MaterialTheme.colorScheme.surface,
-        shape = RoundedCornerShape(16.dp)
+        }
     )
 }
 
@@ -831,7 +607,7 @@ fun FastDetailsDialog(
 fun DetailItem(
     label: String,
     value: String,
-    valueColor: Color = MaterialTheme.colorScheme.onSurface
+    valueColor: Color
 ) {
     Column(
         modifier = Modifier
@@ -840,71 +616,248 @@ fun DetailItem(
     ) {
         Text(
             text = label,
-            style = MaterialTheme.typography.labelMedium,
+            style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
         )
-        
-        Spacer(modifier = Modifier.height(2.dp))
         
         Text(
             text = value,
             style = MaterialTheme.typography.bodyLarge,
-            color = valueColor,
-            fontWeight = if (valueColor != MaterialTheme.colorScheme.onSurface) FontWeight.SemiBold else FontWeight.Normal
+            fontWeight = FontWeight.Medium,
+            color = valueColor
+        )
+    }
+}
+
+/**
+ * A summary section for the fasting log showing statistics and achievements
+ */
+@Composable
+fun FastingLogSummary(
+    fasts: List<CompletedFast>,
+    modifier: Modifier = Modifier
+) {
+    if (fasts.isEmpty()) return
+    
+    // Helper functions to calculate fasting statistics
+    fun calculateTotalFastingHours(fastsList: List<CompletedFast>): Double {
+        return fastsList.sumOf { it.durationMillis } / (1000.0 * 60 * 60)
+    }
+    
+    fun calculateAverageFastingHours(fastsList: List<CompletedFast>): Double {
+        if (fastsList.isEmpty()) return 0.0
+        return calculateTotalFastingHours(fastsList) / fastsList.size
+    }
+    
+    fun calculateLongestFast(fasts: List<CompletedFast>): Double {
+        if (fasts.isEmpty()) return 0.0
+        return (fasts.maxOfOrNull { it.durationMillis } ?: 0L) / (1000.0 * 60 * 60)
+    }
+    
+    fun calculateTotalFasts(fastsList: List<CompletedFast>): Int {
+        return fastsList.size
+    }
+    
+    fun calculateHighestFastingState(fastsList: List<CompletedFast>): FastingState {
+        if (fastsList.isEmpty()) return FastingState.NOT_FASTING
+        return fastsList.maxByOrNull { it.maxFastingState.ordinal }?.maxFastingState ?: FastingState.NOT_FASTING
+    }
+    
+    fun calculateFastingStateAchievements(fastsList: List<CompletedFast>): Map<FastingState, Int> {
+        val achievements = mutableMapOf<FastingState, Int>()
+        FastingState.entries.forEach { state ->
+            if (state != FastingState.NOT_FASTING) {
+                achievements[state] = fastsList.count { it.maxFastingState == state }
+            }
+        }
+        return achievements
+    }
+    
+    val totalFasts = calculateTotalFasts(fasts)
+    val totalHours = calculateTotalFastingHours(fasts)
+    val averageHours = calculateAverageFastingHours(fasts)
+    val longestFast = calculateLongestFast(fasts)
+    val highestState = calculateHighestFastingState(fasts)
+    val achievements = calculateFastingStateAchievements(fasts)
+    
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        ),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+                Text(
+                text = "Fasting Summary",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            
+            Divider(
+                modifier = Modifier.padding(vertical = 4.dp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)
+            )
+            
+            // Statistics row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                StatisticItem(
+                    label = "Total Fasts",
+                    value = totalFasts.toString(),
+                    modifier = Modifier.weight(1f)
+                )
+                
+                StatisticItem(
+                    label = "Total Hours",
+                    value = "%.1f".format(totalHours),
+                    modifier = Modifier.weight(1f)
+                )
+                
+                StatisticItem(
+                    label = "Average",
+                    value = "%.1f h".format(averageHours),
+                    modifier = Modifier.weight(1f)
+                )
+            }
+            
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                StatisticItem(
+                    label = "Longest Fast",
+                    value = "%.1f h".format(longestFast),
+                    modifier = Modifier.weight(1f)
+                )
+                
+                StatisticItem(
+                    label = "Best State",
+                    value = highestState.displayName,
+                    valueColor = getColorForFastingState(highestState),
+                    modifier = Modifier.weight(1f)
+                )
+            }
+                
+                Divider(
+                    modifier = Modifier.padding(vertical = 4.dp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)
+            )
+            
+            // Achievements section
+            Text(
+                text = "Achievements",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                for ((state, count) in achievements) {
+                    if (count > 0) {
+                        AchievementItem(
+                            state = state,
+                            count = count
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun StatisticItem(
+    label: String,
+    value: String,
+    valueColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = value,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            color = valueColor
         )
         
-        Divider(
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+        )
+    }
+}
+
+@Composable
+fun AchievementItem(
+    state: FastingState,
+    count: Int
+) {
+    val stateColor = getColorForFastingState(state)
+    
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(horizontal = 4.dp)
+    ) {
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp),
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
-            thickness = 0.5.dp
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(stateColor.copy(alpha = 0.2f))
+        ) {
+            Text(
+                text = count.toString(),
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold,
+                color = stateColor
+            )
+        }
+        
+        Text(
+            text = state.displayName,
+            style = MaterialTheme.typography.bodySmall,
+            color = stateColor,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(top = 4.dp)
         )
     }
 }
 
-// Helper functions
-private fun getAchievementText(fast: CompletedFast): String {
-    val hours = fast.durationMillis / (1000 * 60 * 60)
-    
-    return when (fast.maxFastingState) {
-        FastingState.NOT_FASTING -> "You completed a feeding period of ${hours}h. This is important for nutrient intake and energy replenishment."
-        FastingState.EARLY_FAST -> "You started the fasting process and maintained it for ${hours}h. This is the first step toward metabolic benefits."
-        FastingState.KETOSIS -> "You reached ketosis and maintained it for ${hours - FastingState.KETOSIS.hourThreshold}h! Your body has switched to burning fat for energy."
-        FastingState.AUTOPHAGY -> "You achieved autophagy for ${hours - FastingState.AUTOPHAGY.hourThreshold}h! Your body is actively cleaning out damaged cells and regenerating new ones."
-        FastingState.DEEP_FASTING -> "You reached deep fasting for ${hours - FastingState.DEEP_FASTING.hourThreshold}h! This is where maximum cellular regeneration and metabolic benefits occur."
+fun shareFast(context: Context, fast: CompletedFast) {
+    val shareText = fast.toShareText(context)
+        val shareIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, shareText)
+            type = "text/plain"
     }
+    context.startActivity(Intent.createChooser(shareIntent, "Share Fasting Achievement"))
 }
 
-private fun getHealthBenefitsText(fast: CompletedFast): String {
-    val hours = fast.durationMillis / (1000 * 60 * 60)
+fun CompletedFast.toShareText(context: Context): String {
+    val preferences = DateTimePreferences()
+    val startDate = DateTimeFormatter.formatDateTime(startTimeMillis, preferences)
+    val duration = DateTimeFormatter.formatDuration(durationMillis)
+    val fastingStateName = maxFastingState.displayName
     
-    return when {
-        hours < 12 -> "Short fasting periods help regulate blood sugar levels, reduce insulin resistance, and give your digestive system a much-needed rest. Even brief fasts can improve metabolic health."
-        hours < 18 -> "At this stage, your body has depleted glycogen stores and is beginning to switch to fat burning. Growth hormone levels start to increase, and insulin levels drop significantly."
-        hours < 24 -> "Your insulin levels have dropped significantly, making stored body fat more accessible for energy. Cellular repair processes are beginning, and fat oxidation is increasing."
-        hours < 48 -> "Autophagy is in full swing, where your body cleans out damaged cells and regenerates new ones. Ketone levels are elevated, providing a clean energy source for your brain and reducing inflammation."
-        hours < 72 -> "Growth hormone levels have increased substantially, protecting lean muscle mass and metabolic health. Your body is experiencing enhanced fat burning and cellular cleanup."
-        else -> "Extended fasting provides deep cellular cleanup, enhanced mental clarity, and significant metabolic benefits. Your body is in a state of profound renewal with increased stem cell production and immune system regeneration."
-    }
-}
-
-// Extension function to format CompletedFast for sharing
-private fun CompletedFast.toShareText(context: Context): String {
     return """
-        I completed a ${getFormattedDuration()} fast using FastTrack!
+        I completed a $duration fast with FastTrack! 🎉
         
-        🕒 Started: ${getFormattedStartTime(context)}
-        🏁 Ended: ${getFormattedEndTime(context)}
-        ✨ Reached: ${maxFastingState.displayName}
-        💪 Benefits: ${when (maxFastingState) {
-            FastingState.NOT_FASTING -> "Nutrient replenishment"
-            FastingState.EARLY_FAST -> "Beginning fat burning"
-            FastingState.KETOSIS -> "Fat burning mode"
-            FastingState.AUTOPHAGY -> "Cellular cleanup"
-            FastingState.DEEP_FASTING -> "Maximum regeneration"
-        }}
+        Started: $startDate
+        Achieved: $fastingStateName
         
-        #FastTrack #Fasting #IntermittentFasting #${maxFastingState.displayName.replace(" ", "")}
+        #FastTrack #Fasting #IntermittentFasting #${fastingStateName.replace(" ", "")}
     """.trimIndent()
 } 
