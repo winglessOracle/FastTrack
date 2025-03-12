@@ -87,7 +87,8 @@ fun FastingSummaryDialog(
                 Spacer(modifier = Modifier.height(16.dp))
                 
                 // Achievement badge
-                if (completedFast.maxFastingState != FastingState.NOT_FASTING) {
+                if (completedFast.maxFastingState != FastingState.NOT_FASTING && 
+                    completedFast.maxFastingState != FastingState.EARLY_FAST) {
                     val achievementColor = getColorForFastingState(completedFast.maxFastingState)
                     
                     Box(

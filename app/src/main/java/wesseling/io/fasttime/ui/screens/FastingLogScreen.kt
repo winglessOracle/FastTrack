@@ -668,7 +668,8 @@ fun FastingLogSummary(
     fun calculateFastingStateAchievements(fastsList: List<CompletedFast>): Map<FastingState, Int> {
         val achievements = mutableMapOf<FastingState, Int>()
         FastingState.entries.forEach { state ->
-            if (state != FastingState.NOT_FASTING) {
+            // Only count achievements from GLYCOGEN_DEPLETION (12+ hours) and beyond
+            if (state != FastingState.NOT_FASTING && state != FastingState.EARLY_FAST) {
                 achievements[state] = fastsList.count { it.maxFastingState == state }
             }
         }
@@ -841,10 +842,10 @@ fun AchievementItem(
 
 fun shareFast(context: Context, fast: CompletedFast) {
     val shareText = fast.toShareText()
-    val shareIntent = Intent().apply {
-        action = Intent.ACTION_SEND
+        val shareIntent = Intent().apply {
+            action = Intent.ACTION_SEND
         putExtra(Intent.EXTRA_TEXT, shareText)
-        type = "text/plain"
+            type = "text/plain"
     }
     context.startActivity(Intent.createChooser(shareIntent, "Share Fasting Achievement"))
 }

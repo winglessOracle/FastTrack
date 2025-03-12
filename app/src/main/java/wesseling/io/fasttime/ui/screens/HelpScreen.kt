@@ -125,11 +125,13 @@ fun BasicsTab() {
         HelpSection(
             title = "Understanding Fasting States",
             items = listOf(
-                "Not Fasting (Gray): When you're not in a fasting period",
-                "Early Fast (Yellow): First 12 hours of fasting",
-                "Ketosis (Blue): 12-18 hours, fat burning begins",
-                "Autophagy (Green): 18-24 hours, cell repair starts",
-                "Deep Fasting (Purple): 24+ hours, extended benefits"
+                "Fed State (Gray): 0-4 hours, digestion & absorption",
+                "Early Fasting (Yellow): 4-12 hours, fat burning begins",
+                "Glycogen Depletion (Orange): 12-18 hours, fat metabolism increases",
+                "Metabolic Shift (Blue): 18-24 hours, ketosis begins",
+                "Deep Ketosis (Green): 24-48 hours, autophagy peaks",
+                "Immune Reset (Purple): 48-72 hours, stem cell production",
+                "Extended Fast (Magenta): 72+ hours, cellular rejuvenation"
             )
         )
         
@@ -192,7 +194,7 @@ fun FastingTypesTab() {
             items = listOf(
                 "Schedule: 18 hours fasting, 6 hours eating",
                 "Popular intermediate protocol",
-                "Enhanced fat burning and better ketosis",
+                "Reaches Glycogen Depletion and begins Metabolic Shift",
                 "Best for those who have mastered 16:8",
                 "Try eating between 12pm-6pm or 1pm-7pm"
             )
@@ -204,7 +206,7 @@ fun FastingTypesTab() {
             items = listOf(
                 "Schedule: 20 hours fasting, 4 hours eating",
                 "Popular among experienced fasters",
-                "Significant fat loss and deeper ketosis",
+                "Fully enters Metabolic Shift stage",
                 "Best for experienced fasters seeking results",
                 "Try one large meal with small snacks"
             )
@@ -216,7 +218,7 @@ fun FastingTypesTab() {
             items = listOf(
                 "Schedule: 23 hours fasting, 1 hour eating",
                 "Growing in popularity among advanced fasters",
-                "Maximum autophagy, simplified eating",
+                "Approaches Deep Ketosis stage with increased autophagy",
                 "Best for experienced fasters",
                 "Ensure your one meal is nutritionally complete"
             )
@@ -236,12 +238,13 @@ fun FastingTypesTab() {
         
         // Extended Fasting
         HelpSection(
-            title = "Extended Fasting (36-72 hours)",
+            title = "Extended Fasting (36-72+ hours)",
             items = listOf(
-                "Fasting for 36-72 hours, done occasionally",
+                "Fasting for 36-72+ hours, done occasionally",
                 "Practiced by advanced fasters",
-                "Maximum autophagy and cellular renewal",
-                "Only for experienced fasters"
+                "Reaches Deep Ketosis and potentially Immune Reset stages",
+                "Promotes autophagy, stem cell production, and cellular renewal",
+                "Only for experienced fasters with medical supervision"
             )
         )
         

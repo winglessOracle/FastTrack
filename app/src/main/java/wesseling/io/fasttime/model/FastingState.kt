@@ -8,11 +8,13 @@ enum class FastingState(
     val description: String,
     val hourThreshold: Int
 ) {
-    NOT_FASTING("Fed", "Not fasting", 0),
-    EARLY_FAST("Early Fast", "Fat burning begins", 5),
-    KETOSIS("Ketosis", "Fat burning accelerates", 13),
-    AUTOPHAGY("Autophagy", "Cell repair begins", 17),
-    DEEP_FASTING("Deep Fasting", "Growth hormone increases", 25);
+    NOT_FASTING("Fed State", "Digestion & Absorption", 0),
+    EARLY_FAST("Early Fasting", "Fat Burning Begins", 4),
+    GLYCOGEN_DEPLETION("Glycogen Depletion", "Fat Metabolism Increases", 12),
+    METABOLIC_SHIFT("Metabolic Shift", "Ketosis Begins", 18),
+    DEEP_KETOSIS("Deep Ketosis", "Autophagy Peaks", 24),
+    IMMUNE_RESET("Immune Reset", "Stem Cell Production", 48),
+    EXTENDED_FAST("Extended Fast", "Cellular Rejuvenation", 72);
 
     companion object {
         /**

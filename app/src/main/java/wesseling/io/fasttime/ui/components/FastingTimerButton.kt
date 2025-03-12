@@ -54,10 +54,12 @@ import wesseling.io.fasttime.model.CompletedFast
 import wesseling.io.fasttime.model.FastingState
 import wesseling.io.fasttime.repository.FastingRepository
 import wesseling.io.fasttime.timer.FastingTimer
-import wesseling.io.fasttime.ui.theme.AutophagyGreen
-import wesseling.io.fasttime.ui.theme.DeepFastingPurple
+import wesseling.io.fasttime.ui.theme.DeepKetosisGreen
 import wesseling.io.fasttime.ui.theme.EarlyFastingYellow
-import wesseling.io.fasttime.ui.theme.KetosisBlue
+import wesseling.io.fasttime.ui.theme.ExtendedFastMagenta
+import wesseling.io.fasttime.ui.theme.GlycogenDepletionOrange
+import wesseling.io.fasttime.ui.theme.ImmuneResetPurple
+import wesseling.io.fasttime.ui.theme.MetabolicShiftBlue
 import wesseling.io.fasttime.ui.theme.NotFastingGray
 import wesseling.io.fasttime.ui.theme.getColorForFastingState
 

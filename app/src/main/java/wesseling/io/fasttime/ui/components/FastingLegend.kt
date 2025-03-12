@@ -33,11 +33,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import wesseling.io.fasttime.model.FastingState
-import wesseling.io.fasttime.ui.theme.AutophagyGreen
-import wesseling.io.fasttime.ui.theme.DeepFastingPurple
-import wesseling.io.fasttime.ui.theme.EarlyFastingYellow
-import wesseling.io.fasttime.ui.theme.KetosisBlue
 import wesseling.io.fasttime.ui.theme.NotFastingGray
+import wesseling.io.fasttime.ui.theme.EarlyFastingYellow
+import wesseling.io.fasttime.ui.theme.GlycogenDepletionOrange
+import wesseling.io.fasttime.ui.theme.MetabolicShiftBlue
+import wesseling.io.fasttime.ui.theme.DeepKetosisGreen
+import wesseling.io.fasttime.ui.theme.ImmuneResetPurple
+import wesseling.io.fasttime.ui.theme.ExtendedFastMagenta
 
 /**
  * A component that displays a legend explaining the different fasting states,
@@ -95,36 +97,50 @@ fun FastingLegend(
             LegendItem(
                 state = FastingState.NOT_FASTING,
                 color = NotFastingGray,
-                timeRange = "0-5 hours",
+                timeRange = "0-4 hours",
                 onClick = { selectedState = FastingState.NOT_FASTING }
             )
             
             LegendItem(
                 state = FastingState.EARLY_FAST,
                 color = EarlyFastingYellow,
-                timeRange = "5-13 hours",
+                timeRange = "4-12 hours",
                 onClick = { selectedState = FastingState.EARLY_FAST }
             )
             
             LegendItem(
-                state = FastingState.KETOSIS,
-                color = KetosisBlue,
-                timeRange = "13-17 hours",
-                onClick = { selectedState = FastingState.KETOSIS }
+                state = FastingState.GLYCOGEN_DEPLETION,
+                color = GlycogenDepletionOrange,
+                timeRange = "12-18 hours",
+                onClick = { selectedState = FastingState.GLYCOGEN_DEPLETION }
             )
             
             LegendItem(
-                state = FastingState.AUTOPHAGY,
-                color = AutophagyGreen,
-                timeRange = "17-25 hours",
-                onClick = { selectedState = FastingState.AUTOPHAGY }
+                state = FastingState.METABOLIC_SHIFT,
+                color = MetabolicShiftBlue,
+                timeRange = "18-24 hours",
+                onClick = { selectedState = FastingState.METABOLIC_SHIFT }
             )
             
             LegendItem(
-                state = FastingState.DEEP_FASTING,
-                color = DeepFastingPurple,
-                timeRange = "25+ hours",
-                onClick = { selectedState = FastingState.DEEP_FASTING }
+                state = FastingState.DEEP_KETOSIS,
+                color = DeepKetosisGreen,
+                timeRange = "24-48 hours",
+                onClick = { selectedState = FastingState.DEEP_KETOSIS }
+            )
+            
+            LegendItem(
+                state = FastingState.IMMUNE_RESET,
+                color = ImmuneResetPurple,
+                timeRange = "48-72 hours",
+                onClick = { selectedState = FastingState.IMMUNE_RESET }
+            )
+            
+            LegendItem(
+                state = FastingState.EXTENDED_FAST,
+                color = ExtendedFastMagenta,
+                timeRange = "72+ hours",
+                onClick = { selectedState = FastingState.EXTENDED_FAST }
             )
         }
     }

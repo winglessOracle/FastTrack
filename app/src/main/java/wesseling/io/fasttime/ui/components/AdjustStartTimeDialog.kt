@@ -1,9 +1,6 @@
 package wesseling.io.fasttime.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,7 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
@@ -25,7 +22,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,7 +32,6 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -45,18 +41,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import java.util.Calendar
-import java.util.Date
 import java.util.concurrent.TimeUnit
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
+import java.util.Calendar
 import wesseling.io.fasttime.model.DateTimePreferences
 import wesseling.io.fasttime.settings.PreferencesManager
 import wesseling.io.fasttime.util.DateTimeFormatter
@@ -92,10 +87,19 @@ fun AdjustStartTimeDialog(
     val month = calendar.get(Calendar.MONTH)
     val day = calendar.get(Calendar.DAY_OF_MONTH)
     
+    // State to track if we're adjusting to the previous day
+    var adjustToPreviousDay by remember { mutableStateOf(false) }
+    
     // Calculate the new start time based on selected hour and minute
     val newStartCalendar = Calendar.getInstance().apply {
+        // Set to the same day as the original start time
         set(year, month, day, selectedHour, selectedMinute, 0)
         set(Calendar.MILLISECOND, 0)
+        
+        // If adjusting to previous day, subtract one day
+        if (adjustToPreviousDay) {
+            add(Calendar.DAY_OF_MONTH, -1)
+        }
     }
     val newStartTimeMillis = newStartCalendar.timeInMillis
     
@@ -114,7 +118,11 @@ fun AdjustStartTimeDialog(
     val newStartTimeFormatted = DateTimeFormatter.formatDateTime(newStartTimeMillis, preferences)
     
     // Determine if the adjustment is valid (not in the future)
-    val isValidAdjustment = newStartTimeMillis <= System.currentTimeMillis()
+    val currentTime = System.currentTimeMillis()
+    val isValidAdjustment = newStartTimeMillis <= currentTime
+    
+    // Determine if the adjustment is valid for fasting (not negative elapsed time)
+    val isValidForFasting = newElapsedTimeMillis > 0
     
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -163,7 +171,9 @@ fun AdjustStartTimeDialog(
                         Text(
                             text = "Current Elapsed Time",
                             style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
                         )
                         
                         Spacer(modifier = Modifier.height(4.dp))
@@ -172,7 +182,9 @@ fun AdjustStartTimeDialog(
                             text = currentFormattedTime,
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary
+                            color = MaterialTheme.colorScheme.primary,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
                         )
                         
                         Spacer(modifier = Modifier.height(8.dp))
@@ -180,13 +192,17 @@ fun AdjustStartTimeDialog(
                         Text(
                             text = "Started fasting on:",
                             style = MaterialTheme.typography.titleSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
                         )
                         
                         Text(
                             text = currentStartTimeFormatted,
                             style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = MaterialTheme.colorScheme.onSurface,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
                         )
                     }
                 }
@@ -237,10 +253,37 @@ fun AdjustStartTimeDialog(
                         )
                     }
                     
+                    Spacer(modifier = Modifier.height(12.dp))
+                    
+                    // Previous day checkbox
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Checkbox(
+                            checked = adjustToPreviousDay,
+                            onCheckedChange = { adjustToPreviousDay = it }
+                        )
+                        
+                        Text(
+                            text = "Previous day",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                    
                     if (!isValidAdjustment) {
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = "Start time cannot be in the future",
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    } else if (!isValidForFasting) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Adjustment would result in negative fasting time",
                             color = MaterialTheme.colorScheme.error,
                             style = MaterialTheme.typography.bodyMedium
                         )
@@ -264,7 +307,9 @@ fun AdjustStartTimeDialog(
                         Text(
                             text = "New Elapsed Time",
                             style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
                         )
                         
                         Spacer(modifier = Modifier.height(4.dp))
@@ -273,21 +318,9 @@ fun AdjustStartTimeDialog(
                             text = newFormattedTime,
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        
-                        Spacer(modifier = Modifier.height(8.dp))
-                        
-                        Text(
-                            text = "New start time:",
-                            style = MaterialTheme.typography.titleSmall,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                        
-                        Text(
-                            text = newStartTimeFormatted,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                            color = MaterialTheme.colorScheme.primary,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
                         )
                     }
                 }
@@ -299,7 +332,7 @@ fun AdjustStartTimeDialog(
                     onAdjustTime(adjustmentMillis)
                     onDismiss()
                 },
-                enabled = isValidAdjustment && adjustmentMillis != 0L,
+                enabled = isValidAdjustment && isValidForFasting && adjustmentMillis != 0L,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary,
@@ -388,20 +421,5 @@ private fun NumberPicker(
                 tint = MaterialTheme.colorScheme.primary
             )
         }
-    }
-}
-
-/**
- * Format hours as a string with hours and minutes
- */
-private fun formatHours(hours: Float): String {
-    val totalMinutes = (hours * 60).toInt()
-    val h = totalMinutes / 60
-    val m = totalMinutes % 60
-    
-    return if (h > 0) {
-        if (m > 0) "$h hours $m minutes" else "$h hours"
-    } else {
-        "$m minutes"
     }
 } 

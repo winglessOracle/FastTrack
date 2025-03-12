@@ -26,9 +26,11 @@ object WidgetBackgroundHelper {
         return when (state) {
             FastingState.NOT_FASTING -> Color.parseColor("#757575") // Neutral gray
             FastingState.EARLY_FAST -> Color.parseColor("#F59E0B") // Amber
-            FastingState.KETOSIS -> Color.parseColor("#3B82F6") // Blue
-            FastingState.AUTOPHAGY -> Color.parseColor("#059669") // Green
-            FastingState.DEEP_FASTING -> Color.parseColor("#8B5CF6") // Purple
+            FastingState.GLYCOGEN_DEPLETION -> Color.parseColor("#EA580C") // Orange
+            FastingState.METABOLIC_SHIFT -> Color.parseColor("#3B82F6") // Blue
+            FastingState.DEEP_KETOSIS -> Color.parseColor("#059669") // Green
+            FastingState.IMMUNE_RESET -> Color.parseColor("#8B5CF6") // Purple
+            FastingState.EXTENDED_FAST -> Color.parseColor("#DB2777") // Magenta
         }
     }
     

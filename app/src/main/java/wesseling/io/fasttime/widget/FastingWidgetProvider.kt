@@ -142,18 +142,22 @@ class FastingWidgetProvider : AppWidgetProvider() {
                     when (currentState) {
                         FastingState.NOT_FASTING -> R.drawable.widget_background_not_fasting_running
                         FastingState.EARLY_FAST -> R.drawable.widget_background_early_fast_running
-                        FastingState.KETOSIS -> R.drawable.widget_background_ketosis_running
-                        FastingState.AUTOPHAGY -> R.drawable.widget_background_autophagy_running
-                        FastingState.DEEP_FASTING -> R.drawable.widget_background_deep_fasting_running
+                        FastingState.GLYCOGEN_DEPLETION -> R.drawable.widget_background_ketosis_running // Using ketosis for glycogen depletion
+                        FastingState.METABOLIC_SHIFT -> R.drawable.widget_background_ketosis_running // Using ketosis for metabolic shift
+                        FastingState.DEEP_KETOSIS -> R.drawable.widget_background_autophagy_running // Using autophagy for deep ketosis
+                        FastingState.IMMUNE_RESET -> R.drawable.widget_background_deep_fasting_running // Using deep fasting for immune reset
+                        FastingState.EXTENDED_FAST -> R.drawable.widget_background_deep_fasting_running // Using deep fasting for extended fast
                     }
                 } else {
                     // Use regular state background
                     when (currentState) {
                         FastingState.NOT_FASTING -> R.drawable.widget_background_not_fasting
                         FastingState.EARLY_FAST -> R.drawable.widget_background_early_fast
-                        FastingState.KETOSIS -> R.drawable.widget_background_ketosis
-                        FastingState.AUTOPHAGY -> R.drawable.widget_background_autophagy
-                        FastingState.DEEP_FASTING -> R.drawable.widget_background_deep_fasting
+                        FastingState.GLYCOGEN_DEPLETION -> R.drawable.widget_background_ketosis // Using ketosis for glycogen depletion
+                        FastingState.METABOLIC_SHIFT -> R.drawable.widget_background_ketosis // Using ketosis for metabolic shift
+                        FastingState.DEEP_KETOSIS -> R.drawable.widget_background_autophagy // Using autophagy for deep ketosis
+                        FastingState.IMMUNE_RESET -> R.drawable.widget_background_deep_fasting // Using deep fasting for immune reset
+                        FastingState.EXTENDED_FAST -> R.drawable.widget_background_deep_fasting // Using deep fasting for extended fast
                     }
                 }
                 

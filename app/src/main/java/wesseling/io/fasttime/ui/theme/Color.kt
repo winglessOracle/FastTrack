@@ -29,16 +29,14 @@ val TextDisabled = Color(0xFF9CA3AF)
 val TextDark = Color(0xFFE1E1E1) // Light text for dark theme
 val TextSecondaryDark = Color(0xFFAAAAAA) // Secondary text for dark theme
 
-// Fasting state colors - Updated distinctive palette
-val NotFastingGray = Color(0xFF757575)
-val EarlyFastingYellow = Color(0xFFF59E0B)
-val KetosisBlue = Color(0xFF3B82F6)
-val AutophagyGreen = Color(0xFF059669)
-val DeepFastingPurple = Color(0xFF8B5CF6)
-
-// Additional fasting state colors
-val DeepFastingDarkGreen = Color(0xFF047857)
-val KetosisLightGreen = Color(0xFF34D399)
+// Fasting state colors - Updated for new states
+val NotFastingGray = Color(0xFF757575) // Keeping gray for NOT_FASTING
+val EarlyFastingYellow = Color(0xFFF59E0B) // Amber for EARLY_FAST
+val GlycogenDepletionOrange = Color(0xFFEA580C) // Orange for GLYCOGEN_DEPLETION
+val MetabolicShiftBlue = Color(0xFF3B82F6) // Blue for METABOLIC_SHIFT
+val DeepKetosisGreen = Color(0xFF059669) // Green for DEEP_KETOSIS
+val ImmuneResetPurple = Color(0xFF8B5CF6) // Purple for IMMUNE_RESET
+val ExtendedFastMagenta = Color(0xFFDB2777) // Magenta for EXTENDED_FAST
 
 // Error colors
 val ErrorLight = Color(0xFFBA1A1A)

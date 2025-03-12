@@ -12,16 +12,20 @@ import androidx.compose.ui.platform.LocalContext
 // Light theme colors
 private val NotFastingGrayLight = Color(0xFF757575)
 private val EarlyFastingYellowLight = Color(0xFFF59E0B)
-private val KetosisBlueLight = Color(0xFF3B82F6)
-private val AutophagyGreenLight = Color(0xFF059669)
-private val DeepFastingPurpleLight = Color(0xFF8B5CF6)
+private val GlycogenDepletionOrangeLight = Color(0xFFEA580C)
+private val MetabolicShiftBlueLight = Color(0xFF3B82F6)
+private val DeepKetosisGreenLight = Color(0xFF059669)
+private val ImmuneResetPurpleLight = Color(0xFF8B5CF6)
+private val ExtendedFastMagentaLight = Color(0xFFDB2777)
 
 // Dark theme colors - slightly brighter for better visibility
 private val NotFastingGrayDark = Color(0xFF9E9E9E)
 private val EarlyFastingYellowDark = Color(0xFFFFB74D)
-private val KetosisBlueDark = Color(0xFF64B5F6)
-private val AutophagyGreenDark = Color(0xFF4CAF50)
-private val DeepFastingPurpleDark = Color(0xFFB39DDB)
+private val GlycogenDepletionOrangeDark = Color(0xFFFF9800)
+private val MetabolicShiftBlueDark = Color(0xFF64B5F6)
+private val DeepKetosisGreenDark = Color(0xFF4CAF50)
+private val ImmuneResetPurpleDark = Color(0xFFB39DDB)
+private val ExtendedFastMagentaDark = Color(0xFFEC4899)
 
 /**
  * Get the appropriate color for the current fasting state, adjusted for the current theme
@@ -43,8 +47,10 @@ fun getColorForFastingState(fastingState: FastingState): Color {
     return when (fastingState) {
         FastingState.NOT_FASTING -> if (useDarkTheme) NotFastingGrayDark else NotFastingGrayLight
         FastingState.EARLY_FAST -> if (useDarkTheme) EarlyFastingYellowDark else EarlyFastingYellowLight
-        FastingState.KETOSIS -> KetosisBlueLight // Same for both themes as it's already visible
-        FastingState.AUTOPHAGY -> if (useDarkTheme) AutophagyGreenDark else AutophagyGreenLight
-        FastingState.DEEP_FASTING -> if (useDarkTheme) DeepFastingPurpleDark else DeepFastingPurpleLight
+        FastingState.GLYCOGEN_DEPLETION -> if (useDarkTheme) GlycogenDepletionOrangeDark else GlycogenDepletionOrangeLight
+        FastingState.METABOLIC_SHIFT -> if (useDarkTheme) MetabolicShiftBlueDark else MetabolicShiftBlueLight
+        FastingState.DEEP_KETOSIS -> if (useDarkTheme) DeepKetosisGreenDark else DeepKetosisGreenLight
+        FastingState.IMMUNE_RESET -> if (useDarkTheme) ImmuneResetPurpleDark else ImmuneResetPurpleLight
+        FastingState.EXTENDED_FAST -> if (useDarkTheme) ExtendedFastMagentaDark else ExtendedFastMagentaLight
     }
 } 
