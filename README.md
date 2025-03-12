@@ -1,11 +1,11 @@
-# FastTime - Intermittent Fasting Tracker
+# FastTime - Fasting Timer
 
-FastTime is a simple yet powerful app designed to help you track your intermittent fasting journey. With an intuitive interface and a home screen widget, FastTime makes it easy to monitor your fasting progress and achieve your health goals.
+FastTime is a simple yet powerful app designed to help you track your fasting time. With an intuitive interface and a home screen widget, FastTime makes it easy to monitor your fasting progress and achieve your health goals.
 
 ## Features
 
 - **Simple Timer**: Start and reset your fasting timer with a single tap
-- **Fasting States**: Track different fasting states (Not Fasting, Early Fast, Ketosis, Autophagy, Deep Fasting)
+- **Fasting States**: Track different fasting states (Not Fasting, Early Fast, Glycogen Depletion, Metabolic Shift, Deep Ketosis, Immune Reset, Extended Fast)
 - **Fasting Log**: Keep a record of your completed fasts
 - **Home Screen Widget**: Monitor and control your fast directly from your home screen
 - **Visual Indicators**: Color-coded states to easily identify your current fasting progress
@@ -23,21 +23,30 @@ FastTime is a simple yet powerful app designed to help you track your intermitte
    - The app displays your current fasting duration in hours
    - The fasting state changes automatically based on your fasting duration:
      - **Not Fasting** (Gray): When you're not in a fasting period
-     - **Early Fast** (Yellow): First few hours of fasting (0-12 hours)
-     - **Ketosis** (Blue): When your body starts burning fat (12-18 hours)
-     - **Autophagy** (Green): Cell repair and cleanup begins (18-24 hours)
-     - **Deep Fasting** (Purple): Extended fasting benefits (24+ hours)
+     - **Early Fast** (Yellow): First few hours of fasting (4-12 hours)
+     - **Glycogen Depletion** (Orange): Liver glycogen depleting (12-18 hours)
+     - **Metabolic Shift** (Blue): When your body starts burning fat (18-24 hours)
+     - **Deep Ketosis** (Green): Cell repair and cleanup begins (24-48 hours)
+     - **Immune Reset** (Purple): Stem cell production increases (48-72 hours)
+     - **Extended Fast** (Magenta): Deeper cellular rejuvenation (72+ hours)
 
-3. **Ending a Fast**
+3. **Staying Hydrated**
+   - Remember that fasting concerns food, not water
+   - Always stay hydrated during your fast
+   - Water, black coffee, and unsweetened tea are permitted during fasting
+   - Consider electrolytes during longer fasts
+   - Proper hydration helps manage hunger and maintain energy
+
+4. **Ending a Fast**
    - Tap the "Reset" button when you want to end your fast
    - A confirmation dialog will appear to prevent accidental resets
    - After confirming, your fast will be recorded in the fasting log
 
-4. **Viewing Your Fasting Log**
+5. **Viewing Your Fasting Log**
    - Tap the "View Fasting Log" button or the history icon in the top bar
    - Browse through your completed fasts, including duration and maximum state achieved
 
-5. **Settings**
+6. **Settings**
    - Tap the "Settings" button or the settings icon in the top bar
    - Customize app preferences according to your needs
 
@@ -60,7 +69,7 @@ FastTime is a simple yet powerful app designed to help you track your intermitte
 
 ## Popular Fasting Protocols
 
-FastTime can be used to track any fasting protocol. Here are some popular options to consider:
+FastTime tracks the time you spend fasting. Here are some popular protocols to consider:
 
 ### 16:8 (Leangains)
 - **Schedule**: 16 hours fasting, 8 hours eating window
@@ -148,4 +157,4 @@ FastTime can be used to track any fasting protocol. Here are some popular option
 
 ---
 
-FastTime is designed to be a helpful tool in your intermittent fasting journey. Remember that fasting should be approached mindfully, and it's always a good idea to consult with a healthcare professional before starting any fasting regimen. 
+FastTime is designed to be a helpful tool in your fasting journey. Remember that fasting should be approached mindfully, and it's always a good idea to consult with a healthcare professional before starting any fasting regimen. 

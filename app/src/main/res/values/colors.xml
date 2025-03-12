@@ -3,6 +3,7 @@
     <!-- Base colors -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="error">#FFB00020</color>
     
     <!-- Theme colors -->
     <color name="primary_dark">#FF1E3A8A</color>
@@ -16,7 +17,6 @@
     <color name="background">#FFF8FAFC</color>
     <color name="background_dark">#FF0F172A</color>
     <color name="surface">#FFFFFFFF</color>
-    <color name="surface_dark">#FF1E293B</color>
     
     <!-- Fasting state colors -->
     <color name="not_fasting_gray">#FF757575</color>
@@ -28,4 +28,18 @@
     <!-- Widget text colors -->
     <color name="widget_text_light">#FFFFFF</color>
     <color name="widget_text_dark">#212121</color>
+
+    <!-- Light theme colors -->
+    <color name="surface_light">#FFFFFF</color>
+    <color name="on_surface_light">#1F2937</color>
+    <color name="surface_variant_light">#F3F4F6</color>
+    <color name="on_surface_variant_light">#4B5563</color>
+    <color name="on_error_light">#FFFFFF</color>
+    
+    <!-- Dark theme colors -->
+    <color name="surface_dark">#1F2937</color>
+    <color name="on_surface_dark">#F9FAFB</color>
+    <color name="surface_variant_dark">#374151</color>
+    <color name="on_surface_variant_dark">#D1D5DB</color>
+    <color name="on_error_dark">#FFFFFF</color>
 </resources>

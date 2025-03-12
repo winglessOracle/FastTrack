@@ -1,6 +1,7 @@
 package wesseling.io.fasttime.widget
 
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -10,6 +11,8 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.util.Log
 import wesseling.io.fasttime.model.FastingState
+import wesseling.io.fasttime.model.ThemePreference
+import wesseling.io.fasttime.settings.PreferencesManager
 import java.io.File
 import java.io.FileOutputStream
 
@@ -19,19 +22,70 @@ import java.io.FileOutputStream
 object WidgetBackgroundHelper {
     private const val TAG = "WidgetBackgroundHelper"
     
+    // Light theme colors - matching the main app's ColorUtils.kt
+    private const val NOT_FASTING_GRAY_LIGHT = "#757575"
+    private const val EARLY_FASTING_YELLOW_LIGHT = "#F59E0B"
+    private const val GLYCOGEN_DEPLETION_ORANGE_LIGHT = "#EA580C"
+    private const val METABOLIC_SHIFT_BLUE_LIGHT = "#3B82F6"
+    private const val DEEP_KETOSIS_GREEN_LIGHT = "#059669"
+    private const val IMMUNE_RESET_PURPLE_LIGHT = "#8B5CF6"
+    private const val EXTENDED_FAST_MAGENTA_LIGHT = "#DB2777"
+    
+    // Dark theme colors - matching the main app's ColorUtils.kt
+    private const val NOT_FASTING_GRAY_DARK = "#9E9E9E"
+    private const val EARLY_FASTING_YELLOW_DARK = "#FFB74D"
+    private const val GLYCOGEN_DEPLETION_ORANGE_DARK = "#FF9800"
+    private const val METABOLIC_SHIFT_BLUE_DARK = "#64B5F6"
+    private const val DEEP_KETOSIS_GREEN_DARK = "#4CAF50"
+    private const val IMMUNE_RESET_PURPLE_DARK = "#B39DDB"
+    private const val EXTENDED_FAST_MAGENTA_DARK = "#EC4899"
+    
     /**
-     * Get color for fasting state
+     * Get color for fasting state, considering the current theme
      */
-    fun getColorForFastingState(state: FastingState): Int {
+    fun getColorForFastingState(state: FastingState, context: Context): Int {
+        // Determine if dark theme is being used
+        val useDarkTheme = shouldUseDarkTheme(context)
+        
         return when (state) {
-            FastingState.NOT_FASTING -> Color.parseColor("#757575") // Neutral gray
-            FastingState.EARLY_FAST -> Color.parseColor("#F59E0B") // Amber
-            FastingState.GLYCOGEN_DEPLETION -> Color.parseColor("#EA580C") // Orange
-            FastingState.METABOLIC_SHIFT -> Color.parseColor("#3B82F6") // Blue
-            FastingState.DEEP_KETOSIS -> Color.parseColor("#059669") // Green
-            FastingState.IMMUNE_RESET -> Color.parseColor("#8B5CF6") // Purple
-            FastingState.EXTENDED_FAST -> Color.parseColor("#DB2777") // Magenta
+            FastingState.NOT_FASTING -> 
+                Color.parseColor(if (useDarkTheme) NOT_FASTING_GRAY_DARK else NOT_FASTING_GRAY_LIGHT)
+            FastingState.EARLY_FAST -> 
+                Color.parseColor(if (useDarkTheme) EARLY_FASTING_YELLOW_DARK else EARLY_FASTING_YELLOW_LIGHT)
+            FastingState.GLYCOGEN_DEPLETION -> 
+                Color.parseColor(if (useDarkTheme) GLYCOGEN_DEPLETION_ORANGE_DARK else GLYCOGEN_DEPLETION_ORANGE_LIGHT)
+            FastingState.METABOLIC_SHIFT -> 
+                Color.parseColor(if (useDarkTheme) METABOLIC_SHIFT_BLUE_DARK else METABOLIC_SHIFT_BLUE_LIGHT)
+            FastingState.DEEP_KETOSIS -> 
+                Color.parseColor(if (useDarkTheme) DEEP_KETOSIS_GREEN_DARK else DEEP_KETOSIS_GREEN_LIGHT)
+            FastingState.IMMUNE_RESET -> 
+                Color.parseColor(if (useDarkTheme) IMMUNE_RESET_PURPLE_DARK else IMMUNE_RESET_PURPLE_LIGHT)
+            FastingState.EXTENDED_FAST -> 
+                Color.parseColor(if (useDarkTheme) EXTENDED_FAST_MAGENTA_DARK else EXTENDED_FAST_MAGENTA_LIGHT)
         }
+    }
+    
+    /**
+     * Determine if dark theme should be used based on system settings and user preferences
+     */
+    private fun shouldUseDarkTheme(context: Context): Boolean {
+        val preferencesManager = PreferencesManager.getInstance(context)
+        val themePreference = preferencesManager.dateTimePreferences.themePreference
+        
+        return when (themePreference) {
+            ThemePreference.SYSTEM -> isSystemInDarkTheme(context)
+            ThemePreference.LIGHT -> false
+            ThemePreference.DARK -> true
+        }
+    }
+    
+    /**
+     * Check if the system is using dark theme
+     */
+    private fun isSystemInDarkTheme(context: Context): Boolean {
+        return (context.resources.configuration.uiMode and 
+                Configuration.UI_MODE_NIGHT_MASK) == 
+                Configuration.UI_MODE_NIGHT_YES
     }
     
     /**

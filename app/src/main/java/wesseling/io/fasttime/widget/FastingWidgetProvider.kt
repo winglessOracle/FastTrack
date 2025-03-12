@@ -138,7 +138,7 @@ class FastingWidgetProvider : AppWidgetProvider() {
                 Log.d(TAG, "Setting widget background for state: ${currentState.name}, running: $isRunning")
                 
                 // Get the color for the current fasting state
-                val stateColor = WidgetBackgroundHelper.getColorForFastingState(currentState)
+                val stateColor = WidgetBackgroundHelper.getColorForFastingState(currentState, context)
                 
                 // Set the background color directly on the ImageView
                 views.setInt(R.id.widget_background_image, "setBackgroundColor", stateColor)

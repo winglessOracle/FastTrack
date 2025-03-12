@@ -101,7 +101,7 @@ fun BasicsTab() {
     ) {
         // Introduction
         Text(
-            text = "FastTrack helps you track your intermittent fasting journey with ease",
+            text = "FastTrack helps you track your fasting time with precision",
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
@@ -118,6 +118,18 @@ fun BasicsTab() {
                 "Your fasting state changes based on duration",
                 "Tap RESET to end your fast and save it to your log",
                 "View your fasting history in the Fasting Log"
+            )
+        )
+        
+        // Hydration Section
+        HelpSection(
+            title = "Importance of Hydration",
+            items = listOf(
+                "Fasting concerns food, not water - stay hydrated!",
+                "Drink plenty of water throughout your fast",
+                "Hydration helps manage hunger and maintain energy",
+                "Consider electrolytes during longer fasts",
+                "Black coffee and unsweetened tea are also permitted"
             )
         )
         
@@ -170,7 +182,7 @@ fun FastingTypesTab() {
         )
         
         Text(
-            text = "FastTrack can track any fasting protocol. Here are some popular options:",
+            text = "FastTrack tracks the time you spend fasting. Here are some popular protocols:",
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()

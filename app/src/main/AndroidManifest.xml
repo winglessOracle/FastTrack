@@ -4,6 +4,8 @@
 
     <!-- Add notification permission -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Add vibration permission -->
+    <uses-permission android:name="android.permission.VIBRATE" />
     <!-- Add foreground service permission for widget updates -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 

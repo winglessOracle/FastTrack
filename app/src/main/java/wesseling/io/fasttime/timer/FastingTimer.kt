@@ -52,6 +52,9 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
     // Start time in system millis
     private var startTimeMillis: Long = 0
     
+    // Constants
+    private val HOUR_IN_MILLIS = TimeUnit.HOURS.toMillis(1)
+    
     // Shared preferences for persistence
     private val prefs: SharedPreferences = appContext.getSharedPreferences(
         PREFS_NAME, 
@@ -311,32 +314,36 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
     }
     
     /**
-     * Update the fasting state based on elapsed time
+     * Update the current fasting state based on elapsed time
      */
     private fun updateFastingState() {
         try {
-            val elapsedHours = TimeUnit.MILLISECONDS.toHours(elapsedTimeMillis)
-            if (elapsedHours < 0) {
-                Log.e(TAG, "Negative elapsed hours detected, resetting timer")
-                resetToSafeState()
-                return
-            }
-
             val previousState = currentFastingState
-            currentFastingState = FastingState.getStateForHours(elapsedHours.toInt())
+            
+            // Determine the current fasting state based on elapsed time
+            currentFastingState = when {
+                !isRunning -> FastingState.NOT_FASTING
+                elapsedTimeMillis < 4 * HOUR_IN_MILLIS -> FastingState.NOT_FASTING
+                elapsedTimeMillis < 12 * HOUR_IN_MILLIS -> FastingState.EARLY_FAST
+                elapsedTimeMillis < 18 * HOUR_IN_MILLIS -> FastingState.GLYCOGEN_DEPLETION
+                elapsedTimeMillis < 24 * HOUR_IN_MILLIS -> FastingState.METABOLIC_SHIFT
+                elapsedTimeMillis < 48 * HOUR_IN_MILLIS -> FastingState.DEEP_KETOSIS
+                elapsedTimeMillis < 72 * HOUR_IN_MILLIS -> FastingState.IMMUNE_RESET
+                else -> FastingState.EXTENDED_FAST
+            }
             
             // Check if the state has changed
-            val stateChanged = currentFastingState != previousState
+            val stateChanged = previousState != currentFastingState
             
             // Update max fasting state if current state is higher
             if (currentFastingState.ordinal > _maxFastingState.ordinal) {
                 _maxFastingState = currentFastingState
                 saveState() // Save when max state changes
-                
-                // Check if we should send a notification for the new fasting state
-                if (stateChanged && currentFastingState != FastingState.NOT_FASTING) {
-                    checkAndSendFastingStateNotification()
-                }
+            }
+            
+            // Send notification when state changes to a new state (not NOT_FASTING)
+            if (stateChanged && currentFastingState != FastingState.NOT_FASTING) {
+                checkAndSendFastingStateNotification()
             }
             
             // Always update widgets when state changes
@@ -448,14 +455,14 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
     private fun updateWidgets(forceUpdate: Boolean = false) {
         try {
             // Use a more reliable approach to update widgets
-            Log.d(TAG, "Updating widgets with current state: running=$isRunning, state=${currentFastingState.name}, forceUpdate=$forceUpdate")
+            Log.d(TAG, "Updating widgets with current state: running=$isRunning, state=${_maxFastingState.name}, forceUpdate=$forceUpdate")
             
             // Send broadcast with current state information
             val widgetIntent = Intent("wesseling.io.fasttime.widget.ACTION_UPDATE_WIDGETS").apply {
                 setPackage(appContext.packageName)
                 // Add state information to help debugging
                 putExtra("IS_RUNNING", isRunning)
-                putExtra("CURRENT_STATE", currentFastingState.ordinal)
+                putExtra("CURRENT_STATE", _maxFastingState.ordinal)
                 putExtra("ELAPSED_TIME", elapsedTimeMillis)
                 putExtra("TIMESTAMP", System.currentTimeMillis())
                 putExtra("FORCE_UPDATE", forceUpdate)

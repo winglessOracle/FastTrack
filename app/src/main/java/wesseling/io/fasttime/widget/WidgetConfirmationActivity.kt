@@ -1,58 +1,106 @@
 package wesseling.io.fasttime.widget
 
 import android.app.Activity
-import android.app.AlertDialog
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import wesseling.io.fasttime.MainActivity
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import wesseling.io.fasttime.R
 import wesseling.io.fasttime.model.CompletedFast
+import wesseling.io.fasttime.repository.FastingRepository
 import wesseling.io.fasttime.timer.FastingTimer
+import wesseling.io.fasttime.ui.components.FastingSummaryDialog
+import wesseling.io.fasttime.ui.theme.FastTrackTheme
 
 /**
  * Activity that shows a confirmation dialog when stopping the timer from the widget
  */
-class WidgetConfirmationActivity : Activity() {
+class WidgetConfirmationActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        // Show confirmation dialog
-        AlertDialog.Builder(this)
-            .setTitle(R.string.stop_timer)
-            .setMessage(R.string.stop_timer_confirmation)
-            .setPositiveButton(R.string.yes) { _, _ ->
-                try {
-                    // Reset the timer and get the completed fast
-                    val fastingTimer = FastingTimer.getInstance(applicationContext)
-                    val completedFast = fastingTimer.resetTimer()
+        setContent {
+            FastTrackTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    var showSummaryDialog by remember { mutableStateOf(false) }
+                    var completedFast by remember { mutableStateOf<CompletedFast?>(null) }
+                    val repository = remember { FastingRepository.getInstance(applicationContext) }
                     
-                    // If there was a fast, start the main activity to show the summary
-                    if (completedFast != null && completedFast.durationMillis > 0) {
-                        val intent = Intent(this, MainActivity::class.java)
-                        intent.putExtra("SHOW_COMPLETED_FAST", true)
-                        intent.putExtra("START_TIME", completedFast.startTimeMillis)
-                        intent.putExtra("END_TIME", completedFast.endTimeMillis)
-                        intent.putExtra("DURATION", completedFast.durationMillis)
-                        intent.putExtra("MAX_STATE", completedFast.maxFastingState.ordinal)
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                        startActivity(intent)
+                    // Show confirmation dialog
+                    AlertDialog(
+                        onDismissRequest = { finish() },
+                        title = { Text(getString(R.string.stop_timer)) },
+                        text = { Text(getString(R.string.stop_timer_confirmation)) },
+                        confirmButton = {
+                            Button(
+                                onClick = {
+                                    try {
+                                        // Reset the timer and get the completed fast
+                                        val fastingTimer = FastingTimer.getInstance(applicationContext)
+                                        val fast = fastingTimer.resetTimer()
+                                        
+                                        // Show summary dialog if there was a fast
+                                        if (fast != null && fast.durationMillis > 0) {
+                                            completedFast = fast
+                                            showSummaryDialog = true
+                                        } else {
+                                            // No fast to show, just finish the activity
+                                            finish()
+                                        }
+                                    } catch (e: Exception) {
+                                        Log.e("WidgetConfirmation", "Error resetting timer", e)
+                                        finish()
+                                    }
+                                }
+                            ) {
+                                Text(getString(R.string.yes))
+                            }
+                        },
+                        dismissButton = {
+                            Button(
+                                onClick = { finish() }
+                            ) {
+                                Text(getString(R.string.no))
+                            }
+                        }
+                    )
+                    
+                    // Summary dialog
+                    if (showSummaryDialog && completedFast != null) {
+                        FastingSummaryDialog(
+                            completedFast = completedFast!!,
+                            onSave = { fast ->
+                                try {
+                                    // Save the fast to the repository
+                                    repository.saveFast(fast)
+                                } catch (e: Exception) {
+                                    Log.e("WidgetConfirmation", "Error saving fast", e)
+                                } finally {
+                                    finish()
+                                }
+                            },
+                            onDismiss = {
+                                finish()
+                            }
+                        )
                     }
-                } catch (e: Exception) {
-                    Log.e("WidgetConfirmation", "Error resetting timer", e)
-                } finally {
-                    finish()
                 }
             }
-            .setNegativeButton(R.string.no) { _, _ ->
-                // Just close the activity
-                finish()
-            }
-            .setOnCancelListener {
-                // Just close the activity
-                finish()
-            }
-            .show()
+        }
     }
 } 
