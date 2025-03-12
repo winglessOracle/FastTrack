@@ -99,7 +99,7 @@ class FastingWidgetProvider : AppWidgetProvider() {
                         val views = RemoteViews(context.packageName, R.layout.fasting_widget)
                         
                         // Set background color based on fasting state
-                        updateWidgetBackground(views, currentState, isRunning)
+                        updateWidgetBackground(context, views, currentState, isRunning)
                         
                         // Set hours text
                         views.setTextViewText(R.id.widget_hours, "${elapsedHours}")
@@ -129,6 +129,7 @@ class FastingWidgetProvider : AppWidgetProvider() {
          * Update widget background based on fasting state
          */
         private fun updateWidgetBackground(
+            context: Context,
             views: RemoteViews,
             currentState: FastingState,
             isRunning: Boolean
@@ -136,38 +137,26 @@ class FastingWidgetProvider : AppWidgetProvider() {
             try {
                 Log.d(TAG, "Setting widget background for state: ${currentState.name}, running: $isRunning")
                 
-                // Get the appropriate background resource based on fasting state
-                val backgroundResId = if (isRunning) {
-                    // Use combined background with running border
-                    when (currentState) {
-                        FastingState.NOT_FASTING -> R.drawable.widget_background_not_fasting_running
-                        FastingState.EARLY_FAST -> R.drawable.widget_background_early_fast_running
-                        FastingState.GLYCOGEN_DEPLETION -> R.drawable.widget_background_ketosis_running // Using ketosis for glycogen depletion
-                        FastingState.METABOLIC_SHIFT -> R.drawable.widget_background_ketosis_running // Using ketosis for metabolic shift
-                        FastingState.DEEP_KETOSIS -> R.drawable.widget_background_autophagy_running // Using autophagy for deep ketosis
-                        FastingState.IMMUNE_RESET -> R.drawable.widget_background_deep_fasting_running // Using deep fasting for immune reset
-                        FastingState.EXTENDED_FAST -> R.drawable.widget_background_deep_fasting_running // Using deep fasting for extended fast
-                    }
+                // Get the color for the current fasting state
+                val stateColor = WidgetBackgroundHelper.getColorForFastingState(currentState)
+                
+                // Set the background color directly on the ImageView
+                views.setInt(R.id.widget_background_image, "setBackgroundColor", stateColor)
+                
+                // Set a border if running
+                if (isRunning) {
+                    // Add a green border indicator for running state
+                    views.setInt(R.id.widget_background, "setBackgroundResource", R.drawable.running_border)
                 } else {
-                    // Use regular state background
-                    when (currentState) {
-                        FastingState.NOT_FASTING -> R.drawable.widget_background_not_fasting
-                        FastingState.EARLY_FAST -> R.drawable.widget_background_early_fast
-                        FastingState.GLYCOGEN_DEPLETION -> R.drawable.widget_background_ketosis // Using ketosis for glycogen depletion
-                        FastingState.METABOLIC_SHIFT -> R.drawable.widget_background_ketosis // Using ketosis for metabolic shift
-                        FastingState.DEEP_KETOSIS -> R.drawable.widget_background_autophagy // Using autophagy for deep ketosis
-                        FastingState.IMMUNE_RESET -> R.drawable.widget_background_deep_fasting // Using deep fasting for immune reset
-                        FastingState.EXTENDED_FAST -> R.drawable.widget_background_deep_fasting // Using deep fasting for extended fast
-                    }
+                    // Clear any border
+                    views.setInt(R.id.widget_background, "setBackgroundResource", 0)
                 }
                 
-                // Set the background resource directly on the widget_background RelativeLayout
-                views.setInt(R.id.widget_background, "setBackgroundResource", backgroundResId)
-                Log.d(TAG, "Set background resource: $backgroundResId for state: ${currentState.name}")
+                Log.d(TAG, "Set background color for state: ${currentState.name}, color: ${Integer.toHexString(stateColor)}")
             } catch (e: Exception) {
                 Log.e(TAG, "Error setting background", e)
                 // Fallback to a safe default
-                views.setInt(R.id.widget_background, "setBackgroundColor", Color.DKGRAY)
+                views.setInt(R.id.widget_background_image, "setBackgroundColor", Color.DKGRAY)
             }
         }
         
