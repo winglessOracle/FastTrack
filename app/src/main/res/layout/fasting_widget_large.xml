@@ -48,7 +48,7 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_play_modern"
+                android:src="@drawable/ic_play"
                 android:contentDescription="Start timer" />
 
             <ImageButton

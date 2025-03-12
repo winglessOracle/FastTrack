@@ -140,23 +140,24 @@ class FastingWidgetProvider : AppWidgetProvider() {
                 // Get the color for the current fasting state
                 val stateColor = WidgetBackgroundHelper.getColorForFastingState(currentState, context)
                 
-                // Set the background color directly on the ImageView
-                views.setInt(R.id.widget_background_image, "setBackgroundColor", stateColor)
+                // Set the background color on the ImageView
+                // We're using a drawable with corner radius defined in XML
+                views.setInt(R.id.widget_background_image, "setColorFilter", stateColor)
                 
                 // Set a border if running
                 if (isRunning) {
                     // Add a green border indicator for running state
                     views.setInt(R.id.widget_background, "setBackgroundResource", R.drawable.running_border)
                 } else {
-                    // Clear any border
-                    views.setInt(R.id.widget_background, "setBackgroundResource", 0)
+                    // Use a transparent background with the same corner radius
+                    views.setInt(R.id.widget_background, "setBackgroundResource", R.drawable.widget_container_background)
                 }
                 
                 Log.d(TAG, "Set background color for state: ${currentState.name}, color: ${Integer.toHexString(stateColor)}")
             } catch (e: Exception) {
                 Log.e(TAG, "Error setting background", e)
                 // Fallback to a safe default
-                views.setInt(R.id.widget_background_image, "setBackgroundColor", Color.DKGRAY)
+                views.setInt(R.id.widget_background_image, "setColorFilter", Color.DKGRAY)
             }
         }
         

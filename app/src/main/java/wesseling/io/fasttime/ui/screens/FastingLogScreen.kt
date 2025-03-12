@@ -45,6 +45,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -523,9 +524,10 @@ fun FastingLogItem(
             .fillMaxWidth()
             .clickable { onInfoClick() },
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f)
         ),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
@@ -541,7 +543,8 @@ fun FastingLogItem(
                                     Text(
                         text = DateTimeFormatter.formatDateTime(fast.startTimeMillis, preferences),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontWeight = FontWeight.Medium
                     )
                     
                     Text(
@@ -553,29 +556,40 @@ fun FastingLogItem(
                 }
                 
                 // Fasting state indicator
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
+                Box(
+                    modifier = Modifier
+                        .background(
+                            color = fastingStateColor.copy(alpha = 0.15f),
+                            shape = RoundedCornerShape(16.dp)
+                        )
+                        .padding(horizontal = 12.dp, vertical = 6.dp)
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(12.dp)
-                            .clip(CircleShape)
-                            .background(fastingStateColor)
-                    )
-                    
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(10.dp)
+                                .clip(CircleShape)
+                                .background(fastingStateColor)
+                        )
+                        
+                        Spacer(modifier = Modifier.width(6.dp))
                                     
                                     Text(
-                        text = fast.maxFastingState.displayName,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = fastingStateColor
-                    )
+                            text = fast.maxFastingState.displayName,
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            color = fastingStateColor
+                        )
+                    }
                 }
             }
             
             Divider(
                 modifier = Modifier.padding(vertical = 8.dp),
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f),
+                thickness = 1.dp
             )
             
             // Action buttons
@@ -611,7 +625,8 @@ fun FastingLogItem(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Delete,
-                        contentDescription = "Delete"
+                        contentDescription = "Delete",
+                        tint = MaterialTheme.colorScheme.error
                     )
                 }
                 
@@ -1034,7 +1049,7 @@ fun EditFastDialog(
                     onValueChange = { note = it },
                     label = { Text("Notes") },
                     modifier = Modifier.fillMaxWidth(),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                    colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = MaterialTheme.colorScheme.primary,
                         unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
                     ),

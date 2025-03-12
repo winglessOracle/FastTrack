@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package wesseling.io.fasttime.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
@@ -41,12 +43,24 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalPagerApi::class)
+/**
+ * Help screen that displays information about how to use the app.
+ * 
+ * Note: This screen currently uses the deprecated Accompanist Pager library.
+ * We're keeping it for now because the new Compose Pager API is still in alpha
+ * and has compatibility issues. We'll migrate to the official API once it's stable.
+ * 
+ * File-level @Suppress("DEPRECATION") is used to silence warnings about the deprecated API.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HelpScreen(
     onBackPressed: () -> Unit
 ) {
     val tabs = listOf("Basics", "Fasting Types", "Tips")
+    
+    // Using Accompanist Pager
+    @OptIn(ExperimentalPagerApi::class)
     val pagerState = rememberPagerState(initialPage = 0)
     val coroutineScope = rememberCoroutineScope()
     
@@ -92,6 +106,8 @@ fun HelpScreen(
                 }
             }
             
+            // Using Accompanist Pager
+            @OptIn(ExperimentalPagerApi::class)
             HorizontalPager(
                 count = tabs.size,
                 state = pagerState,

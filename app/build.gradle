@@ -84,7 +84,10 @@ dependencies {
     implementation 'androidx.compose.runtime:runtime'
     implementation 'androidx.compose.foundation:foundation'
     
-    // Accompanist Pager for swipe navigation (deprecated but still functional)
+    // Compose Pager (new official API)
+    implementation "androidx.compose.foundation:foundation-layout:1.6.1"
+    
+    // Accompanist Pager for swipe navigation (kept for backward compatibility)
     implementation 'com.google.accompanist:accompanist-pager:0.32.0'
     implementation 'com.google.accompanist:accompanist-pager-indicators:0.32.0'
 

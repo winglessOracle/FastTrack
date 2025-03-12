@@ -75,19 +75,25 @@ class NotificationHelper(private val context: Context) {
         // Show the notification
         notificationManager.notify(NOTIFICATION_ID, notification)
         
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                val vibratorManager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
-                vibratorManager.defaultVibrator
-            } else {
-                @Suppress("DEPRECATION")
-                context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-            }
-            
-            vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
+        // Vibrate the device to alert the user
+        vibrateDevice(context)
+    }
+    
+    private fun vibrateDevice(context: Context) {
+        // Get vibrator service using the appropriate method based on Android version
+        val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val vibratorManager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+            vibratorManager.defaultVibrator
         } else {
             @Suppress("DEPRECATION")
-            val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+            context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        }
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
+        } else {
+            // For older versions, use VibrationEffect.createOneShot with compatibility method
+            @Suppress("DEPRECATION")
             vibrator.vibrate(500)
         }
     }

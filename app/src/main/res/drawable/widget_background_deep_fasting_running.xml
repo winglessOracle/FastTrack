@@ -4,6 +4,6 @@
     <corners android:radius="16dp" />
     <solid android:color="#8B5CF6" /> <!-- Purple (Deep Fasting) -->
     <stroke
-        android:width="3dp"
+        android:width="4dp"
         android:color="#4CAF50" /> <!-- Green border when timer is running -->
 </shape> 
