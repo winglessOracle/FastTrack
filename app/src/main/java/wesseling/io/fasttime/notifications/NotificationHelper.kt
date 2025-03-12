@@ -5,7 +5,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.media.RingtoneManager
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -34,13 +33,11 @@ class NotificationHelper(private val context: Context) {
             val channel = NotificationChannel(
                 CHANNEL_ID,
                 "Fasting State Notifications",
-                NotificationManager.IMPORTANCE_HIGH // Changed to HIGH for more visibility
+                NotificationManager.IMPORTANCE_DEFAULT
             ).apply {
                 description = "Notifications for fasting state changes"
                 enableLights(true)
                 enableVibration(true)
-                vibrationPattern = longArrayOf(0, 250, 250, 250) // Vibration pattern
-                setShowBadge(true) // Show badge on app icon
             }
             
             notificationManager.createNotificationChannel(channel)
@@ -63,9 +60,6 @@ class NotificationHelper(private val context: Context) {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         
-        // Get default notification sound
-        val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        
         // Build the notification
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground) // Replace with appropriate icon
@@ -73,48 +67,28 @@ class NotificationHelper(private val context: Context) {
             .setContentText("You've reached the ${fastingState.displayName} state!")
             .setStyle(NotificationCompat.BigTextStyle()
                 .bigText("You've reached the ${fastingState.displayName} state: ${fastingState.description}"))
-            .setPriority(NotificationCompat.PRIORITY_HIGH) // Set to HIGH priority
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
-            .setSound(defaultSoundUri) // Add sound
-            .setVibrate(longArrayOf(0, 250, 250, 250)) // Add vibration pattern
-            .setLights(0xFF0000FF.toInt(), 1000, 500) // Add LED light notification if available
             .build()
         
         // Show the notification
         notificationManager.notify(NOTIFICATION_ID, notification)
         
-        // Also trigger vibration for devices that might not respect the notification vibration
-        vibrate()
-    }
-    
-    /**
-     * Trigger device vibration
-     */
-    private fun vibrate() {
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 val vibratorManager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
-                val vibrator = vibratorManager.defaultVibrator
-                
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
-                } else {
-                    @Suppress("DEPRECATION")
-                    vibrator.vibrate(500)
-                }
+                vibratorManager.defaultVibrator
             } else {
-                val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-                
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
-                } else {
-                    @Suppress("DEPRECATION")
-                    vibrator.vibrate(500)
-                }
+                @Suppress("DEPRECATION")
+                context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
             }
-        } catch (e: Exception) {
-            // Ignore vibration errors
+            
+            vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
+        } else {
+            @Suppress("DEPRECATION")
+            val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+            vibrator.vibrate(500)
         }
     }
     

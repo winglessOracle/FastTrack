@@ -115,7 +115,6 @@ fun AdjustStartTimeDialog(
     
     // Format start times as actual dates
     val currentStartTimeFormatted = DateTimeFormatter.formatDateTime(currentStartTimeMillis, preferences)
-    val newStartTimeFormatted = DateTimeFormatter.formatDateTime(newStartTimeMillis, preferences)
     
     // Determine if the adjustment is valid (not in the future)
     val currentTime = System.currentTimeMillis()
