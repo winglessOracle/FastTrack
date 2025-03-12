@@ -12,6 +12,8 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
     }
+    // Version catalogs are automatically loaded from the libs.versions.toml file
+    // No need to explicitly load it
 }
 
 rootProject.name = "FastTrack"

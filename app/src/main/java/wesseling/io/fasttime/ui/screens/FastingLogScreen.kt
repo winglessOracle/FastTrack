@@ -41,6 +41,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -586,7 +587,7 @@ fun FastingLogItem(
                 }
             }
             
-            Divider(
+            HorizontalDivider(
                 modifier = Modifier.padding(vertical = 8.dp),
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f),
                 thickness = 1.dp
@@ -815,7 +816,7 @@ fun FastingLogSummary(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             
-            Divider(
+            HorizontalDivider(
                 modifier = Modifier.padding(vertical = 4.dp),
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)
             )
@@ -862,7 +863,7 @@ fun FastingLogSummary(
                 )
             }
                 
-                Divider(
+                HorizontalDivider(
                     modifier = Modifier.padding(vertical = 4.dp),
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)
             )
