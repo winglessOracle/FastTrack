@@ -449,25 +449,25 @@ fun FastingLogScreen(
                 showEditConfirmation = false
                 fastToEdit = null
             },
-            title = {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
+                    title = { 
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
                         imageVector = Icons.Filled.Edit,
-                        contentDescription = null,
+                                contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary
-                    )
-                    
-                    Spacer(modifier = Modifier.width(8.dp))
-                    
+                            )
+                            
+                            Spacer(modifier = Modifier.width(8.dp))
+                            
                     Text(
                         text = "Confirm Edit",
                         style = MaterialTheme.typography.titleLarge
                     )
-                }
-            },
-            text = {
+                        }
+                    },
+                    text = { 
                 Text("Are you sure you want to edit this fast? This action cannot be undone.")
             },
             confirmButton = {
@@ -518,7 +518,7 @@ fun FastingLogItem(
 ) {
     val fastingStateColor = getColorForFastingState(fast.maxFastingState)
     
-    Card(
+                            Card(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onInfoClick() },
@@ -532,13 +532,13 @@ fun FastingLogItem(
         ) {
             // Date and duration row
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(
+                            ) {
+                                Column(
                     modifier = Modifier.weight(1f)
-        ) {
-            Text(
+                                ) {
+                                    Text(
                         text = DateTimeFormatter.formatDateTime(fast.startTimeMillis, preferences),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
@@ -547,7 +547,7 @@ fun FastingLogItem(
                     Text(
                         text = DateTimeFormatter.formatDuration(fast.durationMillis),
                         style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
+                                        fontWeight = FontWeight.Bold,
                         color = fastingStateColor
                     )
                 }
@@ -564,8 +564,8 @@ fun FastingLogItem(
                     )
                     
                     Spacer(modifier = Modifier.width(4.dp))
-                    
-                    Text(
+                                    
+                                    Text(
                         text = fast.maxFastingState.displayName,
                         style = MaterialTheme.typography.bodyMedium,
                         color = fastingStateColor
@@ -652,14 +652,14 @@ fun FastDetailsDialog(
                 )
                 
                 Spacer(modifier = Modifier.width(8.dp))
-                
-                Text(
+                            
+                            Text(
                     text = "Fasting Details",
                     style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        },
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    },
         text = {
             Column(
                     modifier = Modifier
@@ -694,7 +694,7 @@ fun FastDetailsDialog(
         confirmButton = {
             Button(
                 onClick = onDismiss,
-                colors = ButtonDefaults.buttonColors(
+                            colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary
                 )
             ) {
@@ -793,7 +793,7 @@ fun FastingLogSummary(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-                Text(
+            Text(
                 text = "Fasting Summary",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
@@ -853,7 +853,7 @@ fun FastingLogSummary(
             )
             
             // Achievements section
-            Text(
+                            Text(
                 text = "Achievements",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
@@ -910,18 +910,18 @@ fun AchievementItem(
 ) {
     val stateColor = getColorForFastingState(state)
     
-    Column(
+        Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.padding(horizontal = 4.dp)
-    ) {
-        Box(
-            modifier = Modifier
+                ) {
+                    Box(
+                        modifier = Modifier
                 .size(40.dp)
-                .clip(CircleShape)
+                            .clip(CircleShape)
                 .background(stateColor.copy(alpha = 0.2f)),
             contentAlignment = Alignment.Center
         ) {
-            Text(
+                    Text(
                 text = count.toString(),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold,
@@ -979,18 +979,18 @@ fun EditFastDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
                     imageVector = Icons.Filled.Edit,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary
                 )
                 
                 Spacer(modifier = Modifier.width(8.dp))
-                
-                Text(
+                            
+                            Text(
                     text = "Edit Fast",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold

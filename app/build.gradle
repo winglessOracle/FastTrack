@@ -83,6 +83,10 @@ dependencies {
     implementation 'androidx.compose.ui:ui-tooling-preview'
     implementation 'androidx.compose.runtime:runtime'
     implementation 'androidx.compose.foundation:foundation'
+    
+    // Accompanist Pager for swipe navigation (deprecated but still functional)
+    implementation 'com.google.accompanist:accompanist-pager:0.32.0'
+    implementation 'com.google.accompanist:accompanist-pager-indicators:0.32.0'
 
     // System UI Controller
     implementation 'com.google.accompanist:accompanist-systemuicontroller:0.32.0'

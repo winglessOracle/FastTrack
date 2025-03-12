@@ -29,20 +29,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.rememberPagerState
+import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPagerApi::class)
 @Composable
 fun HelpScreen(
     onBackPressed: () -> Unit
 ) {
-    var selectedTabIndex by remember { mutableStateOf(0) }
     val tabs = listOf("Basics", "Fasting Types", "Tips")
+    val pagerState = rememberPagerState(initialPage = 0)
+    val coroutineScope = rememberCoroutineScope()
     
     Scaffold(
         modifier = Modifier.systemBarsPadding(),
@@ -70,20 +76,32 @@ fun HelpScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            TabRow(selectedTabIndex = selectedTabIndex) {
+            TabRow(
+                selectedTabIndex = pagerState.currentPage
+            ) {
                 tabs.forEachIndexed { index, title ->
                     Tab(
                         text = { Text(title) },
-                        selected = selectedTabIndex == index,
-                        onClick = { selectedTabIndex = index }
+                        selected = pagerState.currentPage == index,
+                        onClick = {
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(index)
+                            }
+                        }
                     )
                 }
             }
             
-            when (selectedTabIndex) {
-                0 -> BasicsTab()
-                1 -> FastingTypesTab()
-                2 -> TipsTab()
+            HorizontalPager(
+                count = tabs.size,
+                state = pagerState,
+                modifier = Modifier.weight(1f)
+            ) { page ->
+                when (page) {
+                    0 -> BasicsTab()
+                    1 -> FastingTypesTab()
+                    2 -> TipsTab()
+                }
             }
         }
     }
