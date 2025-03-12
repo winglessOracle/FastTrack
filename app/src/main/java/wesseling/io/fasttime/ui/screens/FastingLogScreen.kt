@@ -27,6 +27,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DeleteSweep
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Share
@@ -43,11 +44,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -93,6 +96,8 @@ fun FastingLogScreen(
     var showDeleteAllDialog by remember { mutableStateOf(false) }
     var fastToDelete by remember { mutableStateOf<CompletedFast?>(null) }
     var showFastDetails by remember { mutableStateOf<CompletedFast?>(null) }
+    var fastToEdit by remember { mutableStateOf<CompletedFast?>(null) }
+    var showEditConfirmation by remember { mutableStateOf(false) }
     
     val repository = remember { FastingRepository.getInstance(context) }
     
@@ -175,6 +180,20 @@ fun FastingLogScreen(
                 coroutineScope.launch {
                     snackbarHostState.showSnackbar("Failed to export fasting logs")
                 }
+            }
+        }
+    }
+    
+    // Function to handle editing a fast
+    fun editFast(fast: CompletedFast) {
+        coroutineScope.launch {
+            try {
+                repository.updateFast(fast)
+                refreshData()
+                snackbarHostState.showSnackbar("Fast updated successfully")
+            } catch (e: Exception) {
+                Log.e("FastingLogScreen", "Error updating fast", e)
+                snackbarHostState.showSnackbar("Failed to update fast")
             }
         }
     }
@@ -314,7 +333,11 @@ fun FastingLogScreen(
                             preferences = preferences,
                             onDeleteClick = { fastToDelete = fast },
                             onShareClick = { shareFast(context, fast) },
-                            onInfoClick = { showFastDetails = fast }
+                            onInfoClick = { showFastDetails = fast },
+                            onEditClick = { 
+                                fastToEdit = fast
+                                showEditConfirmation = true
+                            }
                         )
                     }
                     
@@ -418,6 +441,70 @@ fun FastingLogScreen(
             onDismiss = { showFastDetails = null }
         )
     }
+    
+    // Edit confirmation dialog
+    if (showEditConfirmation && fastToEdit != null) {
+        AlertDialog(
+            onDismissRequest = { 
+                showEditConfirmation = false
+                fastToEdit = null
+            },
+            title = {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Edit,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                    
+                    Spacer(modifier = Modifier.width(8.dp))
+                    
+                    Text(
+                        text = "Confirm Edit",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                }
+            },
+            text = {
+                Text("Are you sure you want to edit this fast? This action cannot be undone.")
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showEditConfirmation = false
+                        // fastToEdit is already set, no need to change it
+                    }
+                ) {
+                    Text("Edit")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { 
+                        showEditConfirmation = false
+                        fastToEdit = null
+                    }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+    
+    // Edit fast dialog
+    fastToEdit?.let { fast ->
+        EditFastDialog(
+            fast = fast,
+            preferences = preferences,
+            onSave = { updatedFast ->
+                editFast(updatedFast)
+                fastToEdit = null
+            },
+            onDismiss = { fastToEdit = null }
+        )
+    }
 }
 
 @Composable
@@ -426,7 +513,8 @@ fun FastingLogItem(
     preferences: DateTimePreferences,
     onDeleteClick: () -> Unit,
     onShareClick: () -> Unit,
-    onInfoClick: () -> Unit
+    onInfoClick: () -> Unit,
+    onEditClick: () -> Unit
 ) {
     val fastingStateColor = getColorForFastingState(fast.maxFastingState)
     
@@ -503,6 +591,17 @@ fun FastingLogItem(
                         imageVector = Icons.Filled.Share,
                         contentDescription = "Share",
                         tint = fastingStateColor
+                    )
+                }
+                
+                IconButton(
+                    onClick = onEditClick,
+                    modifier = Modifier.size(36.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Edit,
+                        contentDescription = "Edit",
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
                 
@@ -864,4 +963,101 @@ fun CompletedFast.toShareText(): String {
         
         #FastTrack #Fasting #IntermittentFasting #${fastingStateName.replace(" ", "")}
     """.trimIndent()
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EditFastDialog(
+    fast: CompletedFast,
+    preferences: DateTimePreferences,
+    onSave: (CompletedFast) -> Unit,
+    onDismiss: () -> Unit
+) {
+    var note by remember { mutableStateOf(fast.note) }
+    val fastingStateColor = getColorForFastingState(fast.maxFastingState)
+    
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Edit,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+                
+                Spacer(modifier = Modifier.width(8.dp))
+                
+                Text(
+                    text = "Edit Fast",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        },
+        text = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+            ) {
+                DetailItem(
+                    label = "Started",
+                    value = DateTimeFormatter.formatDateTime(fast.startTimeMillis, preferences),
+                    valueColor = MaterialTheme.colorScheme.onSurface
+                )
+                
+                DetailItem(
+                    label = "Ended",
+                    value = DateTimeFormatter.formatDateTime(fast.endTimeMillis, preferences),
+                    valueColor = MaterialTheme.colorScheme.onSurface
+                )
+                
+                DetailItem(
+                    label = "Duration",
+                    value = DateTimeFormatter.formatDuration(fast.durationMillis),
+                    valueColor = fastingStateColor
+                )
+                
+                DetailItem(
+                    label = "Fasting State",
+                    value = fast.maxFastingState.displayName,
+                    valueColor = fastingStateColor
+                )
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                OutlinedTextField(
+                    value = note,
+                    onValueChange = { note = it },
+                    label = { Text("Notes") },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                    ),
+                    maxLines = 3
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = { onSave(fast.copy(note = note)) },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
+            ) {
+                Text("Save")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onDismiss
+            ) {
+                Text("Cancel")
+            }
+        }
+    )
 } 
