@@ -603,30 +603,79 @@ fun FastingLogItem(
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            // Date and duration row
+            // Duration at the top with smaller font
+            Text(
+                text = DateTimeFormatter.formatDuration(fast.durationMillis),
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = fastingStateColor
+            )
+            
+            Spacer(modifier = Modifier.height(4.dp))
+            
+            // Start and end time on a full line with centered arrow
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = DateTimeFormatter.formatDateTime(fast.startTimeMillis, preferences),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.alignByBaseline()
+                )
+                
+                Text(
+                    text = " → ",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .padding(horizontal = 4.dp)
+                        .alignByBaseline()
+                )
+                
+                Text(
+                    text = DateTimeFormatter.formatDateTime(fast.endTimeMillis, preferences),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.alignByBaseline()
+                )
+            }
+            
+            // Display notes if they exist
+            if (fast.note.isNotBlank()) {
+                Spacer(modifier = Modifier.height(8.dp))
+                
+                Text(
+                    text = fast.note,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .padding(8.dp)
+                )
+            }
+            
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 8.dp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f),
+                thickness = 1.dp
+            )
+            
+            // Bottom row with fasting state pill on left and action buttons on right
             Row(
                 modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(
-                        text = DateTimeFormatter.formatDateTime(fast.startTimeMillis, preferences),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontWeight = FontWeight.Medium
-                    )
-                    
-                    Text(
-                        text = DateTimeFormatter.formatDuration(fast.durationMillis),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = fastingStateColor
-                    )
-                }
-                
-                // Fasting state indicator
+                // Fasting state indicator moved to bottom left
                 Box(
                     modifier = Modifier
                         .background(
@@ -646,8 +695,8 @@ fun FastingLogItem(
                         )
                         
                         Spacer(modifier = Modifier.width(6.dp))
-                                    
-                                    Text(
+                        
+                        Text(
                             text = fast.maxFastingState.displayName,
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.SemiBold,
@@ -655,61 +704,41 @@ fun FastingLogItem(
                         )
                     }
                 }
-            }
-            
-            HorizontalDivider(
-                modifier = Modifier.padding(vertical = 8.dp),
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f),
-                thickness = 1.dp
-            )
-            
-            // Action buttons
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                IconButton(
-                    onClick = onShareClick,
-                    modifier = Modifier.size(36.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Share,
-                        contentDescription = "Share",
-                        tint = fastingStateColor
-                    )
-                }
                 
-                IconButton(
-                    onClick = onEditClick,
-                    modifier = Modifier.size(36.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Edit,
-                        contentDescription = "Edit",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-                
-                IconButton(
-                    onClick = onDeleteClick,
-                    modifier = Modifier.size(36.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Delete,
-                        contentDescription = "Delete",
-                        tint = MaterialTheme.colorScheme.error
-                    )
-                }
-                
-                IconButton(
-                    onClick = onInfoClick,
-                    modifier = Modifier.size(36.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Info,
-                        contentDescription = "Details",
-                        tint = fastingStateColor
-                    )
+                // Action buttons
+                Row {
+                    IconButton(
+                        onClick = onShareClick,
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Share,
+                            contentDescription = "Share",
+                            tint = fastingStateColor
+                        )
+                    }
+                    
+                    IconButton(
+                        onClick = onEditClick,
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Edit,
+                            contentDescription = "Edit",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    
+                    IconButton(
+                        onClick = onDeleteClick,
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Delete,
+                            contentDescription = "Delete",
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                    }
                 }
             }
         }
