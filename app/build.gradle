@@ -30,6 +30,7 @@ android {
                 "src/main/proguard-compose.pro",
                 "src/main/proguard-accompanist.pro"
             )
+            signingConfig signingConfigs.debug
         }
         debug {
             minifyEnabled = false

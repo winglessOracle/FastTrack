@@ -1437,9 +1437,9 @@ fun DatePickerDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    val calendar = Calendar.getInstance()
-                    calendar.set(selectedYear, selectedMonth, selectedDay)
-                    onDateSelected(calendar.timeInMillis)
+                    val resultCalendar = Calendar.getInstance()
+                    resultCalendar.set(selectedYear, selectedMonth, selectedDay)
+                    onDateSelected(resultCalendar.timeInMillis)
                 }
             ) {
                 Text("Select")
