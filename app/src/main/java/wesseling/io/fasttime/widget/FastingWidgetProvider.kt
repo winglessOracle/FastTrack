@@ -179,23 +179,23 @@ class FastingWidgetProvider : AppWidgetProvider() {
         }
         
         /**
-         * Set button click intents
+         * Set button click intents for the widget
          */
         private fun setButtonClickIntents(context: Context, views: RemoteViews) {
             try {
+                // Create intents for the buttons
                 val startIntent = Intent(context, FastingWidgetProvider::class.java).apply {
                     action = ACTION_START_TIMER
-                    putExtra("REQUEST_CODE", System.currentTimeMillis())
                 }
                 
                 val resetIntent = Intent(context, FastingWidgetProvider::class.java).apply {
                     action = ACTION_RESET_TIMER
-                    putExtra("REQUEST_CODE", System.currentTimeMillis())
                 }
                 
+                // Create pending intents
                 val startPendingIntent = PendingIntent.getBroadcast(
                     context,
-                    1, // Different request code for start
+                    1, // Request code for start
                     startIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )
@@ -207,7 +207,20 @@ class FastingWidgetProvider : AppWidgetProvider() {
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )
                 
+                // Create intent for the hours text to open adjust time dialog
+                val adjustTimeIntent = Intent(context, WidgetAdjustTimeActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+                
+                val adjustTimePendingIntent = PendingIntent.getActivity(
+                    context,
+                    3, // Different request code for adjust time
+                    adjustTimeIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
+                
                 // Set the separate intents for each button
+                views.setOnClickPendingIntent(R.id.widget_hours, adjustTimePendingIntent)
                 views.setOnClickPendingIntent(R.id.widget_start_button, startPendingIntent)
                 views.setOnClickPendingIntent(R.id.widget_reset_button, resetPendingIntent)
             } catch (e: Exception) {

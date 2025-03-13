@@ -49,6 +49,12 @@
             android:exported="false"
             android:theme="@style/Theme.FastTrack.Dialog" />
             
+        <!-- Widget adjust time activity -->
+        <activity
+            android:name=".widget.WidgetAdjustTimeActivity"
+            android:exported="false"
+            android:theme="@style/Theme.FastTrack.Dialog" />
+            
         <!-- Widget provider -->
         <receiver
             android:name=".widget.FastingWidgetProvider"
