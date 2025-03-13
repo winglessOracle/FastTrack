@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
+import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -73,7 +74,7 @@ fun AdjustStartTimeDialog(
     // Calculate current start time
     val currentStartTimeMillis = System.currentTimeMillis() - currentElapsedTimeMillis
     
-    // Extract hours and minutes from the start time
+    // Extract date and time components from the start time
     val calendar = Calendar.getInstance().apply {
         timeInMillis = currentStartTimeMillis
     }
@@ -82,24 +83,41 @@ fun AdjustStartTimeDialog(
     var selectedHour by remember { mutableIntStateOf(calendar.get(Calendar.HOUR_OF_DAY)) }
     var selectedMinute by remember { mutableIntStateOf(calendar.get(Calendar.MINUTE)) }
     
-    // Current date components (year, month, day)
-    val year = calendar.get(Calendar.YEAR)
-    val month = calendar.get(Calendar.MONTH)
-    val day = calendar.get(Calendar.DAY_OF_MONTH)
+    // Current date components
+    val currentYear = calendar.get(Calendar.YEAR)
+    val currentMonth = calendar.get(Calendar.MONTH)
+    val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
     
-    // State to track if we're adjusting to the previous day
-    var adjustToPreviousDay by remember { mutableStateOf(false) }
+    // Calculate the maximum number of days we can go back
+    // (limit to 30 days in the past to prevent unreasonable adjustments)
+    val maxDaysBack = 30
     
-    // Calculate the new start time based on selected hour and minute
+    // Create a list of selectable days (today and previous days)
+    val daysList = (0..maxDaysBack).map { daysBack ->
+        val cal = Calendar.getInstance()
+        cal.add(Calendar.DAY_OF_MONTH, -daysBack)
+        Triple(
+            cal.get(Calendar.DAY_OF_MONTH),
+            cal.get(Calendar.MONTH),
+            cal.get(Calendar.YEAR)
+        )
+    }
+    
+    // Find the index of the current day in the list
+    val initialDayIndex = daysList.indexOfFirst { (day, month, year) ->
+        day == currentDay && month == currentMonth && year == currentYear
+    }.coerceAtLeast(0)
+    
+    // State for the selected day index
+    var selectedDayIndex by remember { mutableIntStateOf(initialDayIndex) }
+    
+    // Get the selected day components
+    val (selectedDayOfMonth, selectedMonth, selectedYear) = daysList[selectedDayIndex]
+    
+    // Calculate the new start time based on selected date and time
     val newStartCalendar = Calendar.getInstance().apply {
-        // Set to the same day as the original start time
-        set(year, month, day, selectedHour, selectedMinute, 0)
+        set(selectedYear, selectedMonth, selectedDayOfMonth, selectedHour, selectedMinute, 0)
         set(Calendar.MILLISECOND, 0)
-        
-        // If adjusting to previous day, subtract one day
-        if (adjustToPreviousDay) {
-            add(Calendar.DAY_OF_MONTH, -1)
-        }
     }
     val newStartTimeMillis = newStartCalendar.timeInMillis
     
@@ -115,6 +133,7 @@ fun AdjustStartTimeDialog(
     
     // Format start times as actual dates
     val currentStartTimeFormatted = DateTimeFormatter.formatDateTime(currentStartTimeMillis, preferences)
+    val newStartTimeFormatted = DateTimeFormatter.formatDateTime(newStartTimeMillis, preferences)
     
     // Determine if the adjustment is valid (not in the future)
     val currentTime = System.currentTimeMillis()
@@ -223,54 +242,83 @@ fun AdjustStartTimeDialog(
                     
                     Spacer(modifier = Modifier.height(16.dp))
                     
+                    // Date and time pickers in a row
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Hour picker
-                        NumberPicker(
-                            value = selectedHour,
-                            onValueChange = { selectedHour = it },
-                            range = 0..23,
-                            format = { "%02d".format(it) }
-                        )
+                        // Day picker
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "Day",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            
+                            Spacer(modifier = Modifier.height(4.dp))
+                            
+                            DayPicker(
+                                selectedIndex = selectedDayIndex,
+                                onIndexChange = { selectedDayIndex = it },
+                                daysList = daysList
+                            )
+                        }
                         
-                        Text(
-                            text = ":",
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(horizontal = 8.dp)
-                        )
+                        Spacer(modifier = Modifier.width(16.dp))
                         
-                        // Minute picker
-                        NumberPicker(
-                            value = selectedMinute,
-                            onValueChange = { selectedMinute = it },
-                            range = 0..59,
-                            format = { "%02d".format(it) }
-                        )
+                        // Time pickers
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "Time",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            
+                            Spacer(modifier = Modifier.height(4.dp))
+                            
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                // Hour picker
+                                NumberPicker(
+                                    value = selectedHour,
+                                    onValueChange = { selectedHour = it },
+                                    range = 0..23,
+                                    format = { "%02d".format(it) }
+                                )
+                                
+                                Text(
+                                    text = ":",
+                                    fontSize = 24.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.padding(horizontal = 8.dp)
+                                )
+                                
+                                // Minute picker
+                                NumberPicker(
+                                    value = selectedMinute,
+                                    onValueChange = { selectedMinute = it },
+                                    range = 0..59,
+                                    format = { "%02d".format(it) }
+                                )
+                            }
+                        }
                     }
                     
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                     
-                    // Previous day checkbox
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Checkbox(
-                            checked = adjustToPreviousDay,
-                            onCheckedChange = { adjustToPreviousDay = it }
-                        )
-                        
-                        Text(
-                            text = "Previous day",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
+                    // Show the selected date and time
+                    Text(
+                        text = "New start time: $newStartTimeFormatted",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center
+                    )
                     
                     if (!isValidAdjustment) {
                         Spacer(modifier = Modifier.height(8.dp))
@@ -356,6 +404,73 @@ fun AdjustStartTimeDialog(
         titleContentColor = MaterialTheme.colorScheme.onSurface,
         textContentColor = MaterialTheme.colorScheme.onSurfaceVariant
     )
+}
+
+/**
+ * A day picker component that allows scrolling through days
+ */
+@Composable
+private fun DayPicker(
+    selectedIndex: Int,
+    onIndexChange: (Int) -> Unit,
+    daysList: List<Triple<Int, Int, Int>>
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .width(70.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
+            .padding(vertical = 8.dp)
+    ) {
+        // Up arrow
+        IconButton(
+            onClick = {
+                val newIndex = if (selectedIndex <= 0) 0 else selectedIndex - 1
+                onIndexChange(newIndex)
+            },
+            modifier = Modifier.size(36.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.ArrowDropUp,
+                contentDescription = "Previous Day",
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
+        
+        // Current value
+        Box(
+            modifier = Modifier
+                .height(40.dp)
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            val (day, _, _) = daysList[selectedIndex]
+            
+            // Format as "DD" (day of month)
+            Text(
+                text = "%02d".format(day),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+        
+        // Down arrow
+        IconButton(
+            onClick = {
+                val newIndex = if (selectedIndex >= daysList.size - 1) daysList.size - 1 else selectedIndex + 1
+                onIndexChange(newIndex)
+            },
+            modifier = Modifier.size(36.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.ArrowDropDown,
+                contentDescription = "Next Day",
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
+    }
 }
 
 /**
