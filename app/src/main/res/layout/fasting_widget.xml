@@ -83,7 +83,7 @@
                 android:paddingEnd="6dp"
                 android:paddingTop="2dp"
                 android:paddingBottom="2dp"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="16dp"
                 android:gravity="center"
                 android:contentDescription="Current fasting state" />
         </LinearLayout>

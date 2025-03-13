@@ -64,6 +64,7 @@ FastTime is a simple yet powerful app designed to help you track your fasting ti
      - When fasting: Tap to adjust your start time
      - When not fasting: Tap to open the main app
    - **State Display**: Shows your current fasting state
+     - Tap the state pill (colored text) to view detailed information about your current fasting state
 
 3. **Widget Colors**
    - The widget background color changes based on your fasting state

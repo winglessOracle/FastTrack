@@ -261,6 +261,16 @@ fun MainScreen(
                 
                 Spacer(modifier = Modifier.height(16.dp))
                 
+                // Fasting log button (moved to top for easier access)
+                Button(
+                    onClick = onNavigateToLog,
+                    modifier = Modifier.fillMaxWidth(0.8f)
+                ) {
+                    Text("View Fasting Log")
+                }
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
                 // Fasting timer button
                 FastingTimerButton()
                 
@@ -268,14 +278,6 @@ fun MainScreen(
                 FastingLegend()
                 
                 Spacer(modifier = Modifier.height(16.dp))
-                
-                // Fasting log button
-                Button(
-                    onClick = onNavigateToLog,
-                    modifier = Modifier.fillMaxWidth(0.8f)
-                ) {
-                    Text("View Fasting Log")
-                }
                 
                 // Settings button
                 Button(
