@@ -55,6 +55,12 @@
             android:exported="false"
             android:theme="@style/Theme.FastTrack.Dialog" />
             
+        <!-- Fasting state info activity -->
+        <activity
+            android:name=".widget.FastingStateInfoActivity"
+            android:exported="false"
+            android:theme="@style/Theme.FastTrack.Dialog" />
+            
         <!-- Widget provider -->
         <receiver
             android:name=".widget.FastingWidgetProvider"

@@ -68,7 +68,12 @@ fun HelpScreen(
         modifier = Modifier.systemBarsPadding(),
         topBar = {
             TopAppBar(
-                title = { Text("How to Use FastTrack") },
+                title = { 
+                    Text(
+                        text = "Help & Information",
+                        fontWeight = FontWeight.Bold
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBackPressed) {
                         Icon(
@@ -78,9 +83,8 @@ fun HelpScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             )
         }
@@ -144,7 +148,7 @@ fun BasicsTab() {
         Divider()
         
         // Main App Usage
-        HelpSection(
+        HelpSectionWithItems(
             title = "Using the Main App",
             items = listOf(
                 "Tap START to begin your fasting timer",
@@ -156,7 +160,7 @@ fun BasicsTab() {
         )
         
         // Hydration Section
-        HelpSection(
+        HelpSectionWithItems(
             title = "Importance of Hydration",
             items = listOf(
                 "Fasting concerns food, not water - stay hydrated!",
@@ -168,7 +172,7 @@ fun BasicsTab() {
         )
         
         // Fasting States
-        HelpSection(
+        HelpSectionWithItems(
             title = "Understanding Fasting States",
             items = listOf(
                 "Fed State (Gray): 0-4 hours, digestion & absorption",
@@ -182,20 +186,17 @@ fun BasicsTab() {
         )
         
         // Widget Usage
-        HelpSection(
-            title = "Using the Home Screen Widget",
+        HelpSectionWithItems(
+            title = "Widget Features",
             items = listOf(
-                "Add widget: Long-press home screen → Widgets → FastTrack",
-                "Tap START to begin a fast from your home screen",
-                "Tap RESET to end your current fast",
-                "Tap HOURS display when fasting to adjust your start time",
-                "Tap HOURS display when not fasting to open the main app",
-                "Widget color changes based on your fasting state",
-                "Green border appears when a fast is in progress"
+                "Add the FastTrack widget to your home screen",
+                "Tap START to begin a fast directly from your home screen",
+                "Tap RESET to end your fast",
+                "Tap the hours to adjust the start time (when fasting) or open the app (when not fasting)",
+                "Tap the state pill (colored text showing your current fasting state) to view detailed information about that fasting state",
+                "The widget updates automatically to show your current fasting state"
             )
         )
-        
-        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
@@ -209,102 +210,99 @@ fun FastingTypesTab() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        // Introduction
         Text(
-            text = "Popular Fasting Protocols",
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
+            text = "Common Intermittent Fasting Protocols",
+            style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
         
-        Text(
-            text = "FastTrack tracks the time you spend fasting. Here are some popular protocols:",
-            style = MaterialTheme.typography.bodyMedium,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
-        )
+        Divider()
         
-        // 16:8 Protocol
-        HelpSection(
-            title = "16:8 (Leangains)",
+        // 16:8 Method
+        HelpSectionWithItems(
+            title = "16:8 Method (Leangains)",
             items = listOf(
-                "Schedule: 16 hours fasting, 8 hours eating",
-                "Most popular and beginner-friendly approach",
-                "Easier to maintain, fits into most lifestyles",
-                "Best for beginners and daily routine",
-                "Try eating between 12pm-8pm or 10am-6pm"
+                "Fast for 16 hours, eat during an 8-hour window",
+                "Popular window: 12pm to 8pm",
+                "Suitable for beginners",
+                "Can be done daily",
+                "Good for weight management and metabolic health"
             )
         )
         
-        // 18:6 Protocol
-        HelpSection(
-            title = "18:6",
+        // 18:6 Method
+        HelpSectionWithItems(
+            title = "18:6 Method",
             items = listOf(
-                "Schedule: 18 hours fasting, 6 hours eating",
-                "Popular intermediate protocol",
-                "Reaches Glycogen Depletion and begins Metabolic Shift",
-                "Best for those who have mastered 16:8",
-                "Try eating between 12pm-6pm or 1pm-7pm"
+                "Fast for 18 hours, eat during a 6-hour window",
+                "Popular window: 2pm to 8pm",
+                "Intermediate level",
+                "Enhanced fat burning and ketosis",
+                "May improve insulin sensitivity"
             )
         )
         
-        // 20:4 Protocol
-        HelpSection(
-            title = "20:4 (Warrior Diet)",
+        // 20:4 Method (Warrior Diet)
+        HelpSectionWithItems(
+            title = "20:4 Method (Warrior Diet)",
             items = listOf(
-                "Schedule: 20 hours fasting, 4 hours eating",
-                "Popular among experienced fasters",
-                "Fully enters Metabolic Shift stage",
-                "Best for experienced fasters seeking results",
-                "Try one large meal with small snacks"
+                "Fast for 20 hours, eat during a 4-hour window",
+                "Popular window: 4pm to 8pm",
+                "Advanced level",
+                "Significant autophagy benefits",
+                "May enhance growth hormone production"
             )
         )
         
-        // OMAD Protocol
-        HelpSection(
+        // OMAD (One Meal A Day)
+        HelpSectionWithItems(
             title = "OMAD (One Meal A Day)",
             items = listOf(
-                "Schedule: 23 hours fasting, 1 hour eating",
-                "Growing in popularity among advanced fasters",
-                "Approaches Deep Ketosis stage with increased autophagy",
-                "Best for experienced fasters",
-                "Ensure your one meal is nutritionally complete"
+                "23:1 ratio - eat just one meal per day",
+                "Advanced level",
+                "Maximum autophagy benefits",
+                "Significant metabolic benefits",
+                "Requires careful nutritional planning"
             )
         )
         
-        // 5:2 Protocol
-        HelpSection(
-            title = "5:2 (The Fast Diet)",
+        // 5:2 Diet
+        HelpSectionWithItems(
+            title = "5:2 Diet",
             items = listOf(
-                "5 days normal eating, 2 days restricted calories",
-                "Popular for those who don't want daily fasting",
-                "Offers flexibility and psychological ease",
-                "Best for those who find daily fasting challenging",
-                "Try Monday and Thursday as fasting days"
+                "Eat normally 5 days a week",
+                "Restrict calories (500-600) on 2 non-consecutive days",
+                "Good for those who find daily fasting difficult",
+                "Flexible scheduling",
+                "Shown to improve metabolic markers"
+            )
+        )
+        
+        // Alternate Day Fasting
+        HelpSectionWithItems(
+            title = "Alternate Day Fasting",
+            items = listOf(
+                "Fast every other day",
+                "Advanced level",
+                "Significant weight loss potential",
+                "May improve cardiovascular health",
+                "Requires careful planning and adaptation"
             )
         )
         
         // Extended Fasting
-        HelpSection(
-            title = "Extended Fasting (36-72+ hours)",
+        HelpSectionWithItems(
+            title = "Extended Fasting",
             items = listOf(
-                "Fasting for 36-72+ hours, done occasionally",
-                "Practiced by advanced fasters",
-                "Reaches Deep Ketosis and potentially Immune Reset stages",
-                "Promotes autophagy, stem cell production, and cellular renewal",
-                "Only for experienced fasters with medical supervision"
+                "Fasts lasting 24-72+ hours",
+                "Expert level - not for beginners",
+                "Maximum autophagy and cellular rejuvenation",
+                "Significant immune system reset",
+                "Should be done under medical supervision",
+                "Not recommended for regular practice"
             )
-        )
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        // Disclaimer
-        Text(
-            text = "Always consult with a healthcare professional before starting any fasting regimen",
-            style = MaterialTheme.typography.bodySmall,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-            modifier = Modifier.fillMaxWidth()
         )
     }
 }
@@ -319,67 +317,85 @@ fun TipsTab() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        // Introduction
         Text(
-            text = "Tips for Your Fasting Journey",
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
+            text = "Tips for Successful Fasting",
+            style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
         
-        // For Beginners
-        HelpSection(
-            title = "For Beginners",
+        Divider()
+        
+        // Getting Started
+        HelpSectionWithItems(
+            title = "Getting Started",
             items = listOf(
-                "Start with a 12:12 schedule and gradually extend",
-                "Stay hydrated with water, black coffee, or tea",
-                "Plan nutritious, balanced meals for eating windows",
-                "Be patient as your body adapts to fasting",
-                "Use FastTrack to track how you feel at different durations",
-                "Don't stress if you need to break your fast early",
-                "Align your eating window with your social schedule"
+                "Start with shorter fasting windows (12-14 hours)",
+                "Gradually increase your fasting duration",
+                "Be consistent with your fasting schedule",
+                "Track your progress with FastTrack",
+                "Listen to your body and adjust as needed"
             )
         )
         
-        // For Intermediate Fasters
-        HelpSection(
-            title = "For Intermediate Fasters",
+        // Hydration
+        HelpSectionWithItems(
+            title = "Stay Hydrated",
             items = listOf(
-                "Try various fasting schedules to find what works best",
-                "Consider light exercise during fasted states",
-                "Focus on nutrient-dense foods during eating windows",
-                "Adjust your schedule based on your energy needs",
-                "Consider electrolytes for fasts longer than 18 hours",
-                "Use the fasting log to identify patterns",
-                "Gradually work up to longer fasts if that's your goal"
+                "Drink plenty of water throughout your fast",
+                "Add electrolytes for longer fasts (24+ hours)",
+                "Black coffee and unsweetened tea are permitted",
+                "Avoid artificial sweeteners during fasting",
+                "Carbonated water can help with hunger pangs"
             )
         )
         
-        // For Advanced Fasters
-        HelpSection(
-            title = "For Advanced Fasters",
+        // Managing Hunger
+        HelpSectionWithItems(
+            title = "Managing Hunger",
             items = listOf(
-                "Try 24-72 hour fasts occasionally",
-                "Focus on nutrient density during refeeding periods",
-                "Monitor health markers with regular check-ups",
-                "Listen to your body - know when to push and when to rest",
-                "Integrate fasting with exercise and stress management",
-                "Remember your fasting journey is unique to you",
-                "Consider working with healthcare providers knowledgeable about fasting"
+                "Hunger comes in waves and typically passes",
+                "Stay busy during peak hunger times",
+                "Drink water when hunger strikes",
+                "Light exercise can reduce hunger",
+                "Remember: hunger is not an emergency"
             )
         )
         
-        // Common Challenges
-        HelpSection(
-            title = "Overcoming Common Challenges",
+        // Breaking Your Fast
+        HelpSectionWithItems(
+            title = "Breaking Your Fast",
             items = listOf(
-                "Hunger pangs: Try drinking water or herbal tea",
-                "Low energy: Schedule demanding activities during eating windows",
-                "Social events: Consider adjusting your fasting window for special occasions",
-                "Plateaus: Try changing your fasting schedule or duration",
-                "Cravings: Distract yourself with activities or light exercise",
-                "Headaches: Ensure proper hydration and electrolyte balance",
-                "Difficulty sleeping: Consider adjusting your eating window to end earlier"
+                "Break your fast with a small, easily digestible meal",
+                "Avoid large, heavy meals immediately after fasting",
+                "Include protein and healthy fats",
+                "Chew food thoroughly and eat slowly",
+                "For longer fasts (24+ hours), be especially careful"
+            )
+        )
+        
+        // Nutrition During Eating Windows
+        HelpSectionWithItems(
+            title = "Nutrition During Eating Windows",
+            items = listOf(
+                "Focus on nutrient-dense whole foods",
+                "Include adequate protein (0.8-1g per lb of lean body mass)",
+                "Don't neglect healthy fats",
+                "Include plenty of vegetables and fiber",
+                "Consider your total caloric needs"
+            )
+        )
+        
+        // When to Stop Fasting
+        HelpSectionWithItems(
+            title = "When to Stop Fasting",
+            items = listOf(
+                "If you feel unwell beyond normal hunger",
+                "If you experience dizziness or weakness",
+                "If you have a medical condition that requires food",
+                "During illness or high stress periods",
+                "During pregnancy or breastfeeding"
             )
         )
         
@@ -399,11 +415,47 @@ fun TipsTab() {
 @Composable
 fun HelpSection(
     title: String,
+    content: String
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+            
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            Text(
+                text = content,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+    }
+}
+
+@Composable
+fun HelpSectionWithItems(
+    title: String,
     items: List<String>
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
     ) {
         Column(
             modifier = Modifier.padding(16.dp),

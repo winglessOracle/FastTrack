@@ -201,6 +201,7 @@ class FastingWidgetProvider : AppWidgetProvider() {
                 // Get the fasting timer to check state
                 val fastingTimer = FastingTimer.getInstance(context)
                 val isRunning = fastingTimer.isRunning
+                val currentState = fastingTimer.currentFastingState
                 
                 // Create intents for the buttons
                 val startIntent = Intent(context, FastingWidgetProvider::class.java).apply {
@@ -225,6 +226,22 @@ class FastingWidgetProvider : AppWidgetProvider() {
                     resetIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
                 )
+                
+                // Create intent for the state pill to open state info dialog
+                val stateInfoIntent = Intent(context, FastingStateInfoActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    putExtra(FastingStateInfoActivity.EXTRA_FASTING_STATE_ORDINAL, currentState.ordinal)
+                }
+                
+                val stateInfoPendingIntent = PendingIntent.getActivity(
+                    context,
+                    5, // Different request code for state info
+                    stateInfoIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+                )
+                
+                // Set click handler for state pill
+                views.setOnClickPendingIntent(R.id.widget_state, stateInfoPendingIntent)
                 
                 // Only set adjust time intent if timer is running
                 if (isRunning) {
