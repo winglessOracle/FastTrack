@@ -10,6 +10,7 @@ import android.graphics.RectF
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.util.Log
+import android.util.LruCache
 import wesseling.io.fasttime.model.FastingState
 import wesseling.io.fasttime.model.ThemePreference
 import wesseling.io.fasttime.settings.PreferencesManager
@@ -39,6 +40,23 @@ object WidgetBackgroundHelper {
     private const val DEEP_KETOSIS_GREEN_DARK = "#4CAF50"
     private const val IMMUNE_RESET_PURPLE_DARK = "#B39DDB"
     private const val EXTENDED_FAST_MAGENTA_DARK = "#EC4899"
+    
+    // Memory cache for background drawables
+    // Use 1/8th of available memory for this cache
+    private val maxMemory = (Runtime.getRuntime().maxMemory() / 1024).toInt()
+    private val cacheSize = maxMemory / 8
+    private val memoryCache = object : LruCache<String, Bitmap>(cacheSize) {
+        override fun sizeOf(key: String, bitmap: Bitmap): Int {
+            // The cache size will be measured in kilobytes
+            return bitmap.byteCount / 1024
+        }
+    }
+    
+    // Cache cleanup - call this when the app is in the background
+    fun clearMemoryCache() {
+        memoryCache.evictAll()
+        Log.d(TAG, "Memory cache cleared")
+    }
     
     /**
      * Get color for fasting state, considering the current theme
@@ -89,28 +107,48 @@ object WidgetBackgroundHelper {
     }
     
     /**
-     * Create a background drawable for the widget based on the fasting state
-     * @return Path to the saved drawable file
+     * Get a background drawable for the widget based on the fasting state
+     * This method checks memory cache first, then file cache, then creates a new drawable
      */
-    fun createBackgroundDrawable(
+    fun getBackgroundDrawable(
         context: Context,
         stateColor: Int,
-        borderColor: Int,
-        borderWidth: Float
-    ): String? {
+        borderColor: Int = Color.TRANSPARENT,
+        borderWidth: Float = 0f
+    ): Drawable {
+        // Create a unique key for this drawable configuration
+        val cacheKey = "widget_bg_${stateColor}_${borderColor}_${borderWidth.toInt()}"
+        
         try {
-            // Create a unique filename based on the color and border
-            val filename = "widget_bg_${stateColor}_${borderColor}_${borderWidth.toInt()}.png"
-            val file = File(context.cacheDir, filename)
-            
-            // Check if the file already exists
-            if (file.exists()) {
-                Log.d(TAG, "Using cached background: $filename")
-                return file.absolutePath
+            // 1. Check memory cache first (fastest)
+            val cachedBitmap = memoryCache.get(cacheKey)
+            if (cachedBitmap != null) {
+                Log.d(TAG, "Using memory-cached background: $cacheKey")
+                return BitmapDrawable(context.resources, cachedBitmap)
             }
             
+            // 2. Check file cache next
+            val file = File(context.cacheDir, "$cacheKey.png")
+            if (file.exists() && file.length() > 0) {
+                try {
+                    // Load bitmap from file
+                    val bitmap = android.graphics.BitmapFactory.decodeFile(file.absolutePath)
+                    if (bitmap != null) {
+                        // Add to memory cache for future use
+                        memoryCache.put(cacheKey, bitmap)
+                        Log.d(TAG, "Loaded background from file cache: $cacheKey")
+                        return BitmapDrawable(context.resources, bitmap)
+                    }
+                } catch (e: Exception) {
+                    Log.w(TAG, "Failed to load cached drawable from file, will recreate", e)
+                    // Continue to create a new one if loading failed
+                }
+            }
+            
+            // 3. Create new drawable
+            Log.d(TAG, "Creating new background drawable: $cacheKey")
+            
             // Create the bitmap with gradient and border
-            // Increased dimensions for better quality
             val width = 800 // Width of the drawable
             val height = 240 // Height of the drawable
             val cornerRadius = 24f // Corner radius in dp
@@ -126,17 +164,90 @@ object WidgetBackgroundHelper {
                 borderColor, borderWidth
             )
             
-            // Save the bitmap to a file
-            FileOutputStream(file).use { out ->
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
-            }
+            // Save to memory cache
+            memoryCache.put(cacheKey, bitmap)
             
-            Log.d(TAG, "Created new background: $filename")
-            return file.absolutePath
+            // Save to file cache in the background
+            Thread {
+                try {
+                    FileOutputStream(file).use { out ->
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 90, out)
+                    }
+                    Log.d(TAG, "Saved background to file cache: $cacheKey")
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to save background to file cache", e)
+                }
+            }.start()
+            
+            return BitmapDrawable(context.resources, bitmap)
         } catch (e: Exception) {
             Log.e(TAG, "Error creating background drawable", e)
-            return null
+            
+            // Return a simple colored drawable as fallback
+            val fallbackBitmap = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(fallbackBitmap)
+            canvas.drawColor(stateColor)
+            return BitmapDrawable(context.resources, fallbackBitmap)
         }
+    }
+    
+    /**
+     * Clean up old cache files that haven't been accessed recently
+     * Call this periodically to prevent cache from growing too large
+     */
+    fun cleanupCacheFiles(context: Context) {
+        Thread {
+            try {
+                val cacheDir = context.cacheDir
+                if (!cacheDir.exists()) {
+                    return@Thread
+                }
+                
+                val currentTime = System.currentTimeMillis()
+                val maxAge = 7 * 24 * 60 * 60 * 1000L // 7 days in milliseconds
+                
+                cacheDir.listFiles()?.forEach { file ->
+                    if (file.name.startsWith("widget_bg_") && file.name.endsWith(".png")) {
+                        val fileAge = currentTime - file.lastModified()
+                        if (fileAge > maxAge) {
+                            file.delete()
+                            Log.d(TAG, "Deleted old cache file: ${file.name}")
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error cleaning up cache files", e)
+            }
+        }.start()
+    }
+    
+    // For backward compatibility - will be removed in future versions
+    @Deprecated("Use getBackgroundDrawable instead", ReplaceWith("getBackgroundDrawable(context, stateColor, borderColor, borderWidth)"))
+    fun createBackgroundDrawable(
+        context: Context,
+        stateColor: Int,
+        borderColor: Int,
+        borderWidth: Float
+    ): String? {
+        // Create a drawable and return its path
+        val drawable = getBackgroundDrawable(context, stateColor, borderColor, borderWidth)
+        
+        // For compatibility, save to file and return the path
+        val cacheKey = "widget_bg_${stateColor}_${borderColor}_${borderWidth.toInt()}"
+        val file = File(context.cacheDir, "$cacheKey.png")
+        
+        try {
+            if (drawable is BitmapDrawable) {
+                FileOutputStream(file).use { out ->
+                    drawable.bitmap.compress(Bitmap.CompressFormat.PNG, 90, out)
+                }
+                return file.absolutePath
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error in compatibility method", e)
+        }
+        
+        return null
     }
     
     /**

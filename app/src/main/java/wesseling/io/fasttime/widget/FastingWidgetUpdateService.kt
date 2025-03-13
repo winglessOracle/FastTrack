@@ -6,10 +6,13 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.os.BatteryManager
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import android.os.PowerManager
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import wesseling.io.fasttime.MainActivity
@@ -19,6 +22,7 @@ import java.util.concurrent.TimeUnit
 
 /**
  * Service to update the fasting widget periodically
+ * Implements battery-aware update intervals to conserve battery
  */
 class FastingWidgetUpdateService : Service() {
     private val handler = Handler(Looper.getMainLooper())
@@ -46,6 +50,10 @@ class FastingWidgetUpdateService : Service() {
         private const val TAG = "WidgetUpdateService"
         private const val NOTIFICATION_ID = 1001
         private const val CHANNEL_ID = "fasting_widget_channel"
+        
+        // Battery thresholds
+        private const val BATTERY_LOW_THRESHOLD = 15 // 15%
+        private const val BATTERY_MEDIUM_THRESHOLD = 30 // 30%
     }
     
     override fun onCreate() {
@@ -123,14 +131,22 @@ class FastingWidgetUpdateService : Service() {
         .build()
     
     /**
-     * Schedule the next update with an adaptive interval based on fasting state
+     * Schedule the next update with an adaptive interval based on fasting state and battery level
      */
     private fun scheduleNextUpdateWithAdaptiveInterval() {
         try {
             val fastingTimer = FastingTimer.getInstance(this)
             
-            // Calculate appropriate update interval
-            val updateInterval = when {
+            // Get battery information
+            val batteryInfo = getBatteryInfo()
+            val batteryLevel = batteryInfo.first
+            val isCharging = batteryInfo.second
+            val isPowerSaveMode = isPowerSaveMode()
+            
+            Log.d(TAG, "Battery level: $batteryLevel%, Charging: $isCharging, Power save: $isPowerSaveMode")
+            
+            // Base update interval based on fasting state
+            val baseInterval = when {
                 // When timer is running, update more frequently
                 fastingTimer.isRunning -> {
                     val elapsedHours = TimeUnit.MILLISECONDS.toHours(fastingTimer.elapsedTimeMillis).toInt()
@@ -155,15 +171,63 @@ class FastingWidgetUpdateService : Service() {
                 else -> TimeUnit.MINUTES.toMillis(15)
             }
             
-            Log.d(TAG, "Next update scheduled in ${updateInterval/1000} seconds")
+            // Adjust interval based on battery level and charging state
+            val adjustedInterval = when {
+                // If charging, we can use the base interval
+                isCharging -> baseInterval
+                
+                // If in power save mode, extend intervals significantly
+                isPowerSaveMode -> baseInterval * 3
+                
+                // If battery is low, extend intervals
+                batteryLevel <= BATTERY_LOW_THRESHOLD -> baseInterval * 2.5
+                
+                // If battery is medium, slightly extend intervals
+                batteryLevel <= BATTERY_MEDIUM_THRESHOLD -> baseInterval * 1.5
+                
+                // Otherwise use the base interval
+                else -> baseInterval
+            }.toLong()
+            
+            Log.d(TAG, "Next update scheduled in ${adjustedInterval/1000} seconds (base: ${baseInterval/1000}s)")
             
             // Ensure we don't have multiple callbacks
             handler.removeCallbacks(updateRunnable)
-            handler.postDelayed(updateRunnable, updateInterval)
+            handler.postDelayed(updateRunnable, adjustedInterval)
         } catch (e: Exception) {
             Log.e(TAG, "Error scheduling next update", e)
             // Fallback to a safe interval
             handler.postDelayed(updateRunnable, TimeUnit.MINUTES.toMillis(5))
+        }
+    }
+    
+    /**
+     * Get battery level and charging state
+     * @return Pair of (batteryLevel, isCharging)
+     */
+    private fun getBatteryInfo(): Pair<Int, Boolean> {
+        val batteryIntent = registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+        
+        val level = batteryIntent?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
+        val scale = batteryIntent?.getIntExtra(BatteryManager.EXTRA_SCALE, -1) ?: -1
+        val batteryLevel = if (level != -1 && scale != -1) (level * 100 / scale) else 50
+        
+        val status = batteryIntent?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
+        val isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING || 
+                         status == BatteryManager.BATTERY_STATUS_FULL
+        
+        return Pair(batteryLevel, isCharging)
+    }
+    
+    /**
+     * Check if device is in power save mode
+     */
+    private fun isPowerSaveMode(): Boolean {
+        val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            powerManager.isPowerSaveMode
+        } else {
+            false
         }
     }
     

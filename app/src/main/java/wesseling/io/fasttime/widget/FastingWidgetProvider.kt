@@ -153,6 +153,11 @@ class FastingWidgetProvider : AppWidgetProvider() {
                     views.setInt(R.id.widget_background, "setBackgroundResource", R.drawable.widget_container_background)
                 }
                 
+                // Periodically clean up old cache files (do this rarely)
+                if (Math.random() < 0.01) { // 1% chance on each update
+                    WidgetBackgroundHelper.cleanupCacheFiles(context)
+                }
+                
                 Log.d(TAG, "Set background color for state: ${currentState.name}, color: ${Integer.toHexString(stateColor)}")
             } catch (e: Exception) {
                 Log.e(TAG, "Error setting background", e)
@@ -183,6 +188,10 @@ class FastingWidgetProvider : AppWidgetProvider() {
          */
         private fun setButtonClickIntents(context: Context, views: RemoteViews) {
             try {
+                // Get the fasting timer to check state
+                val fastingTimer = FastingTimer.getInstance(context)
+                val isRunning = fastingTimer.isRunning
+                
                 // Create intents for the buttons
                 val startIntent = Intent(context, FastingWidgetProvider::class.java).apply {
                     action = ACTION_START_TIMER
@@ -207,20 +216,40 @@ class FastingWidgetProvider : AppWidgetProvider() {
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )
                 
-                // Create intent for the hours text to open adjust time dialog
-                val adjustTimeIntent = Intent(context, WidgetAdjustTimeActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                // Only set adjust time intent if timer is running
+                if (isRunning) {
+                    // Create intent for the hours text to open adjust time dialog
+                    val adjustTimeIntent = Intent(context, WidgetAdjustTimeActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    }
+                    
+                    val adjustTimePendingIntent = PendingIntent.getActivity(
+                        context,
+                        3, // Different request code for adjust time
+                        adjustTimeIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                    )
+                    
+                    // Set click handler for hours text
+                    views.setOnClickPendingIntent(R.id.widget_hours, adjustTimePendingIntent)
+                } else {
+                    // If not running, clicking hours will start the main app
+                    val mainAppIntent = Intent(context, MainActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    }
+                    
+                    val mainAppPendingIntent = PendingIntent.getActivity(
+                        context,
+                        4, // Different request code for main app
+                        mainAppIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                    )
+                    
+                    // Set click handler for hours text to open main app
+                    views.setOnClickPendingIntent(R.id.widget_hours, mainAppPendingIntent)
                 }
                 
-                val adjustTimePendingIntent = PendingIntent.getActivity(
-                    context,
-                    3, // Different request code for adjust time
-                    adjustTimeIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-                )
-                
                 // Set the separate intents for each button
-                views.setOnClickPendingIntent(R.id.widget_hours, adjustTimePendingIntent)
                 views.setOnClickPendingIntent(R.id.widget_start_button, startPendingIntent)
                 views.setOnClickPendingIntent(R.id.widget_reset_button, resetPendingIntent)
             } catch (e: Exception) {

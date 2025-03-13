@@ -61,6 +61,8 @@ FastTime is a simple yet powerful app designed to help you track your fasting ti
    - **Start Button**: Tap to begin a new fast
    - **Reset Button**: Tap to end your current fast (requires confirmation)
    - **Hours Display**: Shows your current fasting duration
+     - When fasting: Tap to adjust your start time
+     - When not fasting: Tap to open the main app
    - **State Display**: Shows your current fasting state
 
 3. **Widget Colors**

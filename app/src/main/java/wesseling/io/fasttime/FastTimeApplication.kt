@@ -9,6 +9,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import wesseling.io.fasttime.timer.FastingTimer
+import wesseling.io.fasttime.widget.WidgetBackgroundHelper
 
 /**
  * Custom Application class for FastTrack app
@@ -34,6 +35,9 @@ class FastTrackApplication : Application(), LifecycleEventObserver {
                 // App moved to background
                 Log.d(TAG, "App moved to background, saving state")
                 saveAllState()
+                
+                // Clear memory caches to free up memory
+                clearMemoryCaches()
             }
             Lifecycle.Event.ON_DESTROY -> {
                 // App is being destroyed
@@ -61,6 +65,9 @@ class FastTrackApplication : Application(), LifecycleEventObserver {
         
         // Save state and clean up non-essential resources
         saveAllState()
+        
+        // Clear all memory caches
+        clearMemoryCaches()
     }
     
     /**
@@ -89,12 +96,33 @@ class FastTrackApplication : Application(), LifecycleEventObserver {
     }
     
     /**
+     * Clear memory caches to free up memory
+     */
+    private fun clearMemoryCaches() {
+        try {
+            // Clear widget background memory cache
+            WidgetBackgroundHelper.clearMemoryCache()
+            
+            // Run garbage collection to reclaim memory
+            System.gc()
+            
+            Log.d(TAG, "Memory caches cleared")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error clearing memory caches", e)
+        }
+    }
+    
+    /**
      * Clean up singleton instances
      */
     private fun cleanupSingletons() {
         try {
             // Destroy FastingTimer instance
             FastingTimer.destroyInstance()
+            
+            // Clear memory caches
+            clearMemoryCaches()
+            
             Log.d(TAG, "Singletons cleaned up successfully")
         } catch (e: Exception) {
             Log.e(TAG, "Error cleaning up singletons", e)

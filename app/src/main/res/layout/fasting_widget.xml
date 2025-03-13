@@ -32,31 +32,42 @@
             android:gravity="center_vertical"
             android:layout_marginStart="4dp">
 
-            <TextView
-                android:id="@+id/widget_hours"
+            <!-- Wrap hours in a clickable container with visual feedback -->
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#FFFFFF"
-                android:shadowColor="#80000000"
-                android:shadowDx="1"
-                android:shadowDy="1"
-                android:shadowRadius="1" />
-            
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="hrs"
-                android:textSize="12sp"
-                android:textColor="#FFFFFF"
-                android:alpha="0.9"
-                android:layout_marginStart="2dp"
-                android:shadowColor="#80000000"
-                android:shadowDx="1"
-                android:shadowDy="1"
-                android:shadowRadius="1" />
+                android:orientation="horizontal"
+                android:background="@drawable/clickable_widget_item"
+                android:padding="4dp">
+                
+                <TextView
+                    android:id="@+id/widget_hours"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:shadowColor="#80000000"
+                    android:shadowDx="1"
+                    android:shadowDy="1"
+                    android:shadowRadius="1"
+                    android:contentDescription="Fasting hours. Tap to adjust start time when fasting, or open app when not fasting" />
+                
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="hrs"
+                    android:textSize="12sp"
+                    android:textColor="#FFFFFF"
+                    android:alpha="0.9"
+                    android:layout_marginStart="2dp"
+                    android:shadowColor="#80000000"
+                    android:shadowDx="1"
+                    android:shadowDy="1"
+                    android:shadowRadius="1"
+                    android:importantForAccessibility="no" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/widget_state"
@@ -72,7 +83,8 @@
                 android:paddingTop="2dp"
                 android:paddingBottom="2dp"
                 android:layout_marginStart="8dp"
-                android:gravity="center" />
+                android:gravity="center"
+                android:contentDescription="Current fasting state" />
         </LinearLayout>
 
         <!-- Right section: Buttons -->

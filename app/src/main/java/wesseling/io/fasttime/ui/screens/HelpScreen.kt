@@ -188,6 +188,8 @@ fun BasicsTab() {
                 "Add widget: Long-press home screen → Widgets → FastTrack",
                 "Tap START to begin a fast from your home screen",
                 "Tap RESET to end your current fast",
+                "Tap HOURS display when fasting to adjust your start time",
+                "Tap HOURS display when not fasting to open the main app",
                 "Widget color changes based on your fasting state",
                 "Green border appears when a fast is in progress"
             )
