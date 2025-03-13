@@ -1,10 +1,15 @@
 package wesseling.io.fasttime.ui.screens
 
+import android.content.Intent
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.BatteryChargingFull
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,6 +21,7 @@ import wesseling.io.fasttime.model.DateFormat
 import wesseling.io.fasttime.model.ThemePreference
 import wesseling.io.fasttime.model.TimeFormat
 import wesseling.io.fasttime.settings.PreferencesManager
+import wesseling.io.fasttime.util.BatteryOptimizationHelper
 
 /**
  * Settings screen for the app
@@ -255,6 +261,91 @@ fun SettingsScreen(
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
+                        }
+                    }
+                }
+            }
+            
+            // Battery Optimization Section
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.BatteryChargingFull,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "Battery Optimization",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        
+                        var isIgnoringBatteryOptimizations by remember { 
+                            mutableStateOf(BatteryOptimizationHelper.isIgnoringBatteryOptimizations(context)) 
+                        }
+                        
+                        val batteryOptimizationLauncher = rememberLauncherForActivityResult(
+                            contract = ActivityResultContracts.StartActivityForResult()
+                        ) {
+                            // Check the status again after returning from the settings
+                            isIgnoringBatteryOptimizations = BatteryOptimizationHelper.isIgnoringBatteryOptimizations(context)
+                        }
+                        
+                        Text(
+                            text = "Disabling battery optimization allows the app to update the widget and track your fasting time more reliably, but may slightly increase battery usage.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        
+                        if (isIgnoringBatteryOptimizations) {
+                            Text(
+                                text = "Battery optimization is disabled for this app.",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            OutlinedButton(
+                                onClick = {
+                                    batteryOptimizationLauncher.launch(
+                                        BatteryOptimizationHelper.createBatteryOptimizationSettingsIntent()
+                                    )
+                                }
+                            ) {
+                                Text("Battery Settings")
+                            }
+                        } else {
+                            Text(
+                                text = "Battery optimization is enabled for this app, which may cause widget updates to be delayed or missed.",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.error
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Button(
+                                onClick = {
+                                    BatteryOptimizationHelper.createBatteryOptimizationIntent(context)?.let {
+                                        batteryOptimizationLauncher.launch(it)
+                                    }
+                                }
+                            ) {
+                                Text("Disable Battery Optimization")
+                            }
                         }
                     }
                 }

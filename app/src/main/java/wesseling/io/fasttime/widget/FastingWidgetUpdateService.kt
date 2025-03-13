@@ -154,21 +154,21 @@ class FastingWidgetUpdateService : Service() {
                     // Update more frequently near state transitions
                     when {
                         // Near state transitions (within 10 minutes), update more frequently
-                        isNearStateTransition(elapsedHours) -> TimeUnit.SECONDS.toMillis(30)
+                        isNearStateTransition(elapsedHours) -> TimeUnit.SECONDS.toMillis(60)
                         
-                        // First hour of fasting, update every minute
-                        elapsedHours < 1 -> TimeUnit.MINUTES.toMillis(1)
+                        // First hour of fasting, update every 2 minutes
+                        elapsedHours < 1 -> TimeUnit.MINUTES.toMillis(2)
                         
                         // After 24 hours, update less frequently
-                        elapsedHours >= 24 -> TimeUnit.MINUTES.toMillis(5)
+                        elapsedHours >= 24 -> TimeUnit.MINUTES.toMillis(10)
                         
                         // Default update interval when running
-                        else -> TimeUnit.MINUTES.toMillis(2)
+                        else -> TimeUnit.MINUTES.toMillis(5)
                     }
                 }
                 
-                // When not running, update infrequently to save battery
-                else -> TimeUnit.MINUTES.toMillis(15)
+                // When not running, update very infrequently to save battery
+                else -> TimeUnit.MINUTES.toMillis(30)
             }
             
             // Adjust interval based on battery level and charging state
@@ -177,13 +177,13 @@ class FastingWidgetUpdateService : Service() {
                 isCharging -> baseInterval
                 
                 // If in power save mode, extend intervals significantly
-                isPowerSaveMode -> baseInterval * 3
+                isPowerSaveMode -> baseInterval * 4
                 
                 // If battery is low, extend intervals
-                batteryLevel <= BATTERY_LOW_THRESHOLD -> baseInterval * 2.5
+                batteryLevel <= BATTERY_LOW_THRESHOLD -> baseInterval * 3
                 
                 // If battery is medium, slightly extend intervals
-                batteryLevel <= BATTERY_MEDIUM_THRESHOLD -> baseInterval * 1.5
+                batteryLevel <= BATTERY_MEDIUM_THRESHOLD -> baseInterval * 2
                 
                 // Otherwise use the base interval
                 else -> baseInterval
@@ -197,7 +197,7 @@ class FastingWidgetUpdateService : Service() {
         } catch (e: Exception) {
             Log.e(TAG, "Error scheduling next update", e)
             // Fallback to a safe interval
-            handler.postDelayed(updateRunnable, TimeUnit.MINUTES.toMillis(5))
+            handler.postDelayed(updateRunnable, TimeUnit.MINUTES.toMillis(10))
         }
     }
     

@@ -221,6 +221,8 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
             
             timerJob = coroutineScope.launch {
                 var lastUpdateTime = System.currentTimeMillis()
+                var inBackground: Boolean
+                var updateInterval: Long
                 
                 while (isRunning) {
                     try {
@@ -237,8 +239,24 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
                         elapsedTimeMillis = expectedElapsed
                         updateFastingState()
                         
+                        // Check if app is in foreground by checking if any activities are resumed
+                        val activityManager = appContext.getSystemService(Context.ACTIVITY_SERVICE) as android.app.ActivityManager
+                        val appProcessInfo = activityManager.runningAppProcesses?.find { 
+                            it.processName == appContext.packageName 
+                        }
+                        
+                        // Adjust update interval based on app state
+                        inBackground = appProcessInfo?.importance != android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
+                        updateInterval = if (inBackground) {
+                            // When in background, update less frequently
+                            5000L // 5 seconds
+                        } else {
+                            // When in foreground, update every second
+                            1000L
+                        }
+                        
                         lastUpdateTime = currentTime
-                        delay(1000) // Update every second
+                        delay(updateInterval)
                     } catch (e: Exception) {
                         Log.e(TAG, "Error in timer loop", e)
                         // Only reset if it's not a cancellation
