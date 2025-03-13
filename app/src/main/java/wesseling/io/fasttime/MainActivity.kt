@@ -50,6 +50,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import wesseling.io.fasttime.model.CompletedFast
 import wesseling.io.fasttime.model.FastingState
 import wesseling.io.fasttime.repository.FastingRepository
@@ -66,6 +67,12 @@ import wesseling.io.fasttime.ui.theme.FastTrackTheme
 class MainActivity : ComponentActivity() {
     companion object {
         private const val TAG = "MainActivity"
+        const val SHOW_COMPLETED_FAST = "SHOW_COMPLETED_FAST"
+        const val SHOW_FASTING_DETAILS = "SHOW_FASTING_DETAILS"
+        const val START_TIME = "START_TIME"
+        const val END_TIME = "END_TIME"
+        const val DURATION = "DURATION"
+        const val MAX_STATE = "MAX_STATE"
     }
     
     // Register the permission launcher
@@ -99,24 +106,25 @@ class MainActivity : ComponentActivity() {
         // Check and request notification permission for Android 13+ (API 33+)
         checkAndRequestNotificationPermission()
         
-        // Check if we need to show a completed fast from the widget
-        val showCompletedFast = intent.getBooleanExtra("SHOW_COMPLETED_FAST", false)
         var completedFast: CompletedFast? = null
+        var initialScreen = "main"
         
-        if (showCompletedFast) {
+        // Handle intent extras
+        if (intent?.getBooleanExtra(SHOW_COMPLETED_FAST, false) == true) {
             try {
-                val startTime = intent.getLongExtra("START_TIME", 0)
-                val endTime = intent.getLongExtra("END_TIME", 0)
-                val duration = intent.getLongExtra("DURATION", 0)
-                val maxStateOrdinal = intent.getIntExtra("MAX_STATE", 0)
+                val startTime = intent.getLongExtra(START_TIME, 0)
+                val endTime = intent.getLongExtra(END_TIME, 0)
+                val duration = intent.getLongExtra(DURATION, 0)
                 
-                if (duration > 0) {
-                    val maxState = if (maxStateOrdinal >= 0 && maxStateOrdinal < FastingState.entries.size) {
-                        FastingState.entries[maxStateOrdinal]
-                    } else {
-                        FastingState.NOT_FASTING
-                    }
-                    
+                // Replace deprecated getSerializableExtra with the newer version
+                val maxState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    intent.getSerializableExtra(MAX_STATE, FastingState::class.java) ?: FastingState.NOT_FASTING
+                } else {
+                    @Suppress("DEPRECATION")
+                    intent.getSerializableExtra(MAX_STATE) as? FastingState ?: FastingState.NOT_FASTING
+                }
+                
+                if (startTime > 0 && endTime > 0 && duration > 0) {
                     completedFast = CompletedFast(
                         startTimeMillis = startTime,
                         endTimeMillis = endTime,
@@ -129,6 +137,10 @@ class MainActivity : ComponentActivity() {
             } catch (e: Exception) {
                 Log.e(TAG, "Error processing completed fast from intent", e)
             }
+        } else if (intent?.getBooleanExtra(SHOW_FASTING_DETAILS, false) == true) {
+            // Navigate to the fasting log screen when SHOW_FASTING_DETAILS is true
+            initialScreen = "log"
+            Log.d(TAG, "Navigating to fasting log from notification")
         }
         
         setContent {
@@ -153,7 +165,7 @@ class MainActivity : ComponentActivity() {
                     }
                 }
                 
-                FastTrackApp()
+                FastTrackApp(initialScreen = initialScreen)
             }
         }
     }
@@ -213,8 +225,8 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun FastTrackApp() {
-    var currentScreen by remember { mutableStateOf("main") }
+fun FastTrackApp(initialScreen: String = "main") {
+    var currentScreen by remember { mutableStateOf(initialScreen) }
     
     // Observe lifecycle events
     val lifecycleOwner = LocalLifecycleOwner.current

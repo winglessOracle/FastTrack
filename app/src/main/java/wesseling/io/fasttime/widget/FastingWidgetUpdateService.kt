@@ -120,6 +120,7 @@ class FastingWidgetUpdateService : Service() {
         .setSmallIcon(R.drawable.ic_play_arrow)
         .setPriority(NotificationCompat.PRIORITY_LOW)
         .setOngoing(true)
+        .setCategory(NotificationCompat.CATEGORY_SERVICE)
         .setContentIntent(
             PendingIntent.getActivity(
                 this,

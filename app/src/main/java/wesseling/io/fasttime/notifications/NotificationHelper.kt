@@ -5,11 +5,13 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationCompat.WearableExtender
 import wesseling.io.fasttime.MainActivity
 import wesseling.io.fasttime.R
 import wesseling.io.fasttime.model.FastingState
@@ -76,13 +78,43 @@ class NotificationHelper(private val context: Context) {
         val currentTime = System.currentTimeMillis()
         val formattedTime = DateTimeFormatter.formatTime(currentTime, preferences)
         
+        // Create the notification content
+        val title = "New Fasting State: ${fastingState.displayName}"
+        val shortText = "At $formattedTime, you reached the ${fastingState.displayName} state!"
+        val longText = "At $formattedTime, you reached the ${fastingState.displayName} state: ${fastingState.description}"
+        
+        // Create a "View Details" action for wearables
+        val viewDetailsIntent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            putExtra(MainActivity.SHOW_FASTING_DETAILS, true)
+        }
+        
+        val viewDetailsPendingIntent = PendingIntent.getActivity(
+            context,
+            1, // Different request code from the main intent
+            viewDetailsIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        
+        // Create a wearable extender for the notification
+        val wearableExtender = WearableExtender()
+            .setHintContentIntentLaunchesActivity(true)
+            .setContentAction(0) // Set the first action as the main action
+            .addAction(
+                NotificationCompat.Action.Builder(
+                    R.drawable.ic_play_arrow,
+                    "View Details",
+                    viewDetailsPendingIntent
+                ).build()
+            )
+        
         // Build the notification
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_play_arrow) // Using a more appropriate icon
-            .setContentTitle("New Fasting State: ${fastingState.displayName}")
-            .setContentText("At $formattedTime, you reached the ${fastingState.displayName} state!")
+            .setSmallIcon(R.drawable.ic_play_arrow)
+            .setContentTitle(title)
+            .setContentText(shortText)
             .setStyle(NotificationCompat.BigTextStyle()
-                .bigText("At $formattedTime, you reached the ${fastingState.displayName} state: ${fastingState.description}"))
+                .bigText(longText))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
@@ -91,6 +123,14 @@ class NotificationHelper(private val context: Context) {
             .setCategory(NotificationCompat.CATEGORY_STATUS)
             .setWhen(currentTime) // Set the timestamp for the notification
             .setShowWhen(true) // Show the timestamp
+            // Add action button for mobile devices
+            .addAction(
+                R.drawable.ic_play_arrow,
+                "View Details",
+                viewDetailsPendingIntent
+            )
+            // Add wearable features
+            .extend(wearableExtender)
             .build()
         
         // Show the notification
