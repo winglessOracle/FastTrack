@@ -10,7 +10,7 @@
     <ImageView
         android:id="@+id/widget_background_image"
         android:layout_width="match_parent"
-        android:layout_height="52dp"
+        android:layout_height="46dp"
         android:scaleType="fitXY"
         android:contentDescription="Widget background"
         android:src="@drawable/widget_image_background"
@@ -18,10 +18,10 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="52dp"
+        android:layout_height="46dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:padding="4dp">
+        android:padding="3dp">
 
         <!-- Left section: Hours and state -->
         <LinearLayout
@@ -30,7 +30,7 @@
             android:layout_weight="1"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginStart="4dp">
+            android:layout_marginStart="3dp">
 
             <!-- Wrap hours in a clickable container with visual feedback -->
             <LinearLayout
@@ -39,7 +39,7 @@
                 android:layout_height="@dimen/widget_button_height"
                 android:orientation="horizontal"
                 android:background="@drawable/clickable_widget_item"
-                android:padding="4dp"
+                android:padding="3dp"
                 android:gravity="center_vertical">
                 
                 <TextView
@@ -78,9 +78,9 @@
                 android:layout_height="@dimen/widget_button_height"
                 android:layout_weight="1"
                 android:orientation="horizontal"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="4dp"
-                android:padding="2dp"
+                android:layout_marginStart="6dp"
+                android:layout_marginEnd="3dp"
+                android:padding="1dp"
                 android:gravity="center_vertical">
                 
                 <TextView
@@ -94,8 +94,8 @@
                     android:background="@drawable/state_pill_clickable_background"
                     android:paddingStart="6dp"
                     android:paddingEnd="6dp"
-                    android:paddingTop="2dp"
-                    android:paddingBottom="2dp"
+                    android:paddingTop="1dp"
+                    android:paddingBottom="1dp"
                     android:gravity="center"
                     android:maxLines="2"
                     android:ellipsize="end"
@@ -109,7 +109,7 @@
             android:layout_height="match_parent"
             android:orientation="horizontal"
             android:gravity="end|center_vertical"
-            android:layout_marginEnd="4dp">
+            android:layout_marginEnd="3dp">
 
             <Button
                 android:id="@+id/widget_start_button"
@@ -124,8 +124,8 @@
                 android:background="@drawable/widget_button_pill"
                 android:clickable="true"
                 android:focusable="true"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp"
                 android:paddingTop="0dp"
                 android:paddingBottom="0dp"
                 android:gravity="center"
@@ -144,8 +144,8 @@
                 android:background="@drawable/widget_button_pill_red"
                 android:clickable="true"
                 android:focusable="true"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp"
                 android:paddingTop="0dp"
                 android:paddingBottom="0dp"
                 android:gravity="center"
