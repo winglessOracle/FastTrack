@@ -1,6 +1,8 @@
 package wesseling.io.fasttime.ui.screens
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -17,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import wesseling.io.fasttime.model.DateFormat
 import wesseling.io.fasttime.model.ThemePreference
 import wesseling.io.fasttime.model.TimeFormat
@@ -39,6 +42,47 @@ fun SettingsScreen(
     }.apply {
         // This will update the UI whenever preferences change
         this.value = preferencesManager.dateTimePreferences
+    }
+    
+    // Permission request launcher
+    val requestPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // Permission granted, enable notifications
+            preferencesManager.toggleFastingStateNotifications(true)
+        } else {
+            // Permission denied, keep notifications disabled
+            preferencesManager.toggleFastingStateNotifications(false)
+        }
+    }
+    
+    // Function to check and request notification permission
+    val checkAndRequestNotificationPermission: (Boolean) -> Unit = { enable ->
+        if (enable) {
+            // Only check permission when enabling notifications
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                when {
+                    ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ) == PackageManager.PERMISSION_GRANTED -> {
+                        // Permission already granted, enable notifications
+                        preferencesManager.toggleFastingStateNotifications(true)
+                    }
+                    else -> {
+                        // Request permission
+                        requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    }
+                }
+            } else {
+                // For older Android versions, no runtime permission needed
+                preferencesManager.toggleFastingStateNotifications(true)
+            }
+        } else {
+            // Simply disable notifications
+            preferencesManager.toggleFastingStateNotifications(false)
+        }
     }
     
     Scaffold(
@@ -241,7 +285,7 @@ fun SettingsScreen(
                     ) {
                         Switch(
                             checked = dateTimePreferences.enableFastingStateNotifications,
-                            onCheckedChange = { preferencesManager.toggleFastingStateNotifications(it) },
+                            onCheckedChange = { checkAndRequestNotificationPermission(it) },
                             colors = SwitchDefaults.colors(
                                 checkedThumbColor = MaterialTheme.colorScheme.primary,
                                 checkedTrackColor = MaterialTheme.colorScheme.primaryContainer,

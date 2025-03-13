@@ -1,9 +1,13 @@
 package wesseling.io.fasttime
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -42,12 +46,14 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import wesseling.io.fasttime.model.CompletedFast
 import wesseling.io.fasttime.model.FastingState
 import wesseling.io.fasttime.repository.FastingRepository
+import wesseling.io.fasttime.settings.PreferencesManager
 import wesseling.io.fasttime.timer.FastingTimer
 import wesseling.io.fasttime.ui.components.FastingLegend
 import wesseling.io.fasttime.ui.components.FastingSummaryDialog
@@ -62,12 +68,36 @@ class MainActivity : ComponentActivity() {
         private const val TAG = "MainActivity"
     }
     
+    // Register the permission launcher
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            Log.d(TAG, "Notification permission granted")
+            // Update the notification preference to true since permission is granted
+            val preferencesManager = PreferencesManager.getInstance(this)
+            if (!preferencesManager.dateTimePreferences.enableFastingStateNotifications) {
+                preferencesManager.toggleFastingStateNotifications(true)
+            }
+        } else {
+            Log.d(TAG, "Notification permission denied")
+            // Update the notification preference to false since permission is denied
+            val preferencesManager = PreferencesManager.getInstance(this)
+            if (preferencesManager.dateTimePreferences.enableFastingStateNotifications) {
+                preferencesManager.toggleFastingStateNotifications(false)
+            }
+        }
+    }
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate")
         
         // Enable edge-to-edge display
         WindowCompat.setDecorFitsSystemWindows(window, false)
+        
+        // Check and request notification permission for Android 13+ (API 33+)
+        checkAndRequestNotificationPermission()
         
         // Check if we need to show a completed fast from the widget
         val showCompletedFast = intent.getBooleanExtra("SHOW_COMPLETED_FAST", false)
@@ -151,6 +181,34 @@ class MainActivity : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         Log.d(TAG, "onDestroy")
+    }
+    
+    /**
+     * Check if notification permission is granted and request it if not
+     */
+    private fun checkAndRequestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            when {
+                ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED -> {
+                    // Permission is already granted
+                    Log.d(TAG, "Notification permission already granted")
+                }
+                shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
+                    // Show permission rationale if needed
+                    Log.d(TAG, "Should show notification permission rationale")
+                    // Request permission
+                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
+                else -> {
+                    // Request permission
+                    Log.d(TAG, "Requesting notification permission")
+                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
+            }
+        }
     }
 }
 

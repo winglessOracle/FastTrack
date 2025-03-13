@@ -11,6 +11,11 @@
             <stroke
                 android:width="0.5dp"
                 android:color="#40FFFFFF" />
+            <padding
+                android:left="8dp"
+                android:right="8dp"
+                android:top="4dp"
+                android:bottom="4dp" />
         </shape>
     </item>
 </ripple> 
