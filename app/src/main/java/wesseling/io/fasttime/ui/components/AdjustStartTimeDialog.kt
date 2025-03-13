@@ -1,61 +1,47 @@
 package wesseling.io.fasttime.ui.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.ArrowDropUp
-import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.util.concurrent.TimeUnit
 import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import java.util.Calendar
-import wesseling.io.fasttime.model.DateTimePreferences
+import java.util.Locale
 import wesseling.io.fasttime.settings.PreferencesManager
 import wesseling.io.fasttime.util.DateTimeFormatter
+// Import the picker components
+import wesseling.io.fasttime.ui.components.DayPicker
+import wesseling.io.fasttime.ui.components.NumberPicker
 
 /**
  * Dialog for adjusting the start time of a fast
@@ -93,14 +79,16 @@ fun AdjustStartTimeDialog(
     val maxDaysBack = 30
     
     // Create a list of selectable days (today and previous days)
-    val daysList = (0..maxDaysBack).map { daysBack ->
-        val cal = Calendar.getInstance()
-        cal.add(Calendar.DAY_OF_MONTH, -daysBack)
-        Triple(
-            cal.get(Calendar.DAY_OF_MONTH),
-            cal.get(Calendar.MONTH),
-            cal.get(Calendar.YEAR)
-        )
+    val daysList = remember {
+        (0..maxDaysBack).map { daysBack ->
+            val cal = Calendar.getInstance()
+            cal.add(Calendar.DAY_OF_MONTH, -daysBack)
+            Triple(
+                cal.get(Calendar.DAY_OF_MONTH),
+                cal.get(Calendar.MONTH),
+                cal.get(Calendar.YEAR)
+            )
+        }
     }
     
     // Find the index of the current day in the list
@@ -141,6 +129,9 @@ fun AdjustStartTimeDialog(
     
     // Determine if the adjustment is valid for fasting (not negative elapsed time)
     val isValidForFasting = newElapsedTimeMillis > 0
+    
+    // Check if the adjustment is reasonable (not too large)
+    val isReasonableAdjustment = adjustmentMillis < TimeUnit.DAYS.toMillis(30)
     
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -334,6 +325,13 @@ fun AdjustStartTimeDialog(
                             color = MaterialTheme.colorScheme.error,
                             style = MaterialTheme.typography.bodyMedium
                         )
+                    } else if (!isReasonableAdjustment) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Adjustment is too large (maximum 30 days)",
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
                     }
                 }
                 
@@ -379,7 +377,8 @@ fun AdjustStartTimeDialog(
                     onAdjustTime(adjustmentMillis)
                     onDismiss()
                 },
-                enabled = isValidAdjustment && isValidForFasting && adjustmentMillis != 0L,
+                enabled = isValidAdjustment && isValidForFasting && 
+                          adjustmentMillis != 0L && isReasonableAdjustment,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary,
@@ -405,135 +404,3 @@ fun AdjustStartTimeDialog(
         textContentColor = MaterialTheme.colorScheme.onSurfaceVariant
     )
 }
-
-/**
- * A day picker component that allows scrolling through days
- */
-@Composable
-private fun DayPicker(
-    selectedIndex: Int,
-    onIndexChange: (Int) -> Unit,
-    daysList: List<Triple<Int, Int, Int>>
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .width(70.dp)
-            .clip(RoundedCornerShape(8.dp))
-            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
-            .padding(vertical = 8.dp)
-    ) {
-        // Up arrow
-        IconButton(
-            onClick = {
-                val newIndex = if (selectedIndex <= 0) 0 else selectedIndex - 1
-                onIndexChange(newIndex)
-            },
-            modifier = Modifier.size(36.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Filled.ArrowDropUp,
-                contentDescription = "Previous Day",
-                tint = MaterialTheme.colorScheme.primary
-            )
-        }
-        
-        // Current value
-        Box(
-            modifier = Modifier
-                .height(40.dp)
-                .fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
-            val (day, _, _) = daysList[selectedIndex]
-            
-            // Format as "DD" (day of month)
-            Text(
-                text = "%02d".format(day),
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        }
-        
-        // Down arrow
-        IconButton(
-            onClick = {
-                val newIndex = if (selectedIndex >= daysList.size - 1) daysList.size - 1 else selectedIndex + 1
-                onIndexChange(newIndex)
-            },
-            modifier = Modifier.size(36.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Filled.ArrowDropDown,
-                contentDescription = "Next Day",
-                tint = MaterialTheme.colorScheme.primary
-            )
-        }
-    }
-}
-
-/**
- * A number picker component that allows scrolling through numbers
- */
-@Composable
-private fun NumberPicker(
-    value: Int,
-    onValueChange: (Int) -> Unit,
-    range: IntRange,
-    format: (Int) -> String = { it.toString() }
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .width(60.dp)
-            .clip(RoundedCornerShape(8.dp))
-            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
-            .padding(vertical = 8.dp)
-    ) {
-        // Up arrow
-        IconButton(
-            onClick = {
-                val newValue = if (value >= range.last) range.first else value + 1
-                onValueChange(newValue)
-            },
-            modifier = Modifier.size(36.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Filled.ArrowDropUp,
-                contentDescription = "Increase",
-                tint = MaterialTheme.colorScheme.primary
-            )
-        }
-        
-        // Current value
-        Box(
-            modifier = Modifier
-                .height(40.dp)
-                .fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = format(value),
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        }
-        
-        // Down arrow
-        IconButton(
-            onClick = {
-                val newValue = if (value <= range.first) range.last else value - 1
-                onValueChange(newValue)
-            },
-            modifier = Modifier.size(36.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Filled.ArrowDropDown,
-                contentDescription = "Decrease",
-                tint = MaterialTheme.colorScheme.primary
-            )
-        }
-    }
-} 
