@@ -10,7 +10,7 @@
     <ImageView
         android:id="@+id/widget_background_image"
         android:layout_width="match_parent"
-        android:layout_height="58dp"
+        android:layout_height="52dp"
         android:scaleType="fitXY"
         android:contentDescription="Widget background"
         android:src="@drawable/widget_image_background"
@@ -18,7 +18,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="58dp"
+        android:layout_height="52dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:padding="4dp">
@@ -47,7 +47,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/widget_hours_text_size"
                     android:textStyle="bold"
                     android:textColor="#FFFFFF"
                     android:shadowColor="#80000000"
@@ -60,7 +60,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="hrs"
-                    android:textSize="12sp"
+                    android:textSize="@dimen/widget_label_text_size"
                     android:textColor="#FFFFFF"
                     android:alpha="0.9"
                     android:layout_marginStart="2dp"
@@ -74,27 +74,31 @@
             <!-- Wrap state in a clickable container with visual feedback -->
             <LinearLayout
                 android:id="@+id/widget_state_container"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="@dimen/widget_button_height"
+                android:layout_weight="1"
                 android:orientation="horizontal"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="4dp"
                 android:padding="2dp"
                 android:gravity="center_vertical">
                 
                 <TextView
                     android:id="@+id/widget_state"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:text="Not Fasting"
-                    android:textSize="12sp"
+                    android:textSize="@dimen/widget_state_text_size"
                     android:textColor="#FFFFFF"
                     android:alpha="1.0"
                     android:background="@drawable/state_pill_clickable_background"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp"
+                    android:paddingStart="6dp"
+                    android:paddingEnd="6dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp"
                     android:gravity="center"
+                    android:maxLines="2"
+                    android:ellipsize="end"
                     android:contentDescription="Current fasting state. Tap to view detailed information" />
             </LinearLayout>
         </LinearLayout>
@@ -113,7 +117,7 @@
                 android:layout_height="@dimen/widget_button_height"
                 android:minWidth="@dimen/widget_button_min_width"
                 android:text="Start"
-                android:textSize="12sp"
+                android:textSize="@dimen/widget_button_text_size"
                 android:textStyle="bold"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
@@ -133,7 +137,7 @@
                 android:layout_height="@dimen/widget_button_height"
                 android:minWidth="@dimen/widget_button_min_width"
                 android:text="Reset"
-                android:textSize="12sp"
+                android:textSize="@dimen/widget_button_text_size"
                 android:textStyle="bold"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"

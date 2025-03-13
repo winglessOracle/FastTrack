@@ -10,11 +10,11 @@
     <dimen name="widget_margin_small">4dp</dimen>
     <dimen name="widget_margin_medium">16dp</dimen>
     
-    <dimen name="widget_hours_text_size">18sp</dimen>
+    <dimen name="widget_hours_text_size">16sp</dimen>
     <dimen name="widget_label_text_size">12sp</dimen>
-    <dimen name="widget_state_text_size">12sp</dimen>
+    <dimen name="widget_state_text_size">10sp</dimen>
     <dimen name="widget_button_text_size">12sp</dimen>
     
-    <dimen name="widget_button_height">36dp</dimen>
+    <dimen name="widget_button_height">32dp</dimen>
     <dimen name="widget_button_min_width">55dp</dimen>
 </resources> 
