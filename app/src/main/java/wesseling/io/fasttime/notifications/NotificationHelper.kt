@@ -13,6 +13,11 @@ import androidx.core.app.NotificationCompat
 import wesseling.io.fasttime.MainActivity
 import wesseling.io.fasttime.R
 import wesseling.io.fasttime.model.FastingState
+import wesseling.io.fasttime.settings.PreferencesManager
+import wesseling.io.fasttime.util.DateTimeFormatter
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 /**
  * Helper class for managing notifications
@@ -33,11 +38,12 @@ class NotificationHelper(private val context: Context) {
             val channel = NotificationChannel(
                 CHANNEL_ID,
                 "Fasting State Notifications",
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_HIGH
             ).apply {
                 description = "Notifications for fasting state changes"
                 enableLights(true)
                 enableVibration(true)
+                setShowBadge(true)
             }
             
             notificationManager.createNotificationChannel(channel)
@@ -60,20 +66,35 @@ class NotificationHelper(private val context: Context) {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         
+        // Generate a unique notification ID based on the fasting state
+        // This ensures each state gets its own notification instead of replacing previous ones
+        val notificationId = NOTIFICATION_ID_BASE + fastingState.ordinal
+        
+        // Get current time formatted according to user preferences
+        val preferencesManager = PreferencesManager.getInstance(context)
+        val preferences = preferencesManager.dateTimePreferences
+        val currentTime = System.currentTimeMillis()
+        val formattedTime = DateTimeFormatter.formatTime(currentTime, preferences)
+        
         // Build the notification
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_launcher_foreground) // Replace with appropriate icon
-            .setContentTitle("New Fasting State Reached")
-            .setContentText("You've reached the ${fastingState.displayName} state!")
+            .setSmallIcon(R.drawable.ic_play_arrow) // Using a more appropriate icon
+            .setContentTitle("New Fasting State: ${fastingState.displayName}")
+            .setContentText("At $formattedTime, you reached the ${fastingState.displayName} state!")
             .setStyle(NotificationCompat.BigTextStyle()
-                .bigText("You've reached the ${fastingState.displayName} state: ${fastingState.description}"))
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .bigText("At $formattedTime, you reached the ${fastingState.displayName} state: ${fastingState.description}"))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
+            .setOngoing(false)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setCategory(NotificationCompat.CATEGORY_STATUS)
+            .setWhen(currentTime) // Set the timestamp for the notification
+            .setShowWhen(true) // Show the timestamp
             .build()
         
         // Show the notification
-        notificationManager.notify(NOTIFICATION_ID, notification)
+        notificationManager.notify(notificationId, notification)
         
         // Vibrate the device to alert the user
         vibrateDevice(context)
@@ -100,6 +121,6 @@ class NotificationHelper(private val context: Context) {
     
     companion object {
         private const val CHANNEL_ID = "fasting_state_channel"
-        private const val NOTIFICATION_ID = 1001
+        private const val NOTIFICATION_ID_BASE = 1001
     }
 } 
