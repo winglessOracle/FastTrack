@@ -221,35 +221,6 @@ object WidgetBackgroundHelper {
         }.start()
     }
     
-    // For backward compatibility - will be removed in future versions
-    @Deprecated("Use getBackgroundDrawable instead", ReplaceWith("getBackgroundDrawable(context, stateColor, borderColor, borderWidth)"))
-    fun createBackgroundDrawable(
-        context: Context,
-        stateColor: Int,
-        borderColor: Int,
-        borderWidth: Float
-    ): String? {
-        // Create a drawable and return its path
-        val drawable = getBackgroundDrawable(context, stateColor, borderColor, borderWidth)
-        
-        // For compatibility, save to file and return the path
-        val cacheKey = "widget_bg_${stateColor}_${borderColor}_${borderWidth.toInt()}"
-        val file = File(context.cacheDir, "$cacheKey.png")
-        
-        try {
-            if (drawable is BitmapDrawable) {
-                FileOutputStream(file).use { out ->
-                    drawable.bitmap.compress(Bitmap.CompressFormat.PNG, 90, out)
-                }
-                return file.absolutePath
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error in compatibility method", e)
-        }
-        
-        return null
-    }
-    
     /**
      * Create a rounded rectangle bitmap with gradient and border
      */

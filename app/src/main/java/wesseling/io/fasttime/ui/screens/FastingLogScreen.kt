@@ -39,7 +39,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -52,7 +51,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -464,8 +462,9 @@ fun FastingLogScreen(
                             Spacer(modifier = Modifier.width(8.dp))
                             
                     Text(
-                        text = "Confirm Edit",
-                        style = MaterialTheme.typography.titleLarge
+                        text = "Edit Fast",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
                     )
                         }
                     },
@@ -520,7 +519,7 @@ fun FastingLogItem(
 ) {
     val fastingStateColor = getColorForFastingState(fast.maxFastingState)
     
-                            Card(
+    Card(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onInfoClick() },
@@ -535,13 +534,13 @@ fun FastingLogItem(
         ) {
             // Date and duration row
             Row(
-                                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Column(
+            ) {
+                Column(
                     modifier = Modifier.weight(1f)
-                                ) {
-                                    Text(
+                ) {
+                    Text(
                         text = DateTimeFormatter.formatDateTime(fast.startTimeMillis, preferences),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -551,7 +550,7 @@ fun FastingLogItem(
                     Text(
                         text = DateTimeFormatter.formatDuration(fast.durationMillis),
                         style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.Bold,
                         color = fastingStateColor
                     )
                 }
@@ -981,7 +980,6 @@ fun CompletedFast.toShareText(): String {
     """.trimIndent()
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditFastDialog(
     fast: CompletedFast,

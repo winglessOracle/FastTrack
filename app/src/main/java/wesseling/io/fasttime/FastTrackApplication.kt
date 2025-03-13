@@ -38,6 +38,9 @@ class FastTrackApplication : Application(), LifecycleEventObserver {
                 
                 // Clear memory caches to free up memory
                 clearMemoryCaches()
+                
+                // Clean up cache files when app goes to background
+                performCacheCleanup()
             }
             Lifecycle.Event.ON_DESTROY -> {
                 // App is being destroyed
@@ -68,6 +71,9 @@ class FastTrackApplication : Application(), LifecycleEventObserver {
         
         // Clear all memory caches
         clearMemoryCaches()
+        
+        // Clean up cache files when memory is low
+        performCacheCleanup()
     }
     
     /**
@@ -109,6 +115,25 @@ class FastTrackApplication : Application(), LifecycleEventObserver {
             Log.d(TAG, "Memory caches cleared")
         } catch (e: Exception) {
             Log.e(TAG, "Error clearing memory caches", e)
+        }
+    }
+    
+    /**
+     * Perform cleanup of cache files
+     * This is a good time to clean up as the app is not actively being used
+     */
+    private fun performCacheCleanup() {
+        try {
+            // Clean up widget background cache files
+            WidgetBackgroundHelper.cleanupCacheFiles(applicationContext)
+            
+            // Update the last cleanup time in preferences
+            val prefs = applicationContext.getSharedPreferences("widget_prefs", Context.MODE_PRIVATE)
+            prefs.edit().putLong("last_cache_cleanup", System.currentTimeMillis()).apply()
+            
+            Log.d(TAG, "Cache files cleanup completed")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error cleaning up cache files", e)
         }
     }
     

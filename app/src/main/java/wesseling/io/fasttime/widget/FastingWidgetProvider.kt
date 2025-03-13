@@ -153,9 +153,19 @@ class FastingWidgetProvider : AppWidgetProvider() {
                     views.setInt(R.id.widget_background, "setBackgroundResource", R.drawable.widget_container_background)
                 }
                 
-                // Periodically clean up old cache files (do this rarely)
-                if (Math.random() < 0.01) { // 1% chance on each update
+                // Periodically clean up old cache files based on time
+                val prefs = context.getSharedPreferences("widget_prefs", Context.MODE_PRIVATE)
+                val lastCleanupTime = prefs.getLong("last_cache_cleanup", 0)
+                val currentTime = System.currentTimeMillis()
+                val oneDayInMillis = 24 * 60 * 60 * 1000L
+                
+                // Clean up cache once per day
+                if (currentTime - lastCleanupTime > oneDayInMillis) {
+                    Log.d(TAG, "Performing scheduled cache cleanup")
                     WidgetBackgroundHelper.cleanupCacheFiles(context)
+                    
+                    // Update the last cleanup time
+                    prefs.edit().putLong("last_cache_cleanup", currentTime).apply()
                 }
                 
                 Log.d(TAG, "Set background color for state: ${currentState.name}, color: ${Integer.toHexString(stateColor)}")
@@ -206,14 +216,14 @@ class FastingWidgetProvider : AppWidgetProvider() {
                     context,
                     1, // Request code for start
                     startIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
                 )
                 
                 val resetPendingIntent = PendingIntent.getBroadcast(
                     context,
                     2, // Different request code for reset
                     resetIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
                 )
                 
                 // Only set adjust time intent if timer is running
@@ -227,11 +237,13 @@ class FastingWidgetProvider : AppWidgetProvider() {
                         context,
                         3, // Different request code for adjust time
                         adjustTimeIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
                     )
                     
                     // Set click handler for hours text
                     views.setOnClickPendingIntent(R.id.widget_hours, adjustTimePendingIntent)
+                    // Also set click handler on the parent container of the hours text
+                    views.setOnClickPendingIntent(R.id.widget_hours_container, adjustTimePendingIntent)
                 } else {
                     // If not running, clicking hours will start the main app
                     val mainAppIntent = Intent(context, MainActivity::class.java).apply {
@@ -242,11 +254,13 @@ class FastingWidgetProvider : AppWidgetProvider() {
                         context,
                         4, // Different request code for main app
                         mainAppIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
                     )
                     
                     // Set click handler for hours text to open main app
                     views.setOnClickPendingIntent(R.id.widget_hours, mainAppPendingIntent)
+                    // Also set click handler on the parent container of the hours text
+                    views.setOnClickPendingIntent(R.id.widget_hours_container, mainAppPendingIntent)
                 }
                 
                 // Set the separate intents for each button
