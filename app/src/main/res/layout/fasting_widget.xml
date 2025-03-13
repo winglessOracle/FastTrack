@@ -36,17 +36,18 @@
             <LinearLayout
                 android:id="@+id/widget_hours_container"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="28dp"
                 android:orientation="horizontal"
                 android:background="@drawable/clickable_widget_item"
-                android:padding="4dp">
+                android:padding="4dp"
+                android:gravity="center_vertical">
                 
                 <TextView
                     android:id="@+id/widget_hours"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textStyle="bold"
                     android:textColor="#FFFFFF"
                     android:shadowColor="#80000000"
@@ -74,24 +75,25 @@
             <LinearLayout
                 android:id="@+id/widget_state_container"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="28dp"
                 android:orientation="horizontal"
                 android:layout_marginStart="16dp"
-                android:padding="2dp">
+                android:padding="2dp"
+                android:gravity="center_vertical">
                 
                 <TextView
                     android:id="@+id/widget_state"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:text="Not Fasting"
                     android:textSize="12sp"
                     android:textColor="#FFFFFF"
                     android:alpha="1.0"
                     android:background="@drawable/state_pill_clickable_background"
-                    android:paddingStart="6dp"
-                    android:paddingEnd="6dp"
-                    android:paddingTop="2dp"
-                    android:paddingBottom="2dp"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:paddingTop="0dp"
+                    android:paddingBottom="0dp"
                     android:gravity="center"
                     android:contentDescription="Current fasting state. Tap to view detailed information" />
             </LinearLayout>
@@ -108,7 +110,7 @@
             <Button
                 android:id="@+id/widget_start_button"
                 android:layout_width="wrap_content"
-                android:layout_height="26dp"
+                android:layout_height="28dp"
                 android:minWidth="55dp"
                 android:text="Start"
                 android:textSize="12sp"
@@ -118,8 +120,8 @@
                 android:background="@drawable/widget_button_pill"
                 android:clickable="true"
                 android:focusable="true"
-                android:paddingStart="6dp"
-                android:paddingEnd="6dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
                 android:paddingTop="0dp"
                 android:paddingBottom="0dp"
                 android:gravity="center"
@@ -128,7 +130,7 @@
             <Button
                 android:id="@+id/widget_reset_button"
                 android:layout_width="wrap_content"
-                android:layout_height="26dp"
+                android:layout_height="28dp"
                 android:minWidth="55dp"
                 android:text="Reset"
                 android:textSize="12sp"
@@ -138,8 +140,8 @@
                 android:background="@drawable/widget_button_pill_red"
                 android:clickable="true"
                 android:focusable="true"
-                android:paddingStart="6dp"
-                android:paddingEnd="6dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
                 android:paddingTop="0dp"
                 android:paddingBottom="0dp"
                 android:gravity="center"
