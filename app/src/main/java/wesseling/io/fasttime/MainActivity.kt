@@ -278,23 +278,6 @@ fun MainScreen(
                 // Fasting legend
                 FastingLegend()
                 
-                // Settings button
-                Button(
-                    onClick = onNavigateToSettings,
-                    modifier = Modifier.fillMaxWidth(0.8f)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Settings,
-                            contentDescription = null
-                        )
-                        Text("Settings")
-                    }
-                }
-                
                 // Help button
                 Button(
                     onClick = onNavigateToHelp,
