@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,6 +29,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -219,12 +221,6 @@ fun MainScreen(
                             contentDescription = "Settings"
                         )
                     }
-                    IconButton(onClick = onNavigateToLog) {
-                        Icon(
-                            imageVector = Icons.Filled.History,
-                            contentDescription = "Fasting Log"
-                        )
-                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
@@ -248,7 +244,7 @@ fun MainScreen(
                     .padding(16.dp)
                     .background(MaterialTheme.colorScheme.background),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
                 // App description
                 Text(
@@ -259,17 +255,22 @@ fun MainScreen(
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
                 
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                // Fasting log button (moved to top for easier access)
+                // Fasting log button with icon (moved to top for easier access)
                 Button(
                     onClick = onNavigateToLog,
                     modifier = Modifier.fillMaxWidth(0.8f)
                 ) {
-                    Text("View Fasting Log")
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.History,
+                            contentDescription = null
+                        )
+                        Text("View Fasting Log")
+                    }
                 }
-                
-                Spacer(modifier = Modifier.height(16.dp))
                 
                 // Fasting timer button
                 FastingTimerButton()
@@ -277,14 +278,21 @@ fun MainScreen(
                 // Fasting legend
                 FastingLegend()
                 
-                Spacer(modifier = Modifier.height(16.dp))
-                
                 // Settings button
                 Button(
                     onClick = onNavigateToSettings,
                     modifier = Modifier.fillMaxWidth(0.8f)
                 ) {
-                    Text("Settings")
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Settings,
+                            contentDescription = null
+                        )
+                        Text("Settings")
+                    }
                 }
                 
                 // Help button
@@ -292,10 +300,17 @@ fun MainScreen(
                     onClick = onNavigateToHelp,
                     modifier = Modifier.fillMaxWidth(0.8f)
                 ) {
-                    Text("How to Use FastTrack")
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Info,
+                            contentDescription = null
+                        )
+                        Text("How to Use FastTrack")
+                    }
                 }
-                
-                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }

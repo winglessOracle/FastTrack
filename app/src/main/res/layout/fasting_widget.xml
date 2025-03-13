@@ -70,22 +70,31 @@
                     android:importantForAccessibility="no" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/widget_state"
+            <!-- Wrap state in a clickable container with visual feedback -->
+            <LinearLayout
+                android:id="@+id/widget_state_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Not Fasting"
-                android:textSize="12sp"
-                android:textColor="#FFFFFF"
-                android:alpha="1.0"
-                android:background="@drawable/state_pill_background"
-                android:paddingStart="6dp"
-                android:paddingEnd="6dp"
-                android:paddingTop="2dp"
-                android:paddingBottom="2dp"
+                android:orientation="horizontal"
                 android:layout_marginStart="16dp"
-                android:gravity="center"
-                android:contentDescription="Current fasting state" />
+                android:padding="2dp">
+                
+                <TextView
+                    android:id="@+id/widget_state"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Not Fasting"
+                    android:textSize="12sp"
+                    android:textColor="#FFFFFF"
+                    android:alpha="1.0"
+                    android:background="@drawable/state_pill_clickable_background"
+                    android:paddingStart="6dp"
+                    android:paddingEnd="6dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp"
+                    android:gravity="center"
+                    android:contentDescription="Current fasting state. Tap to view detailed information" />
+            </LinearLayout>
         </LinearLayout>
 
         <!-- Right section: Buttons -->

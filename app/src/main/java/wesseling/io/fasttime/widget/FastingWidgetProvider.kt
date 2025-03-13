@@ -241,7 +241,7 @@ class FastingWidgetProvider : AppWidgetProvider() {
                 )
                 
                 // Set click handler for state pill
-                views.setOnClickPendingIntent(R.id.widget_state, stateInfoPendingIntent)
+                views.setOnClickPendingIntent(R.id.widget_state_container, stateInfoPendingIntent)
                 
                 // Only set adjust time intent if timer is running
                 if (isRunning) {
