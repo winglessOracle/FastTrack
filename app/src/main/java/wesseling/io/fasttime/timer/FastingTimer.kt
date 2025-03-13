@@ -305,6 +305,11 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
             // Update widgets
             updateWidgets()
             
+            // Log the completed fast details
+            if (completedFast != null) {
+                Log.d(TAG, "Created completed fast: id=${completedFast.id}, duration=${completedFast.durationMillis}, state=${completedFast.maxFastingState}")
+            }
+            
             return completedFast
         } catch (e: Exception) {
             Log.e(TAG, "Error resetting timer", e)

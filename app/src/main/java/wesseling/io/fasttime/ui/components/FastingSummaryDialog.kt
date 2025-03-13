@@ -1,5 +1,6 @@
 package wesseling.io.fasttime.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -171,8 +172,19 @@ fun FastingSummaryDialog(
                     
                     Button(
                         onClick = {
-                            onSave(completedFast.copy(note = note))
-                            onDismiss()
+                            try {
+                                // Create a copy with the updated note
+                                val fastWithNote = completedFast.copy(note = note)
+                                
+                                // Call the onSave callback
+                                onSave(fastWithNote)
+                                
+                                // Only dismiss if no exception was thrown
+                                onDismiss()
+                            } catch (e: Exception) {
+                                Log.e("FastingSummaryDialog", "Error saving fast: ${e.message}", e)
+                                // Don't dismiss on error so user can try again
+                            }
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary,

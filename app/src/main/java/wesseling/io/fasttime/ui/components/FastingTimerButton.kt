@@ -167,8 +167,27 @@ fun FastingTimerButton(
         FastingSummaryDialog(
             completedFast = completedFast!!,
             onSave = { fast ->
-                // Save the fast to the repository
-                repository.saveFast(fast)
+                try {
+                    // Save the fast to the repository
+                    repository.saveFast(fast)
+                    Log.d("FastingTimerButton", "Fast saved to repository: ${fast.id}")
+                    
+                    // Show a toast message to confirm
+                    Toast.makeText(
+                        context,
+                        "Fasting session saved to log",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } catch (e: Exception) {
+                    Log.e("FastingTimerButton", "Error saving fast to repository", e)
+                    
+                    // Show error toast
+                    Toast.makeText(
+                        context,
+                        "Error saving fasting session",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             },
             onDismiss = {
                 showSummaryDialog = false

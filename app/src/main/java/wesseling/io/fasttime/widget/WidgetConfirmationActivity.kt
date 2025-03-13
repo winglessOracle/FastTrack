@@ -3,6 +3,7 @@ package wesseling.io.fasttime.widget
 import android.app.Activity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -118,8 +119,23 @@ class WidgetConfirmationActivity : ComponentActivity() {
                             try {
                                 // Save the fast to the repository
                                 repository.saveFast(fast)
+                                Log.d("WidgetConfirmation", "Fast saved to repository: ${fast.id}")
+                                
+                                // Show a toast message to confirm
+                                Toast.makeText(
+                                    applicationContext,
+                                    "Fasting session saved to log",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             } catch (e: Exception) {
                                 Log.e("WidgetConfirmation", "Error saving fast", e)
+                                
+                                // Show error toast
+                                Toast.makeText(
+                                    applicationContext,
+                                    "Error saving fasting session",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             } finally {
                                 finish()
                             }

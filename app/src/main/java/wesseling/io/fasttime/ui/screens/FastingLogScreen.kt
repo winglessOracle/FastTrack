@@ -25,11 +25,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -106,12 +108,21 @@ fun FastingLogScreen(
     fun refreshData() {
         isLoading = true
         coroutineScope.launch {
-        try {
-            allFasts = repository.getAllFasts()
-        } catch (e: Exception) {
+            try {
+                Log.d("FastingLogScreen", "Refreshing fasts from repository")
+                val fasts = repository.getAllFasts()
+                Log.d("FastingLogScreen", "Refreshed ${fasts.size} fasts from repository")
+                
+                // Log details of each fast for debugging
+                fasts.forEachIndexed { index, fast ->
+                    Log.d("FastingLogScreen", "Fast $index: id=${fast.id}, duration=${fast.durationMillis}, state=${fast.maxFastingState}")
+                }
+                
+                allFasts = fasts
+            } catch (e: Exception) {
                 Log.e("FastingLogScreen", "Error loading fasts", e)
                 snackbarHostState.showSnackbar("Failed to load fasting data")
-        } finally {
+            } finally {
                 isLoading = false
             }
         }
@@ -123,7 +134,16 @@ fun FastingLogScreen(
     // Load data when screen is first displayed
     LaunchedEffect(key1 = repository) {
         try {
-            allFasts = repository.getAllFasts()
+            Log.d("FastingLogScreen", "Loading fasts from repository")
+            val fasts = repository.getAllFasts()
+            Log.d("FastingLogScreen", "Loaded ${fasts.size} fasts from repository")
+            
+            // Log details of each fast for debugging
+            fasts.forEachIndexed { index, fast ->
+                Log.d("FastingLogScreen", "Fast $index: id=${fast.id}, duration=${fast.durationMillis}, state=${fast.maxFastingState}")
+            }
+            
+            allFasts = fasts
         } catch (e: Exception) {
             Log.e("FastingLogScreen", "Error loading fasts", e)
             snackbarHostState.showSnackbar("Failed to load fasting data")
@@ -199,6 +219,39 @@ fun FastingLogScreen(
         }
     }
     
+    // Function to add a test fast for debugging
+    fun addTestFast() {
+        coroutineScope.launch {
+            try {
+                Log.d("FastingLogScreen", "Adding test fast to repository")
+                
+                // Create a test fast with current time
+                val currentTime = System.currentTimeMillis()
+                val startTime = currentTime - (16 * 60 * 60 * 1000) // 16 hours ago
+                
+                val testFast = CompletedFast(
+                    startTimeMillis = startTime,
+                    endTimeMillis = currentTime,
+                    durationMillis = currentTime - startTime,
+                    maxFastingState = FastingState.METABOLIC_SHIFT,
+                    note = "Test fast added for debugging"
+                )
+                
+                // Save the test fast
+                repository.saveFast(testFast)
+                
+                // Refresh the data
+                refreshData()
+                
+                // Show a snackbar
+                snackbarHostState.showSnackbar("Test fast added successfully")
+            } catch (e: Exception) {
+                Log.e("FastingLogScreen", "Error adding test fast", e)
+                snackbarHostState.showSnackbar("Failed to add test fast")
+            }
+        }
+    }
+    
     Scaffold(
         modifier = Modifier.systemBarsPadding(),
         topBar = {
@@ -218,6 +271,24 @@ fun FastingLogScreen(
                     }
                 },
                 actions = {
+                    // Refresh button
+                    IconButton(
+                        onClick = { refreshData() }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = "Refresh Fasting Log"
+                        )
+                    }
+                    // Add test fast button (for debugging)
+                    IconButton(
+                        onClick = { addTestFast() }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Add Test Fast"
+                        )
+                    }
                     // Export button
                     IconButton(
                         onClick = { exportAllFasts() }
@@ -704,6 +775,23 @@ fun FastDetailsDialog(
                     value = fast.maxFastingState.displayName,
                     valueColor = fastingStateColor
                 )
+                
+                // Display notes if they exist
+                if (fast.note.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    
+                    Text(
+                        text = "Notes",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    )
+                    
+                    Text(
+                        text = fast.note,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
             }
         },
         confirmButton = {
@@ -781,7 +869,7 @@ fun FastingLogSummary(
     
     fun calculateFastingStateAchievements(fastsList: List<CompletedFast>): Map<FastingState, Int> {
         val achievements = mutableMapOf<FastingState, Int>()
-        FastingState.entries.forEach { state ->
+        FastingState.values().forEach { state ->
             // Only count achievements from GLYCOGEN_DEPLETION (12+ hours) and beyond
             if (state != FastingState.NOT_FASTING && state != FastingState.EARLY_FAST) {
                 achievements[state] = fastsList.count { it.maxFastingState == state }
