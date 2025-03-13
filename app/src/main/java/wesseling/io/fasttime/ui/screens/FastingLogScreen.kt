@@ -462,9 +462,8 @@ fun FastingLogScreen(
                             Spacer(modifier = Modifier.width(8.dp))
                             
                     Text(
-                        text = "Edit Fast",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
+                        text = "Confirm Edit",
+                        style = MaterialTheme.typography.titleLarge
                     )
                         }
                     },
