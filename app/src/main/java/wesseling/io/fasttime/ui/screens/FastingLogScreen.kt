@@ -80,6 +80,7 @@ import java.io.FileWriter
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
@@ -987,23 +988,39 @@ fun EditFastDialog(
     onDismiss: () -> Unit
 ) {
     var note by remember { mutableStateOf(fast.note) }
-    val fastingStateColor = getColorForFastingState(fast.maxFastingState)
+    var startTimeMillis by remember { mutableStateOf(fast.startTimeMillis) }
+    var endTimeMillis by remember { mutableStateOf(fast.endTimeMillis) }
+    
+    // Calculate duration and fasting state based on current start/end times
+    val durationMillis = endTimeMillis - startTimeMillis
+    val maxFastingState = FastingState.getStateForDuration(durationMillis)
+    
+    val fastingStateColor = getColorForFastingState(maxFastingState)
+    
+    // Date/time picker states
+    var showStartDatePicker by remember { mutableStateOf(false) }
+    var showStartTimePicker by remember { mutableStateOf(false) }
+    var showEndDatePicker by remember { mutableStateOf(false) }
+    var showEndTimePicker by remember { mutableStateOf(false) }
+    
+    // Error state
+    var errorMessage by remember { mutableStateOf<String?>(null) }
     
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
                     imageVector = Icons.Filled.Edit,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary
                 )
                 
                 Spacer(modifier = Modifier.width(8.dp))
-                            
-                            Text(
+                
+                Text(
                     text = "Edit Fast",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
@@ -1016,29 +1033,87 @@ fun EditFastDialog(
                     .fillMaxWidth()
                     .padding(top = 8.dp)
             ) {
-                DetailItem(
-                    label = "Started",
-                    value = DateTimeFormatter.formatDateTime(fast.startTimeMillis, preferences),
-                    valueColor = MaterialTheme.colorScheme.onSurface
-                )
+                // Start time section with edit button
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Started",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        )
+                        
+                        Text(
+                            text = DateTimeFormatter.formatDateTime(startTimeMillis, preferences),
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                    
+                    IconButton(onClick = { showStartDatePicker = true }) {
+                        Icon(
+                            imageVector = Icons.Filled.Edit,
+                            contentDescription = "Edit Start Time",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
                 
-                DetailItem(
-                    label = "Ended",
-                    value = DateTimeFormatter.formatDateTime(fast.endTimeMillis, preferences),
-                    valueColor = MaterialTheme.colorScheme.onSurface
-                )
+                // End time section with edit button
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Ended",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        )
+                        
+                        Text(
+                            text = DateTimeFormatter.formatDateTime(endTimeMillis, preferences),
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                    
+                    IconButton(onClick = { showEndDatePicker = true }) {
+                        Icon(
+                            imageVector = Icons.Filled.Edit,
+                            contentDescription = "Edit End Time",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
                 
+                // Duration (calculated)
                 DetailItem(
                     label = "Duration",
-                    value = DateTimeFormatter.formatDuration(fast.durationMillis),
+                    value = DateTimeFormatter.formatDuration(durationMillis),
                     valueColor = fastingStateColor
                 )
                 
+                // Fasting State (calculated)
                 DetailItem(
                     label = "Fasting State",
-                    value = fast.maxFastingState.displayName,
+                    value = maxFastingState.displayName,
                     valueColor = fastingStateColor
                 )
+                
+                // Error message if any
+                errorMessage?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                }
                 
                 Spacer(modifier = Modifier.height(16.dp))
                 
@@ -1057,7 +1132,24 @@ fun EditFastDialog(
         },
         confirmButton = {
             Button(
-                onClick = { onSave(fast.copy(note = note)) },
+                onClick = { 
+                    // Validate times
+                    if (endTimeMillis <= startTimeMillis) {
+                        errorMessage = "End time must be after start time"
+                    } else if (endTimeMillis > System.currentTimeMillis()) {
+                        errorMessage = "End time cannot be in the future"
+                    } else {
+                        // Create updated fast with new times, duration and state
+                        val updatedFast = fast.copy(
+                            startTimeMillis = startTimeMillis,
+                            endTimeMillis = endTimeMillis,
+                            durationMillis = durationMillis,
+                            maxFastingState = maxFastingState,
+                            note = note
+                        )
+                        onSave(updatedFast)
+                    }
+                },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary
                 )
@@ -1068,6 +1160,426 @@ fun EditFastDialog(
         dismissButton = {
             TextButton(
                 onClick = onDismiss
+            ) {
+                Text("Cancel")
+            }
+        }
+    )
+    
+    // Date/Time Pickers
+    if (showStartDatePicker) {
+        DatePickerDialog(
+            onDismissRequest = { showStartDatePicker = false },
+            onDateSelected = { date ->
+                // Keep the time part, update only the date part
+                val calendar = Calendar.getInstance()
+                calendar.timeInMillis = startTimeMillis
+                val oldHour = calendar.get(Calendar.HOUR_OF_DAY)
+                val oldMinute = calendar.get(Calendar.MINUTE)
+                
+                calendar.timeInMillis = date
+                calendar.set(Calendar.HOUR_OF_DAY, oldHour)
+                calendar.set(Calendar.MINUTE, oldMinute)
+                
+                startTimeMillis = calendar.timeInMillis
+                showStartDatePicker = false
+                showStartTimePicker = true // Show time picker after date
+            },
+            initialDate = startTimeMillis
+        )
+    }
+    
+    if (showStartTimePicker) {
+        TimePickerDialog(
+            onDismissRequest = { showStartTimePicker = false },
+            onTimeSelected = { hour, minute ->
+                val calendar = Calendar.getInstance()
+                calendar.timeInMillis = startTimeMillis
+                calendar.set(Calendar.HOUR_OF_DAY, hour)
+                calendar.set(Calendar.MINUTE, minute)
+                startTimeMillis = calendar.timeInMillis
+                showStartTimePicker = false
+                
+                // Clear any error messages when user makes changes
+                errorMessage = null
+            },
+            initialTimeMillis = startTimeMillis
+        )
+    }
+    
+    if (showEndDatePicker) {
+        DatePickerDialog(
+            onDismissRequest = { showEndDatePicker = false },
+            onDateSelected = { date ->
+                // Keep the time part, update only the date part
+                val calendar = Calendar.getInstance()
+                calendar.timeInMillis = endTimeMillis
+                val oldHour = calendar.get(Calendar.HOUR_OF_DAY)
+                val oldMinute = calendar.get(Calendar.MINUTE)
+                
+                calendar.timeInMillis = date
+                calendar.set(Calendar.HOUR_OF_DAY, oldHour)
+                calendar.set(Calendar.MINUTE, oldMinute)
+                
+                endTimeMillis = calendar.timeInMillis
+                showEndDatePicker = false
+                showEndTimePicker = true // Show time picker after date
+            },
+            initialDate = endTimeMillis
+        )
+    }
+    
+    if (showEndTimePicker) {
+        TimePickerDialog(
+            onDismissRequest = { showEndTimePicker = false },
+            onTimeSelected = { hour, minute ->
+                val calendar = Calendar.getInstance()
+                calendar.timeInMillis = endTimeMillis
+                calendar.set(Calendar.HOUR_OF_DAY, hour)
+                calendar.set(Calendar.MINUTE, minute)
+                endTimeMillis = calendar.timeInMillis
+                showEndTimePicker = false
+                
+                // Clear any error messages when user makes changes
+                errorMessage = null
+            },
+            initialTimeMillis = endTimeMillis
+        )
+    }
+}
+
+/**
+ * A dialog for selecting a date
+ */
+@Composable
+fun DatePickerDialog(
+    onDismissRequest: () -> Unit,
+    onDateSelected: (Long) -> Unit,
+    initialDate: Long
+) {
+    val calendar = Calendar.getInstance()
+    calendar.timeInMillis = initialDate
+    
+    var selectedYear by remember { mutableStateOf(calendar.get(Calendar.YEAR)) }
+    var selectedMonth by remember { mutableStateOf(calendar.get(Calendar.MONTH)) }
+    var selectedDay by remember { mutableStateOf(calendar.get(Calendar.DAY_OF_MONTH)) }
+    
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        title = { 
+            Text(
+                text = "Select Date",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+        },
+        text = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp)
+            ) {
+                // Year picker
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Year:",
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.width(80.dp)
+                    )
+                    
+                    // Simple year picker with +/- buttons
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(
+                            onClick = { selectedYear-- }
+                        ) {
+                            Text("-", fontWeight = FontWeight.Bold)
+                        }
+                        
+                        Text(
+                            text = selectedYear.toString(),
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(horizontal = 16.dp)
+                        )
+                        
+                        IconButton(
+                            onClick = { selectedYear++ }
+                        ) {
+                            Text("+", fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(8.dp))
+                
+                // Month picker
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Month:",
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.width(80.dp)
+                    )
+                    
+                    // Simple month picker with +/- buttons
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(
+                            onClick = { 
+                                if (selectedMonth > 0) selectedMonth-- 
+                                else {
+                                    selectedMonth = 11
+                                    selectedYear--
+                                }
+                            }
+                        ) {
+                            Text("-", fontWeight = FontWeight.Bold)
+                        }
+                        
+                        val monthNames = listOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+                                              "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+                        
+                        Text(
+                            text = monthNames[selectedMonth],
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(horizontal = 16.dp)
+                        )
+                        
+                        IconButton(
+                            onClick = { 
+                                if (selectedMonth < 11) selectedMonth++ 
+                                else {
+                                    selectedMonth = 0
+                                    selectedYear++
+                                }
+                            }
+                        ) {
+                            Text("+", fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(8.dp))
+                
+                // Day picker
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Day:",
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.width(80.dp)
+                    )
+                    
+                    // Simple day picker with +/- buttons
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(
+                            onClick = { 
+                                if (selectedDay > 1) selectedDay-- 
+                                else {
+                                    // Go to previous month's last day
+                                    val tempCalendar = Calendar.getInstance()
+                                    tempCalendar.set(selectedYear, selectedMonth, 1)
+                                    tempCalendar.add(Calendar.DAY_OF_MONTH, -1)
+                                    selectedDay = tempCalendar.get(Calendar.DAY_OF_MONTH)
+                                    selectedMonth = tempCalendar.get(Calendar.MONTH)
+                                    selectedYear = tempCalendar.get(Calendar.YEAR)
+                                }
+                            }
+                        ) {
+                            Text("-", fontWeight = FontWeight.Bold)
+                        }
+                        
+                        Text(
+                            text = selectedDay.toString(),
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(horizontal = 16.dp)
+                        )
+                        
+                        IconButton(
+                            onClick = { 
+                                // Calculate max days in current month
+                                val tempCalendar = Calendar.getInstance()
+                                tempCalendar.set(selectedYear, selectedMonth, 1)
+                                val maxDays = tempCalendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+                                
+                                if (selectedDay < maxDays) selectedDay++ 
+                                else {
+                                    // Go to next month's first day
+                                    selectedDay = 1
+                                    if (selectedMonth < 11) selectedMonth++
+                                    else {
+                                        selectedMonth = 0
+                                        selectedYear++
+                                    }
+                                }
+                            }
+                        ) {
+                            Text("+", fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    val calendar = Calendar.getInstance()
+                    calendar.set(selectedYear, selectedMonth, selectedDay)
+                    onDateSelected(calendar.timeInMillis)
+                }
+            ) {
+                Text("Select")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onDismissRequest
+            ) {
+                Text("Cancel")
+            }
+        }
+    )
+}
+
+/**
+ * A dialog for selecting a time
+ */
+@Composable
+fun TimePickerDialog(
+    onDismissRequest: () -> Unit,
+    onTimeSelected: (hour: Int, minute: Int) -> Unit,
+    initialTimeMillis: Long
+) {
+    val calendar = Calendar.getInstance()
+    calendar.timeInMillis = initialTimeMillis
+    
+    var selectedHour by remember { mutableStateOf(calendar.get(Calendar.HOUR_OF_DAY)) }
+    var selectedMinute by remember { mutableStateOf(calendar.get(Calendar.MINUTE)) }
+    
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        title = { 
+            Text(
+                text = "Select Time",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+        },
+        text = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Hour and minute pickers side by side
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Hour picker
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Hour",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        
+                        Spacer(modifier = Modifier.height(8.dp))
+                        
+                        IconButton(
+                            onClick = { 
+                                selectedHour = if (selectedHour < 23) selectedHour + 1 else 0
+                            }
+                        ) {
+                            Text("+", fontWeight = FontWeight.Bold)
+                        }
+                        
+                        Text(
+                            text = String.format("%02d", selectedHour),
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                        
+                        IconButton(
+                            onClick = { 
+                                selectedHour = if (selectedHour > 0) selectedHour - 1 else 23
+                            }
+                        ) {
+                            Text("-", fontWeight = FontWeight.Bold)
+                        }
+                    }
+                    
+                    Text(
+                        text = ":",
+                        style = MaterialTheme.typography.headlineLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                    
+                    // Minute picker
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Minute",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        
+                        Spacer(modifier = Modifier.height(8.dp))
+                        
+                        IconButton(
+                            onClick = { 
+                                selectedMinute = if (selectedMinute < 59) selectedMinute + 1 else 0
+                            }
+                        ) {
+                            Text("+", fontWeight = FontWeight.Bold)
+                        }
+                        
+                        Text(
+                            text = String.format("%02d", selectedMinute),
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                        
+                        IconButton(
+                            onClick = { 
+                                selectedMinute = if (selectedMinute > 0) selectedMinute - 1 else 59
+                            }
+                        ) {
+                            Text("-", fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    onTimeSelected(selectedHour, selectedMinute)
+                }
+            ) {
+                Text("Select")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onDismissRequest
             ) {
                 Text("Cancel")
             }

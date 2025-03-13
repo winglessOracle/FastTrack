@@ -25,6 +25,14 @@ enum class FastingState(
         }
         
         /**
+         * Get the fasting state based on elapsed milliseconds
+         */
+        fun getStateForDuration(durationMillis: Long): FastingState {
+            val hours = (durationMillis / (1000 * 60 * 60)).toInt()
+            return getStateForHours(hours)
+        }
+        
+        /**
          * Get the next fasting state based on the current state
          */
         fun FastingState.getNextState(): FastingState? {
