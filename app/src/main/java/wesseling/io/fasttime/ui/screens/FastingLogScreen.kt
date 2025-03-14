@@ -72,6 +72,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import kotlinx.coroutines.launch
 import wesseling.io.fasttime.model.CompletedFast
 import wesseling.io.fasttime.model.DateTimePreferences
@@ -214,8 +215,13 @@ fun FastingLogScreen(
                 val file = File(context.cacheDir, fileName)
                 FileWriter(file).use { it.write(fullContent) }
                 
-                // Share the file
-                val uri = Uri.fromFile(file)
+                // Share the file using FileProvider
+                val uri = androidx.core.content.FileProvider.getUriForFile(
+                    context,
+                    "${context.packageName}.provider",
+                    file
+                )
+                
                 val shareIntent = Intent().apply {
                     action = Intent.ACTION_SEND
                     putExtra(Intent.EXTRA_STREAM, uri)
