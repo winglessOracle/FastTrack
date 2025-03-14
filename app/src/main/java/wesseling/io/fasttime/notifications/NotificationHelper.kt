@@ -106,7 +106,8 @@ class NotificationHelper(private val context: Context) {
             .setStyle(NotificationCompat.BigTextStyle()
                 .bigText(notificationContent.longText))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentIntent(pendingIntent)
+            // Remove content intent so tapping just expands the notification
+            // .setContentIntent(pendingIntent)
             .setAutoCancel(false)
             .setOngoing(true)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
