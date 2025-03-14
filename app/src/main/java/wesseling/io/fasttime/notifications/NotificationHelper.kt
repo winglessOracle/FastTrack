@@ -107,8 +107,8 @@ class NotificationHelper(private val context: Context) {
                 .bigText(notificationContent.longText))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingIntent)
-            .setAutoCancel(true)
-            .setOngoing(false)
+            .setAutoCancel(false)
+            .setOngoing(true)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setCategory(NotificationCompat.CATEGORY_STATUS)
             .setWhen(currentTime) // Set the timestamp for the notification
