@@ -17,6 +17,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import wesseling.io.fasttime.MainActivity
 import wesseling.io.fasttime.R
+import wesseling.io.fasttime.settings.PreferencesManager
 import wesseling.io.fasttime.timer.FastingTimer
 import java.util.concurrent.TimeUnit
 
@@ -132,7 +133,18 @@ class FastingWidgetUpdateService : Service() {
         .build()
     
     /**
-     * Schedule the next update with an adaptive interval based on fasting state and battery level
+     * Schedule the next update with an adaptive interval based on fasting state, battery level, and user preferences
+     * 
+     * This method implements a sophisticated adaptive update strategy that balances update frequency
+     * with battery consumption. It considers multiple factors:
+     * 
+     * 1. Current fasting state and progress - updates more frequently during critical periods
+     * 2. Battery level and charging status - conserves battery when needed
+     * 3. Power save mode - respects system battery saving
+     * 4. User preferences - allows user control over update frequency
+     * 
+     * The algorithm first determines a base interval based on the fasting state and progress,
+     * then applies adjustments based on battery conditions and user preferences.
      */
     private fun scheduleNextUpdateWithAdaptiveInterval() {
         try {
@@ -144,7 +156,12 @@ class FastingWidgetUpdateService : Service() {
             val isCharging = batteryInfo.second
             val isPowerSaveMode = isPowerSaveMode()
             
-            Log.d(TAG, "Battery level: $batteryLevel%, Charging: $isCharging, Power save: $isPowerSaveMode")
+            // Get user's update frequency preference
+            val preferencesManager = PreferencesManager.getInstance(this)
+            val updateFrequencyMultiplier = preferencesManager.dateTimePreferences.updateFrequency.multiplier
+            
+            Log.d(TAG, "Battery level: $batteryLevel%, Charging: $isCharging, Power save: $isPowerSaveMode, " +
+                       "Update frequency multiplier: $updateFrequencyMultiplier")
             
             // Base update interval based on fasting state
             val baseInterval = when {
@@ -172,25 +189,29 @@ class FastingWidgetUpdateService : Service() {
                 else -> TimeUnit.MINUTES.toMillis(30)
             }
             
-            // Adjust interval based on battery level and charging state
+            // Apply user's update frequency preference to the base interval
+            val userAdjustedInterval = (baseInterval * updateFrequencyMultiplier).toLong()
+            
+            // Further adjust interval based on battery level and charging state
             val adjustedInterval = when {
-                // If charging, we can use the base interval
-                isCharging -> baseInterval
+                // If charging, we can use the user-adjusted interval
+                isCharging -> userAdjustedInterval
                 
                 // If in power save mode, extend intervals significantly
-                isPowerSaveMode -> baseInterval * 4
+                isPowerSaveMode -> userAdjustedInterval * 2
                 
                 // If battery is low, extend intervals
-                batteryLevel <= BATTERY_LOW_THRESHOLD -> baseInterval * 3
+                batteryLevel <= BATTERY_LOW_THRESHOLD -> userAdjustedInterval * 1.5
                 
                 // If battery is medium, slightly extend intervals
-                batteryLevel <= BATTERY_MEDIUM_THRESHOLD -> baseInterval * 2
+                batteryLevel <= BATTERY_MEDIUM_THRESHOLD -> userAdjustedInterval * 1.2
                 
-                // Otherwise use the base interval
-                else -> baseInterval
+                // Otherwise use the user-adjusted interval
+                else -> userAdjustedInterval
             }.toLong()
             
-            Log.d(TAG, "Next update scheduled in ${adjustedInterval/1000} seconds (base: ${baseInterval/1000}s)")
+            Log.d(TAG, "Next update scheduled in ${adjustedInterval/1000} seconds " +
+                       "(base: ${baseInterval/1000}s, user-adjusted: ${userAdjustedInterval/1000}s)")
             
             // Ensure we don't have multiple callbacks
             handler.removeCallbacks(updateRunnable)
@@ -204,7 +225,18 @@ class FastingWidgetUpdateService : Service() {
     
     /**
      * Get battery level and charging state
-     * @return Pair of (batteryLevel, isCharging)
+     * 
+     * This method retrieves the current battery status of the device by:
+     * 1. Registering a receiver for the ACTION_BATTERY_CHANGED broadcast
+     * 2. Extracting the battery level as a percentage (0-100)
+     * 3. Determining if the device is currently charging or fully charged
+     * 
+     * The method includes fallback values (50% battery level) in case the
+     * battery information cannot be retrieved, ensuring the app continues
+     * to function even when battery data is unavailable.
+     * 
+     * @return Pair of (batteryLevel, isCharging) where batteryLevel is 0-100 and
+     *         isCharging is true if the device is plugged in and charging or fully charged
      */
     private fun getBatteryInfo(): Pair<Int, Boolean> {
         val batteryIntent = registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
@@ -222,6 +254,19 @@ class FastingWidgetUpdateService : Service() {
     
     /**
      * Check if device is in power save mode
+     * 
+     * This method determines if the device is currently in power save mode (battery saver)
+     * by querying the PowerManager system service. Power save mode is an Android feature
+     * that restricts background activities to conserve battery.
+     * 
+     * The implementation is version-aware:
+     * - For Android Lollipop (API 21) and above, it uses PowerManager.isPowerSaveMode
+     * - For older versions, it defaults to false as the feature wasn't available
+     * 
+     * When the device is in power save mode, the app adjusts its behavior to further
+     * reduce battery consumption by extending update intervals.
+     * 
+     * @return true if the device is in power save mode, false otherwise
      */
     private fun isPowerSaveMode(): Boolean {
         val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
@@ -233,7 +278,26 @@ class FastingWidgetUpdateService : Service() {
     }
     
     /**
-     * Check if the current elapsed time is near a state transition
+     * Check if the current elapsed time is near a fasting state transition
+     * 
+     * This method determines if the current fasting duration is approaching a state transition point.
+     * State transitions represent significant physiological changes during fasting and are important
+     * moments to update the UI more frequently to provide timely feedback to the user.
+     * 
+     * The method:
+     * 1. Defines key transition points at 0, 12, 18, and 24 hours, which correspond to:
+     *    - 0h: Start of fasting
+     *    - 12h: Transition to glycogen depletion
+     *    - 18h: Transition to metabolic shift
+     *    - 24h: Transition to deep ketosis
+     * 
+     * 2. Checks if the current elapsed time is within 10 minutes of any transition point
+     * 
+     * When near a transition, the widget update frequency is increased to ensure the user
+     * receives timely notifications about their fasting progress and achievements.
+     * 
+     * @param elapsedHours The current duration of the fast in hours
+     * @return true if within 10 minutes of a state transition, false otherwise
      */
     private fun isNearStateTransition(elapsedHours: Int): Boolean {
         // State transitions occur at 0, 12, 18, and 24 hours

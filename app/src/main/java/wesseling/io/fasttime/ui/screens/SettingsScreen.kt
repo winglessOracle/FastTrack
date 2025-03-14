@@ -23,6 +23,7 @@ import androidx.core.content.ContextCompat
 import wesseling.io.fasttime.model.DateFormat
 import wesseling.io.fasttime.model.ThemePreference
 import wesseling.io.fasttime.model.TimeFormat
+import wesseling.io.fasttime.model.UpdateFrequency
 import wesseling.io.fasttime.settings.PreferencesManager
 import wesseling.io.fasttime.util.BatteryOptimizationHelper
 
@@ -327,8 +328,7 @@ fun SettingsScreen(
                             Icon(
                                 imageVector = Icons.Default.BatteryChargingFull,
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(24.dp)
+                                tint = MaterialTheme.colorScheme.primary
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
@@ -338,7 +338,52 @@ fun SettingsScreen(
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                         }
+                        
                         Spacer(modifier = Modifier.height(8.dp))
+                        
+                        // Widget Update Frequency
+                        Text(
+                            text = "Widget Update Frequency",
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        
+                        Spacer(modifier = Modifier.height(4.dp))
+                        
+                        Text(
+                            text = "Control how often the widget updates. More frequent updates provide more accurate information but use more battery.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        
+                        Spacer(modifier = Modifier.height(8.dp))
+                        
+                        UpdateFrequency.entries.forEach { frequency ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                RadioButton(
+                                    selected = dateTimePreferences.updateFrequency == frequency,
+                                    onClick = { preferencesManager.updateUpdateFrequency(frequency) },
+                                    colors = RadioButtonDefaults.colors(
+                                        selectedColor = MaterialTheme.colorScheme.primary,
+                                        unselectedColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = frequency.displayName,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                        }
+                        
+                        Spacer(modifier = Modifier.height(16.dp))
                         
                         var isIgnoringBatteryOptimizations by remember { 
                             mutableStateOf(BatteryOptimizationHelper.isIgnoringBatteryOptimizations(context)) 
@@ -356,7 +401,7 @@ fun SettingsScreen(
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
                         
                         if (isIgnoringBatteryOptimizations) {
                             Text(

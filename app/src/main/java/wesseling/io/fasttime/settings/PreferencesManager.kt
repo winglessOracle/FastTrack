@@ -9,6 +9,7 @@ import wesseling.io.fasttime.model.DateFormat
 import wesseling.io.fasttime.model.DateTimePreferences
 import wesseling.io.fasttime.model.ThemePreference
 import wesseling.io.fasttime.model.TimeFormat
+import wesseling.io.fasttime.model.UpdateFrequency
 
 /**
  * Manager for handling user preferences
@@ -44,17 +45,20 @@ class PreferencesManager(context: Context) {
         val showSeconds = prefs.getBoolean(KEY_SHOW_SECONDS, false)
         val themePreferenceOrdinal = prefs.getInt(KEY_THEME, ThemePreference.SYSTEM.ordinal)
         val enableNotifications = prefs.getBoolean(KEY_ENABLE_NOTIFICATIONS, false)
+        val updateFrequencyOrdinal = prefs.getInt(KEY_UPDATE_FREQUENCY, UpdateFrequency.BALANCED.ordinal)
         
         val dateFormat = DateFormat.entries.getOrElse(dateFormatOrdinal) { DateFormat.DMY_SLASH }
         val timeFormat = TimeFormat.entries.getOrElse(timeFormatOrdinal) { TimeFormat.HOURS_24 }
         val themePreference = ThemePreference.entries.getOrElse(themePreferenceOrdinal) { ThemePreference.SYSTEM }
+        val updateFrequency = UpdateFrequency.entries.getOrElse(updateFrequencyOrdinal) { UpdateFrequency.BALANCED }
         
         return DateTimePreferences(
             dateFormat = dateFormat, 
             timeFormat = timeFormat, 
             showSeconds = showSeconds,
             themePreference = themePreference,
-            enableFastingStateNotifications = enableNotifications
+            enableFastingStateNotifications = enableNotifications,
+            updateFrequency = updateFrequency
         )
     }
     
@@ -68,6 +72,7 @@ class PreferencesManager(context: Context) {
             putBoolean(KEY_SHOW_SECONDS, preferences.showSeconds)
             putInt(KEY_THEME, preferences.themePreference.ordinal)
             putBoolean(KEY_ENABLE_NOTIFICATIONS, preferences.enableFastingStateNotifications)
+            putInt(KEY_UPDATE_FREQUENCY, preferences.updateFrequency.ordinal)
             apply()
         }
     }
@@ -107,6 +112,13 @@ class PreferencesManager(context: Context) {
         savePreferences(dateTimePreferences.copy(enableFastingStateNotifications = enable))
     }
     
+    /**
+     * Update widget update frequency
+     */
+    fun updateUpdateFrequency(updateFrequency: UpdateFrequency) {
+        savePreferences(dateTimePreferences.copy(updateFrequency = updateFrequency))
+    }
+    
     companion object {
         // Shared preferences constants
         const val PREFS_NAME = "wesseling.io.fasttime.SettingsPrefs"
@@ -115,6 +127,7 @@ class PreferencesManager(context: Context) {
         const val KEY_SHOW_SECONDS = "show_seconds"
         const val KEY_THEME = "theme"
         const val KEY_ENABLE_NOTIFICATIONS = "enable_notifications"
+        const val KEY_UPDATE_FREQUENCY = "update_frequency"
         
         // Singleton instance
         @Volatile

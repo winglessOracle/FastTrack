@@ -4,11 +4,13 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -228,8 +230,13 @@ fun FastingTimerButton(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+            .padding(16.dp)
+            .shadow(
+                elevation = 8.dp,
+                shape = RoundedCornerShape(24.dp),
+                spotColor = buttonColor.copy(alpha = 0.3f)
+            ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
@@ -242,34 +249,47 @@ fun FastingTimerButton(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            // Timer display
+            // Timer display with subtle animation
             Text(
                 text = fastingTimer.getFormattedTime(),
                 fontSize = 40.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.animateContentSize(
+                    animationSpec = tween(durationMillis = 300)
+                )
             )
             
-            // Fasting state description
+            // Fasting state description with enhanced card
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(16.dp))
-                    .clickable { showFastingInfoDialog = true },
+                    .clickable { showFastingInfoDialog = true }
+                    .shadow(
+                        elevation = 2.dp,
+                        shape = RoundedCornerShape(16.dp),
+                        spotColor = buttonColor.copy(alpha = 0.2f)
+                    ),
                 colors = CardDefaults.cardColors(
                     containerColor = buttonColor.copy(alpha = 0.15f)
                 ),
                 elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
             ) {
                 Column(
-                    modifier = Modifier.padding(vertical = 12.dp, horizontal = 16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp, horizontal = 16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
                     Text(
                         text = fastingTimer.currentFastingState.description,
                         fontSize = 18.sp,
+                        fontWeight = FontWeight.Medium,
                         textAlign = TextAlign.Center,
-                        color = buttonColor
+                        color = buttonColor,
+                        modifier = Modifier.fillMaxWidth()
                     )
                     
                     Text(
@@ -277,14 +297,16 @@ fun FastingTimerButton(
                         fontSize = 12.sp,
                         textAlign = TextAlign.Center,
                         color = buttonColor.copy(alpha = 0.7f),
-                        modifier = Modifier.padding(top = 4.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 4.dp)
                     )
                 }
             }
             
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             
-            // Timer button
+            // Timer button with enhanced visual effects
             Button(
                 onClick = {
                     if (fastingTimer.isRunning) {
@@ -294,8 +316,12 @@ fun FastingTimerButton(
                     }
                 },
                 modifier = Modifier
-                    .size(120.dp)
-                    .shadow(8.dp, CircleShape),
+                    .size(130.dp)
+                    .shadow(
+                        elevation = 12.dp,
+                        shape = CircleShape,
+                        spotColor = buttonColor.copy(alpha = 0.5f)
+                    ),
                 shape = CircleShape,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = buttonColor,
@@ -303,46 +329,57 @@ fun FastingTimerButton(
                 )
             ) {
                 Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.animateContentSize()
                 ) {
                     Icon(
                         imageVector = if (fastingTimer.isRunning) Icons.Rounded.Refresh else Icons.Rounded.PlayArrow,
                         contentDescription = if (fastingTimer.isRunning) "Reset" else "Start",
-                        modifier = Modifier.size(36.dp),
+                        modifier = Modifier.size(40.dp),
                         tint = Color.White
                     )
                     
+                    Spacer(modifier = Modifier.height(4.dp))
+                    
                     Text(
                         text = if (fastingTimer.isRunning) "Reset" else "Start",
-                        fontSize = 16.sp,
+                        fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
                 }
             }
             
-            // Adjust time button (only show when timer is running)
+            // Adjust time button with improved styling
             if (fastingTimer.isRunning) {
                 TextButton(
                     onClick = { showAdjustTimeDialog = true },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = MaterialTheme.colorScheme.primary
+                    )
                 ) {
                     Row(
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
                     ) {
                         Icon(
                             imageVector = Icons.Filled.AccessTime,
                             contentDescription = "Adjust Time",
                             tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(18.dp)
                         )
                         
-                        Spacer(modifier = Modifier.width(4.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
                         
                         Text(
                             text = "Adjust Start Time",
                             color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Medium
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 16.sp
                         )
                     }
                 }

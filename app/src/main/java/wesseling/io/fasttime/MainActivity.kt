@@ -8,19 +8,24 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,6 +47,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -108,6 +115,7 @@ class MainActivity : ComponentActivity() {
         
         var completedFast: CompletedFast? = null
         var initialScreen = "main"
+        var shouldResetTimer = false
         
         // Handle intent extras
         if (intent?.getBooleanExtra(SHOW_COMPLETED_FAST, false) == true) {
@@ -141,6 +149,10 @@ class MainActivity : ComponentActivity() {
             // Navigate to the fasting log screen when SHOW_FASTING_DETAILS is true
             initialScreen = "log"
             Log.d(TAG, "Navigating to fasting log from notification")
+        } else if (intent?.action == "wesseling.io.fasttime.RESET_TIMER") {
+            // Handle reset timer action from notification
+            shouldResetTimer = true
+            Log.d(TAG, "Reset timer action received from notification")
         }
         
         setContent {
@@ -162,6 +174,25 @@ class MainActivity : ComponentActivity() {
                                 showDialog = false
                             }
                         )
+                    }
+                }
+                
+                // Handle timer reset if needed
+                if (shouldResetTimer) {
+                    DisposableEffect(Unit) {
+                        val timer = FastingTimer.getInstance(this@MainActivity)
+                        val resetCompletedFast = timer.resetTimer()
+                        
+                        // If a fast was completed, show the summary dialog
+                        if (resetCompletedFast != null) {
+                            val repository = FastingRepository.getInstance(this@MainActivity)
+                            repository.saveFast(resetCompletedFast)
+                            Log.d(TAG, "Timer reset from notification, saved completed fast")
+                        } else {
+                            Log.d(TAG, "Timer reset from notification, no completed fast")
+                        }
+                        
+                        onDispose { }
                     }
                 }
                 
@@ -328,17 +359,37 @@ fun MainScreen(
                 // Fasting log button with icon (moved to top for easier access)
                 Button(
                     onClick = onNavigateToLog,
-                    modifier = Modifier.fillMaxWidth(0.8f)
+                    modifier = Modifier
+                        .fillMaxWidth(0.8f)
+                        .shadow(
+                            elevation = 4.dp,
+                            shape = RoundedCornerShape(16.dp),
+                            spotColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                        )
+                        .clip(RoundedCornerShape(16.dp)),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    ),
+                    contentPadding = PaddingValues(vertical = 16.dp, horizontal = 24.dp)
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier.animateContentSize()
                     ) {
                         Icon(
                             imageVector = Icons.Filled.History,
-                            contentDescription = null
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.size(28.dp)
                         )
-                        Text("View Fasting Log")
+                        Text(
+                            text = "View Fasting Log",
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.Bold
+                            ),
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
                     }
                 }
                 
@@ -351,17 +402,35 @@ fun MainScreen(
                 // Help button
                 Button(
                     onClick = onNavigateToHelp,
-                    modifier = Modifier.fillMaxWidth(0.8f)
+                    modifier = Modifier
+                        .fillMaxWidth(0.8f)
+                        .shadow(
+                            elevation = 4.dp,
+                            shape = RoundedCornerShape(16.dp),
+                            spotColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.5f)
+                        )
+                        .clip(RoundedCornerShape(16.dp)),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.tertiary
+                    ),
+                    contentPadding = PaddingValues(vertical = 16.dp, horizontal = 24.dp)
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier.animateContentSize()
                     ) {
                         Icon(
                             imageVector = Icons.Default.Info,
-                            contentDescription = null
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onTertiary,
+                            modifier = Modifier.size(28.dp)
                         )
-                        Text("How to Use FastTrack")
+                        Text(
+                            text = "How to Use FastTrack",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onTertiary
+                        )
                     }
                 }
             }

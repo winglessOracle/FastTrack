@@ -60,6 +60,9 @@ class NotificationHelper(private val context: Context) {
         // Create an intent to open the app when the notification is tapped
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            // Add SHOW_FASTING_DETAILS to the main intent so tapping the notification
+            // directly takes the user to the fasting log screen
+            putExtra(MainActivity.SHOW_FASTING_DETAILS, true)
         }
         
         val pendingIntent = PendingIntent.getActivity(
@@ -82,20 +85,8 @@ class NotificationHelper(private val context: Context) {
         // Get fun and motivating content based on the fasting state
         val notificationContent = getMotivatingContent(fastingState, formattedTime)
         
-        // Create a "View Details" action for wearables
-        val viewDetailsIntent = Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-            putExtra(MainActivity.SHOW_FASTING_DETAILS, true)
-        }
-        
-        val viewDetailsPendingIntent = PendingIntent.getActivity(
-            context,
-            1, // Different request code from the main intent
-            viewDetailsIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-        
         // Create a wearable extender for the notification
+        // Keep the "View Progress" action only for wearables where it's more useful
         val wearableExtender = WearableExtender()
             .setHintContentIntentLaunchesActivity(true)
             .setContentAction(0) // Set the first action as the main action
@@ -103,7 +94,7 @@ class NotificationHelper(private val context: Context) {
                 NotificationCompat.Action.Builder(
                     R.drawable.ic_play_arrow,
                     "View Progress",
-                    viewDetailsPendingIntent
+                    pendingIntent
                 ).build()
             )
         
@@ -122,12 +113,6 @@ class NotificationHelper(private val context: Context) {
             .setCategory(NotificationCompat.CATEGORY_STATUS)
             .setWhen(currentTime) // Set the timestamp for the notification
             .setShowWhen(true) // Show the timestamp
-            // Add action button for mobile devices
-            .addAction(
-                R.drawable.ic_play_arrow,
-                "View Progress",
-                viewDetailsPendingIntent
-            )
             // Add wearable features
             .extend(wearableExtender)
             .build()
@@ -146,9 +131,9 @@ class NotificationHelper(private val context: Context) {
         return when (fastingState) {
             FastingState.NOT_FASTING -> {
                 val titles = listOf(
-                    "Fasting Journey Begins!",
-                    "Ready, Set, Fast!",
-                    "Your Fasting Adventure Starts!"
+                    "Fasting Journey Begins! 🚀",
+                    "Ready, Set, Fast! 🏁",
+                    "Your Fasting Adventure Starts! 🌟"
                 )
                 val shortTexts = listOf(
                     "You're in the Fed State - digestion in progress!",
@@ -156,9 +141,9 @@ class NotificationHelper(private val context: Context) {
                     "Digestion mode activated at $formattedTime!"
                 )
                 val longTexts = listOf(
-                    "Your body is currently processing nutrients. Soon, you'll transition to fat burning mode! Keep going, your cellular health journey is just beginning! 💪",
-                    "You're in the Fed State (digestion & absorption). This is the perfect foundation for the amazing benefits that await as you continue your fast! 🚀",
-                    "Digestion in progress! Your body is processing your last meal. Stick with it, and you'll soon unlock the powerful benefits of fasting! ✨"
+                    "Fun Fact: Your body is currently releasing insulin to store nutrients. In a few hours, insulin will drop and your body will flip the metabolic switch! 💪",
+                    "Did you know? During digestion, your body prioritizes storing energy rather than burning fat. Fasting reverses this process - you're on your way to fat-burning mode! 🔄",
+                    "Science Bite: Right now your body is in 'storage mode' with high insulin levels. As you fast, insulin drops and growth hormone rises by up to 500%! ✨"
                 )
                 randomContent(titles, shortTexts, longTexts)
             }
@@ -174,9 +159,9 @@ class NotificationHelper(private val context: Context) {
                     "You've unlocked Early Fasting mode! Keep it up!"
                 )
                 val longTexts = listOf(
-                    "Congratulations! At $formattedTime, your body started burning fat for energy! This is when the magic begins - insulin levels are dropping and fat burning is ramping up! 🔥",
-                    "Amazing progress! You've reached Early Fasting state where your body begins to tap into fat stores. Your metabolism is thanking you! Keep going for even more benefits! 💯",
-                    "4+ hours of fasting complete! Your body is transitioning from using glucose to burning fat. This is just the beginning of your fasting superpowers! 💪"
+                    "Fun Fact: Your liver has now depleted about 1/3 of its glycogen (stored sugar). Your body is beginning to release fatty acids from fat cells for energy! 🔬",
+                    "Science Bite: At this stage, your body is reducing insulin and increasing lipolysis - the breakdown of fat into usable energy. You're becoming a fat-burning machine! 🔋",
+                    "Did you know? Your body is now producing ghrelin (hunger hormone) in waves that typically last only 20 minutes. Drink water and the wave will pass! 💧"
                 )
                 randomContent(titles, shortTexts, longTexts)
             }
@@ -192,9 +177,9 @@ class NotificationHelper(private val context: Context) {
                     "Glycogen Depletion achieved at $formattedTime!"
                 )
                 val longTexts = listOf(
-                    "Wow! At $formattedTime, your liver glycogen is depleting and fat metabolism is significantly increasing! Your body is becoming a fat-burning machine! 🔄",
-                    "12+ hours of fasting - incredible work! Your body is now depleting glycogen stores and ramping up fat metabolism. This is where the real benefits begin! 🚀",
-                    "You've reached Glycogen Depletion state! Your body is switching to fat as its primary fuel source. Keep going - you're unlocking amazing health benefits with every hour! ✨"
+                    "Fun Fact: Your liver glycogen is now almost gone! Your body is increasing fat oxidation by 300% compared to the fed state. Hello, fat burning! 📊",
+                    "Science Bite: Your body is now producing ketone bodies from fat. These ketones are super-efficient fuel for your brain and heart! 🧠❤️",
+                    "Did you know? At this stage, your body is releasing norepinephrine, giving you natural energy and focus. It's your body's built-in energy drink! ⚡"
                 )
                 randomContent(titles, shortTexts, longTexts)
             }
@@ -210,9 +195,9 @@ class NotificationHelper(private val context: Context) {
                     "You're now producing ketones for energy!"
                 )
                 val longTexts = listOf(
-                    "Incredible achievement! At $formattedTime, your body entered the Metabolic Shift state where ketosis begins! Your brain is starting to use ketones for fuel - hello mental clarity! 🧠✨",
-                    "18+ hours fasted - you're a fasting champion! Your metabolism has shifted to ketone production, offering enhanced focus and energy. Your cells are celebrating! 🎉",
-                    "You've reached the Metabolic Shift milestone! Ketosis is beginning, bringing improved mental clarity and steady energy. Your body is thanking you for this amazing reset! 💫"
+                    "Fun Fact: Your brain is now switching to ketones for about 25% of its energy needs. Many report enhanced mental clarity and focus at this stage! 🧠",
+                    "Science Bite: Your insulin sensitivity is improving by the hour. This metabolic shift helps prevent type 2 diabetes and improves overall metabolic health! 📈",
+                    "Did you know? The ketones you're producing act as signaling molecules that trigger anti-inflammatory pathways in your body. You're reducing inflammation with every hour! 🛡️"
                 )
                 randomContent(titles, shortTexts, longTexts)
             }
@@ -228,9 +213,9 @@ class NotificationHelper(private val context: Context) {
                     "Autophagy is peaking - cellular renewal time!"
                 )
                 val longTexts = listOf(
-                    "Phenomenal achievement! At $formattedTime, you entered Deep Ketosis where autophagy (cellular cleanup) peaks! Your body is removing damaged cells and creating new ones! 🧹✨",
-                    "24+ hours of fasting - you're in the elite zone now! Deep Ketosis brings maximum autophagy, where your body cleans out damaged cellular components. You're literally renewing yourself! 🔄",
-                    "Deep Ketosis achieved! Your body is now in a powerful state of cellular cleanup and renewal. This is where the transformative health benefits of fasting really shine! 💫"
+                    "Fun Fact: Autophagy (cellular cleanup) is now in full swing! Your cells are recycling damaged components and creating new, healthier parts. It's like spring cleaning for your cells! 🧹",
+                    "Science Bite: Your growth hormone levels have increased by up to 1300% by now, promoting muscle preservation and fat burning. You're in the biological fountain of youth! 🏋️",
+                    "Did you know? The ketones you're producing are protecting your brain cells and may help prevent neurodegenerative diseases. Your brain is loving this fast! 🧠✨"
                 )
                 randomContent(titles, shortTexts, longTexts)
             }
@@ -246,9 +231,9 @@ class NotificationHelper(private val context: Context) {
                     "Your immune system is regenerating!"
                 )
                 val longTexts = listOf(
-                    "Extraordinary achievement! At $formattedTime, you reached the Immune Reset state! Your body is increasing stem cell production and regenerating your immune system! 🌱",
-                    "48+ hours fasted - you've reached legendary status! Your body is now in Immune Reset mode, with increased stem cell production and significant immune system regeneration. Simply amazing! 🌟",
-                    "Immune Reset unlocked! Your body is now producing more stem cells and regenerating your immune system. This is a profound level of healing that few experience! 💫"
+                    "Fun Fact: Your body is now breaking down old immune cells and generating new ones. This 'immune system reset' can help your body fight infections better! 🛡️",
+                    "Science Bite: Stem cell production increases by 400% at this stage, helping to regenerate various tissues in your body. You're literally creating a newer version of yourself! 🌱",
+                    "Did you know? Your body is now in a state of significant PKA inhibition, which triggers cellular protection mechanisms that can extend longevity. You're activating your longevity genes! ⏱️"
                 )
                 randomContent(titles, shortTexts, longTexts)
             }
@@ -264,9 +249,9 @@ class NotificationHelper(private val context: Context) {
                     "Maximum rejuvenation mode activated!"
                 )
                 val longTexts = listOf(
-                    "Extraordinary achievement! At $formattedTime, you entered the Extended Fast state! Your body is experiencing maximum cellular rejuvenation and profound healing! 🌟",
-                    "72+ hours of fasting - you've reached the pinnacle! Extended Fasting brings the deepest level of cellular rejuvenation and metabolic benefits. You're among an elite few who reach this level! 👑",
-                    "Extended Fast state achieved! You're experiencing the most profound benefits of fasting - deep cellular rejuvenation, maximum autophagy, and comprehensive metabolic reset. Truly remarkable! ✨"
+                    "Fun Fact: Your insulin sensitivity has improved by up to 70% by now! Your cells are super-responsive to insulin, which helps prevent diabetes and metabolic syndrome. 📉",
+                    "Science Bite: BDNF (Brain-Derived Neurotrophic Factor) levels increase significantly at this stage, promoting the growth of new brain cells and protecting existing ones. Your brain is literally growing! 🧠",
+                    "Did you know? At this stage, your body has activated AMPK pathways that promote cellular repair and longevity. You're experiencing one of the most profound anti-aging interventions known to science! ⏳"
                 )
                 randomContent(titles, shortTexts, longTexts)
             }

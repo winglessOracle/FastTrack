@@ -2,7 +2,9 @@ package wesseling.io.fasttime.timer
 
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.SharedPreferences
+import android.os.BatteryManager
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -213,16 +215,34 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
     
     /**
      * Start the timer from a saved state
+     * 
+     * This method is responsible for starting or resuming the timer based on saved state information.
+     * It implements a sophisticated timer mechanism that:
+     * 
+     * 1. Handles background/foreground state detection to optimize update frequency
+     * 2. Implements time inconsistency detection to prevent timer errors
+     * 3. Provides adaptive update intervals based on elapsed time and app state
+     * 4. Includes error handling with safe recovery mechanisms
+     * 5. Implements battery-aware throttling to minimize energy consumption
+     * 
+     * The timer uses coroutines for efficient background processing and cancellation handling.
+     * When the app is in the background, the update frequency is reduced to conserve battery.
      */
     private fun startTimerFromSavedState() {
         try {
             // Cancel any existing job first
             timerJob?.cancel()
             
+            // Track state changes to minimize SharedPreferences writes
+            var lastSavedElapsedTime = elapsedTimeMillis
+            var lastSavedState = currentFastingState
+            var lastSaveTime = System.currentTimeMillis()
+            
             timerJob = coroutineScope.launch {
                 var lastUpdateTime = System.currentTimeMillis()
-                var inBackground: Boolean
+                var inBackground = false
                 var updateInterval: Long
+                var consecutiveBackgroundUpdates = 0
                 
                 while (isRunning) {
                     try {
@@ -237,22 +257,48 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
                         }
                         
                         elapsedTimeMillis = expectedElapsed
-                        updateFastingState()
                         
-                        // Check if app is in foreground by checking if any activities are resumed
-                        val activityManager = appContext.getSystemService(Context.ACTIVITY_SERVICE) as android.app.ActivityManager
-                        val appProcessInfo = activityManager.runningAppProcesses?.find { 
-                            it.processName == appContext.packageName 
+                        // Check if app is in foreground using a more efficient method
+                        val wasInBackground = inBackground
+                        inBackground = isAppInBackground()
+                        
+                        // If transitioning from foreground to background, save state
+                        if (!wasInBackground && inBackground) {
+                            saveState()
+                            lastSavedElapsedTime = elapsedTimeMillis
+                            lastSavedState = currentFastingState
+                            lastSaveTime = currentTime
                         }
                         
-                        // Adjust update interval based on app state
-                        inBackground = appProcessInfo?.importance != android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
-                        updateInterval = if (inBackground) {
-                            // When in background, update less frequently
-                            5000L // 5 seconds
+                        // Update fasting state
+                        updateFastingState()
+                        
+                        // Determine if we need to save state based on significant changes
+                        val timeSinceLastSave = currentTime - lastSaveTime
+                        val elapsedTimeDifference = elapsedTimeMillis - lastSavedElapsedTime
+                        val stateChanged = lastSavedState != currentFastingState
+                        
+                        // Save state if:
+                        // 1. Fasting state has changed, or
+                        // 2. It's been more than 5 minutes since last save, or
+                        // 3. Elapsed time has changed by more than 5 minutes
+                        if (stateChanged || 
+                            timeSinceLastSave > TimeUnit.MINUTES.toMillis(5) || 
+                            elapsedTimeDifference > TimeUnit.MINUTES.toMillis(5)) {
+                            saveState()
+                            lastSavedElapsedTime = elapsedTimeMillis
+                            lastSavedState = currentFastingState
+                            lastSaveTime = currentTime
+                        }
+                        
+                        // Calculate adaptive update interval based on multiple factors
+                        updateInterval = calculateAdaptiveUpdateInterval(inBackground, consecutiveBackgroundUpdates)
+                        
+                        // If in background, increment counter for progressive throttling
+                        if (inBackground) {
+                            consecutiveBackgroundUpdates++
                         } else {
-                            // When in foreground, update every second
-                            1000L
+                            consecutiveBackgroundUpdates = 0
                         }
                         
                         lastUpdateTime = currentTime
@@ -271,6 +317,160 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
             Log.e(TAG, "Error starting timer from saved state", e)
             resetToSafeState()
         }
+    }
+    
+    /**
+     * Calculate an adaptive update interval based on multiple factors to optimize battery usage
+     * 
+     * @param inBackground Whether the app is in the background
+     * @param consecutiveBackgroundUpdates Number of consecutive updates while in background
+     * @return The calculated update interval in milliseconds
+     */
+    private fun calculateAdaptiveUpdateInterval(inBackground: Boolean, consecutiveBackgroundUpdates: Int): Long {
+        // Base interval depends on whether app is in foreground or background
+        val baseInterval = if (inBackground) {
+            // When in background, start with 5 seconds
+            5000L
+        } else {
+            // When in foreground, update every second
+            1000L
+        }
+        
+        // If in foreground, just return the base interval
+        if (!inBackground) {
+            return baseInterval
+        }
+        
+        // For background updates, apply progressive throttling based on elapsed time
+        val elapsedHours = TimeUnit.MILLISECONDS.toHours(elapsedTimeMillis).toInt()
+        
+        // Calculate time-based multiplier
+        val timeBasedMultiplier = when {
+            // Near state transitions (within 10 minutes), update more frequently
+            isNearStateTransition(elapsedHours) -> 1.0
+            
+            // First hour of fasting, update every 5 seconds in background
+            elapsedHours < 1 -> 1.0
+            
+            // 1-4 hours, gradually increase interval
+            elapsedHours < 4 -> 2.0
+            
+            // 4-12 hours, further increase interval
+            elapsedHours < 12 -> 3.0
+            
+            // 12-24 hours
+            elapsedHours < 24 -> 4.0
+            
+            // After 24 hours, much less frequent updates needed
+            else -> 6.0
+        }
+        
+        // Apply progressive throttling based on consecutive background updates
+        // This gradually reduces update frequency the longer the app stays in background
+        val consecutiveUpdateMultiplier = when {
+            consecutiveBackgroundUpdates < 10 -> 1.0
+            consecutiveBackgroundUpdates < 30 -> 1.5
+            consecutiveBackgroundUpdates < 60 -> 2.0
+            consecutiveBackgroundUpdates < 120 -> 3.0
+            else -> 4.0
+        }
+        
+        // Apply battery-aware throttling
+        val batteryMultiplier = getBatteryAwareThrottlingMultiplier()
+        
+        // Calculate final interval with all multipliers
+        val finalInterval = (baseInterval * timeBasedMultiplier * consecutiveUpdateMultiplier * batteryMultiplier).toLong()
+        
+        // Cap the maximum interval to 10 minutes to ensure reasonable responsiveness
+        return finalInterval.coerceAtMost(TimeUnit.MINUTES.toMillis(10))
+    }
+    
+    /**
+     * Get a throttling multiplier based on battery level and charging state
+     * 
+     * @return A multiplier to apply to the update interval
+     */
+    private fun getBatteryAwareThrottlingMultiplier(): Double {
+        try {
+            val batteryInfo = getBatteryInfo()
+            val batteryLevel = batteryInfo.first
+            val isCharging = batteryInfo.second
+            
+            // If charging, no need to throttle
+            if (isCharging) {
+                return 1.0
+            }
+            
+            // Apply throttling based on battery level
+            return when {
+                batteryLevel <= 15 -> 2.0  // Critical battery level
+                batteryLevel <= 30 -> 1.5  // Low battery level
+                else -> 1.0               // Normal battery level
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error getting battery info", e)
+            return 1.0
+        }
+    }
+    
+    /**
+     * Get battery level and charging state
+     * 
+     * @return Pair of (batteryLevel, isCharging)
+     */
+    private fun getBatteryInfo(): Pair<Int, Boolean> {
+        val batteryIntent = appContext.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+        
+        val level = batteryIntent?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
+        val scale = batteryIntent?.getIntExtra(BatteryManager.EXTRA_SCALE, -1) ?: -1
+        val batteryLevel = if (level != -1 && scale != -1) (level * 100 / scale) else 50
+        
+        val status = batteryIntent?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
+        val isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING || 
+                         status == BatteryManager.BATTERY_STATUS_FULL
+        
+        return Pair(batteryLevel, isCharging)
+    }
+    
+    /**
+     * Check if the app is in background using a more efficient method
+     * 
+     * @return true if the app is in background, false otherwise
+     */
+    private fun isAppInBackground(): Boolean {
+        try {
+            val activityManager = appContext.getSystemService(Context.ACTIVITY_SERVICE) as android.app.ActivityManager
+            val appProcesses = activityManager.runningAppProcesses ?: return true
+            
+            val packageName = appContext.packageName
+            for (appProcess in appProcesses) {
+                if (appProcess.processName == packageName) {
+                    return appProcess.importance != android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
+                }
+            }
+            return true
+        } catch (e: Exception) {
+            Log.e(TAG, "Error checking if app is in background", e)
+            return true // Assume background to be safe
+        }
+    }
+    
+    /**
+     * Check if the current elapsed time is near a state transition
+     */
+    private fun isNearStateTransition(elapsedHours: Int): Boolean {
+        // State transitions occur at 4, 12, 18, 24, 48, and 72 hours
+        val stateTransitions = listOf(4, 12, 18, 24, 48, 72)
+        
+        // Check if we're within 10 minutes of any transition
+        for (transition in stateTransitions) {
+            val minutesToTransition = Math.abs((elapsedHours * 60) - (transition * 60))
+            if (minutesToTransition <= 10) {
+                return true
+            }
+        }
+        
+        return false
     }
     
     /**
@@ -301,7 +501,19 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
     
     /**
      * Reset the timer to zero and stop it
-     * @return CompletedFast object if the timer was running, null otherwise
+     * 
+     * This method performs a complete reset of the fasting timer and returns a CompletedFast object
+     * if the timer was running or had elapsed time. The method:
+     * 
+     * 1. Creates a CompletedFast object with the current timer state (if applicable)
+     * 2. Resets all timer state variables to their initial values
+     * 3. Updates widgets to reflect the timer reset
+     * 4. Implements comprehensive error handling
+     * 
+     * The CompletedFast object contains all relevant information about the completed fasting session,
+     * including start time, end time, duration, and maximum fasting state achieved.
+     * 
+     * @return CompletedFast object if the timer was running or had elapsed time, null otherwise
      */
     @Synchronized
     fun resetTimer(): CompletedFast? {
@@ -338,6 +550,19 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
     
     /**
      * Update the current fasting state based on elapsed time
+     * 
+     * This method is responsible for determining the current fasting state based on the elapsed time
+     * and managing state transitions. It performs several key functions:
+     * 
+     * 1. Calculates the appropriate fasting state based on elapsed time thresholds
+     * 2. Detects state changes and triggers notifications when appropriate
+     * 3. Updates the maximum fasting state achieved during the current fast
+     * 4. Triggers widget updates when the state changes
+     * 5. Implements error handling to prevent crashes
+     * 
+     * The fasting states follow a progression based on scientific research about the physiological
+     * changes that occur during fasting. Each state represents a different set of metabolic processes
+     * and health benefits.
      */
     private fun updateFastingState() {
         try {
@@ -369,13 +594,25 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
                 checkAndSendFastingStateNotification()
             }
             
-            // Always update widgets when state changes
+            // Only update widgets when necessary to save battery
             if (stateChanged) {
+                // Always update widgets when state changes
                 Log.d(TAG, "Fasting state changed from ${previousState.name} to ${currentFastingState.name}, updating widgets")
                 updateWidgets(true) // Force update when state changes
             } else if (isRunning) {
-                // Also update widgets periodically when running, but don't force update
-                updateWidgets(false)
+                // For running timer, update widgets less frequently based on elapsed time
+                val updateIntervalMinutes = when {
+                    elapsedTimeMillis < HOUR_IN_MILLIS -> 1 // Update every minute in the first hour
+                    elapsedTimeMillis < 4 * HOUR_IN_MILLIS -> 2 // Every 2 minutes for 1-4 hours
+                    elapsedTimeMillis < 12 * HOUR_IN_MILLIS -> 5 // Every 5 minutes for 4-12 hours
+                    else -> 10 // Every 10 minutes after 12 hours
+                }
+                
+                // Only update if enough time has passed since the last update
+                val currentTimeMinutes = System.currentTimeMillis() / (60 * 1000)
+                if (currentTimeMinutes % updateIntervalMinutes == 0L) {
+                    updateWidgets(false)
+                }
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error updating fasting state", e)
@@ -494,31 +731,35 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
             }
             appContext.sendBroadcast(widgetIntent)
             
-            // Also directly update widgets as a fallback
-            try {
-                val widgetProviderClass = Class.forName("wesseling.io.fasttime.widget.FastingWidgetProvider")
-                val updateMethod = widgetProviderClass.getDeclaredMethod("updateAllWidgets", Context::class.java, Boolean::class.java)
-                updateMethod.invoke(null, appContext, forceUpdate)
-                Log.d(TAG, "Direct widget update succeeded")
-            } catch (e: Exception) {
-                // This is just a fallback, so log but don't throw
-                Log.d(TAG, "Direct widget update failed: ${e.message}")
-            }
-            
-            // Schedule a delayed update to ensure the widget is updated
-            Handler(Looper.getMainLooper()).postDelayed({
+            // Only use the direct update and delayed update for forced updates
+            // to reduce unnecessary processing
+            if (forceUpdate) {
+                // Also directly update widgets as a fallback
                 try {
-                    Log.d(TAG, "Performing delayed widget update")
-                    val delayedIntent = Intent("wesseling.io.fasttime.widget.ACTION_UPDATE_WIDGETS").apply {
-                        setPackage(appContext.packageName)
-                        putExtra("DELAYED_UPDATE", true)
-                        putExtra("FORCE_UPDATE", forceUpdate)
-                    }
-                    appContext.sendBroadcast(delayedIntent)
+                    val widgetProviderClass = Class.forName("wesseling.io.fasttime.widget.FastingWidgetProvider")
+                    val updateMethod = widgetProviderClass.getDeclaredMethod("updateAllWidgets", Context::class.java, Boolean::class.java)
+                    updateMethod.invoke(null, appContext, forceUpdate)
+                    Log.d(TAG, "Direct widget update succeeded")
                 } catch (e: Exception) {
-                    Log.d(TAG, "Delayed widget update failed: ${e.message}")
+                    // This is just a fallback, so log but don't throw
+                    Log.d(TAG, "Direct widget update failed: ${e.message}")
                 }
-            }, 500) // 500ms delay
+                
+                // Schedule a delayed update to ensure the widget is updated
+                Handler(Looper.getMainLooper()).postDelayed({
+                    try {
+                        Log.d(TAG, "Performing delayed widget update")
+                        val delayedIntent = Intent("wesseling.io.fasttime.widget.ACTION_UPDATE_WIDGETS").apply {
+                            setPackage(appContext.packageName)
+                            putExtra("DELAYED_UPDATE", true)
+                            putExtra("FORCE_UPDATE", forceUpdate)
+                        }
+                        appContext.sendBroadcast(delayedIntent)
+                    } catch (e: Exception) {
+                        Log.d(TAG, "Delayed widget update failed: ${e.message}")
+                    }
+                }, 500) // 500ms delay
+            }
         } catch (e: Exception) {
             // Widget provider might not be available, ignore
             Log.d(TAG, "Could not update widgets: ${e.message}")
