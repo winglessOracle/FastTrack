@@ -24,6 +24,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -68,6 +69,20 @@ fun AdjustStartTimeDialog(
     // Initialize time picker with the start time
     var selectedHour by remember { mutableIntStateOf(calendar.get(Calendar.HOUR_OF_DAY)) }
     var selectedMinute by remember { mutableIntStateOf(calendar.get(Calendar.MINUTE)) }
+    
+    // Determine if we should use 12-hour format based on user preferences
+    val use12HourFormat = preferences.timeFormat == wesseling.io.fasttime.model.TimeFormat.HOURS_12
+    
+    // For 12-hour format, we need to track AM/PM
+    var isAM by remember { mutableStateOf(calendar.get(Calendar.AM_PM) == Calendar.AM) }
+    
+    // Convert 24-hour format to 12-hour format for display if needed
+    val displayHour = if (use12HourFormat) {
+        val h = selectedHour % 12
+        if (h == 0) 12 else h  // Convert 0 to 12 for 12-hour format
+    } else {
+        selectedHour
+    }
     
     // Current date components
     val currentYear = calendar.get(Calendar.YEAR)
@@ -277,10 +292,28 @@ fun AdjustStartTimeDialog(
                             ) {
                                 // Hour picker
                                 NumberPicker(
-                                    value = selectedHour,
-                                    onValueChange = { selectedHour = it },
-                                    range = 0..23,
-                                    format = { "%02d".format(it) }
+                                    value = displayHour,
+                                    onValueChange = { newHour ->
+                                        if (use12HourFormat) {
+                                            // Convert 12-hour format to 24-hour format
+                                            selectedHour = when {
+                                                newHour == 12 && isAM -> 0      // 12 AM -> 0
+                                                newHour == 12 && !isAM -> 12    // 12 PM -> 12
+                                                !isAM -> newHour + 12           // 1-11 PM -> 13-23
+                                                else -> newHour                 // 1-11 AM -> 1-11
+                                            }
+                                        } else {
+                                            selectedHour = newHour
+                                        }
+                                    },
+                                    range = if (use12HourFormat) 1..12 else 0..23,
+                                    format = { 
+                                        if (use12HourFormat) {
+                                            "%d".format(it)  // No leading zero for 12-hour format
+                                        } else {
+                                            "%02d".format(it) // Leading zero for 24-hour format
+                                        }
+                                    }
                                 )
                                 
                                 Text(
@@ -297,6 +330,27 @@ fun AdjustStartTimeDialog(
                                     range = 0..59,
                                     format = { "%02d".format(it) }
                                 )
+                                
+                                // AM/PM selector for 12-hour format
+                                if (use12HourFormat) {
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    
+                                    NumberPicker(
+                                        value = if (isAM) 0 else 1,
+                                        onValueChange = { 
+                                            isAM = it == 0
+                                            // Update the 24-hour selectedHour based on AM/PM change
+                                            selectedHour = when {
+                                                displayHour == 12 && isAM -> 0       // 12 AM -> 0
+                                                displayHour == 12 && !isAM -> 12     // 12 PM -> 12
+                                                !isAM -> displayHour + 12            // 1-11 PM -> 13-23
+                                                else -> displayHour                  // 1-11 AM -> 1-11
+                                            }
+                                        },
+                                        range = 0..1,
+                                        format = { if (it == 0) "AM" else "PM" }
+                                    )
+                                }
                             }
                         }
                     }
