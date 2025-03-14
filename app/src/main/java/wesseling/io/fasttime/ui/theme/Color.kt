@@ -2,6 +2,9 @@ package wesseling.io.fasttime.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+// App brand color
+val AppPink = Color(0xFFE84999) // The app's main brand color
+
 // Primary colors
 val PrimaryDark = Color(0xFF1E3A8A)
 val Primary = Color(0xFF2563EB)

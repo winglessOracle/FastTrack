@@ -19,15 +19,15 @@ import wesseling.io.fasttime.model.ThemePreference
 import wesseling.io.fasttime.settings.PreferencesManager
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Primary,
+    primary = AppPink,
     onPrimary = Color.White,
-    primaryContainer = PrimaryDark,
+    primaryContainer = AppPink.copy(alpha = 0.8f),
     onPrimaryContainer = Color.White,
     secondary = Secondary,
     onSecondary = Color.White,
     secondaryContainer = SecondaryDark,
     onSecondaryContainer = Color.White,
-    tertiary = ImmuneResetPurple,
+    tertiary = AppPink,
     onTertiary = Color.White,
     background = BackgroundDark,
     onBackground = TextDark,
@@ -43,15 +43,15 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Primary,
+    primary = AppPink,
     onPrimary = Color.White,
-    primaryContainer = PrimaryLight,
-    onPrimaryContainer = PrimaryDark,
+    primaryContainer = AppPink.copy(alpha = 0.1f),
+    onPrimaryContainer = AppPink.copy(alpha = 0.8f),
     secondary = Secondary,
     onSecondary = Color.White,
     secondaryContainer = SecondaryLight,
     onSecondaryContainer = SecondaryDark,
-    tertiary = ImmuneResetPurple,
+    tertiary = AppPink,
     onTertiary = Color.White,
     background = Background,
     onBackground = TextPrimary,
