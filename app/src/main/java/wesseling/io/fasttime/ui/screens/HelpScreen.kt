@@ -159,6 +159,19 @@ fun BasicsTab() {
             )
         )
         
+        // Fasting Log Features
+        HelpSectionWithItems(
+            title = "Fasting Log Features",
+            items = listOf(
+                "View a summary of your fasting achievements",
+                "Sort entries by date (newest/oldest first)",
+                "Sort entries by duration (longest/shortest first)",
+                "Filter entries by fasting state to find specific achievements",
+                "Tap on an entry to view detailed information",
+                "Edit or delete entries as needed"
+            )
+        )
+        
         // Hydration Section
         HelpSectionWithItems(
             title = "Importance of Hydration",
@@ -336,6 +349,18 @@ fun TipsTab() {
                 "Be consistent with your fasting schedule",
                 "Track your progress with FastTrack",
                 "Listen to your body and adjust as needed"
+            )
+        )
+        
+        // Using the Fasting Log
+        HelpSectionWithItems(
+            title = "Using the Fasting Log Effectively",
+            items = listOf(
+                "Sort by date to track your recent progress",
+                "Sort by duration to identify your longest fasts",
+                "Filter by fasting state to see how often you reach specific milestones",
+                "Use the summary statistics to understand your overall progress",
+                "Review your log regularly to identify patterns and improvements"
             )
         )
         

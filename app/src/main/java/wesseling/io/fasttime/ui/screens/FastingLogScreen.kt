@@ -25,11 +25,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.FileDownload
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Share
@@ -84,6 +86,14 @@ import java.util.Date
 import java.util.Locale
 import java.util.Calendar
 
+// Add these enum classes for sorting and filtering
+enum class SortOption(val displayName: String) {
+    DATE_DESC("Date (Newest First)"),
+    DATE_ASC("Date (Oldest First)"),
+    DURATION_DESC("Duration (Longest First)"),
+    DURATION_ASC("Duration (Shortest First)")
+}
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun FastingLogScreen(
@@ -101,6 +111,12 @@ fun FastingLogScreen(
     var showFastDetails by remember { mutableStateOf<CompletedFast?>(null) }
     var fastToEdit by remember { mutableStateOf<CompletedFast?>(null) }
     var showEditConfirmation by remember { mutableStateOf(false) }
+    
+    // Add state variables for sorting and filtering
+    var currentSortOption by remember { mutableStateOf(SortOption.DATE_DESC) }
+    var selectedFastingState by remember { mutableStateOf<FastingState?>(null) }
+    var showSortDialog by remember { mutableStateOf(false) }
+    var showFilterDialog by remember { mutableStateOf(false) }
     
     val repository = remember { FastingRepository.getInstance(context) }
     
@@ -125,6 +141,24 @@ fun FastingLogScreen(
             } finally {
                 isLoading = false
             }
+        }
+    }
+    
+    // Function to sort and filter fasts
+    fun getSortedAndFilteredFasts(): List<CompletedFast> {
+        // First apply filter
+        val filteredFasts = if (selectedFastingState != null) {
+            allFasts.filter { it.maxFastingState == selectedFastingState }
+        } else {
+            allFasts
+        }
+        
+        // Then apply sorting
+        return when (currentSortOption) {
+            SortOption.DATE_DESC -> filteredFasts.sortedByDescending { it.endTimeMillis }
+            SortOption.DATE_ASC -> filteredFasts.sortedBy { it.endTimeMillis }
+            SortOption.DURATION_DESC -> filteredFasts.sortedByDescending { it.durationMillis }
+            SortOption.DURATION_ASC -> filteredFasts.sortedBy { it.durationMillis }
         }
     }
     
@@ -271,6 +305,22 @@ fun FastingLogScreen(
                     }
                 },
                 actions = {
+                    // Add sort button
+                    IconButton(onClick = { showSortDialog = true }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Sort,
+                            contentDescription = "Sort"
+                        )
+                    }
+                    
+                    // Add filter button
+                    IconButton(onClick = { showFilterDialog = true }) {
+                        Icon(
+                            imageVector = Icons.Default.FilterList,
+                            contentDescription = "Filter"
+                        )
+                    }
+                    
                     // Refresh button
                     IconButton(
                         onClick = { refreshData() }
@@ -322,6 +372,8 @@ fun FastingLogScreen(
                 .padding(paddingValues)
                 .pullRefresh(pullRefreshState)
         ) {
+            val sortedAndFilteredFasts = getSortedAndFilteredFasts()
+            
             if (allFasts.isEmpty()) {
                 // Empty state
                 Column(
@@ -356,6 +408,51 @@ fun FastingLogScreen(
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                     )
                 }
+            } else if (sortedAndFilteredFasts.isEmpty()) {
+                // No results after filtering
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.FilterList,
+                        contentDescription = null,
+                        modifier = Modifier.size(64.dp),
+                        tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                    )
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    Text(
+                        text = "No matching fasting sessions",
+                        style = MaterialTheme.typography.titleLarge,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                    )
+                    
+                    Spacer(modifier = Modifier.height(8.dp))
+                    
+                    Text(
+                        text = "Try changing your filter settings",
+                        style = MaterialTheme.typography.bodyLarge,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                    )
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    Button(
+                        onClick = { selectedFastingState = null },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary
+                        )
+                    ) {
+                        Text("Clear Filter")
+                    }
+                }
             } else {
                     LazyColumn(
                         modifier = Modifier
@@ -370,17 +467,42 @@ fun FastingLogScreen(
                     // Summary section
                     item {
                         FastingLogSummary(
-                            fasts = allFasts,
+                            fasts = sortedAndFilteredFasts,
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
                     
-                    // Header with delete all button
-                            item {
+                    // Active filters indicator
+                    if (selectedFastingState != null) {
+                        item {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "Filtered by: ${selectedFastingState?.displayName}",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.weight(1f)
+                                )
+                                
+                                TextButton(
+                                    onClick = { selectedFastingState = null }
+                                ) {
+                                    Text("Clear")
+                                }
+                            }
+                        }
+                    }
+                    
+                    // Header with count
+                    item {
                         Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 8.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
@@ -389,9 +511,9 @@ fun FastingLogScreen(
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier.weight(1f)
                             )
-                                        
-                                        Text(
-                                text = "${allFasts.size} sessions",
+                            
+                            Text(
+                                text = "${sortedAndFilteredFasts.size} sessions",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                             )
@@ -399,7 +521,7 @@ fun FastingLogScreen(
                     }
                     
                     // List of fasts
-                    items(allFasts) { fast ->
+                    items(sortedAndFilteredFasts) { fast ->
                         FastingLogItem(
                             fast = fast,
                             preferences = preferences,
@@ -575,6 +697,151 @@ fun FastingLogScreen(
                 fastToEdit = null
             },
             onDismiss = { fastToEdit = null }
+        )
+    }
+    
+    // Sort dialog
+    if (showSortDialog) {
+        AlertDialog(
+            onDismissRequest = { showSortDialog = false },
+            title = { Text("Sort By") },
+            text = {
+                Column {
+                    SortOption.values().forEach { option ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    currentSortOption = option
+                                    showSortDialog = false
+                                }
+                                .padding(vertical = 12.dp, horizontal = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            if (currentSortOption == option) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.Sort,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            } else {
+                                Spacer(modifier = Modifier.width(24.dp))
+                            }
+                            
+                            Spacer(modifier = Modifier.width(16.dp))
+                            
+                            Text(
+                                text = option.displayName,
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = if (currentSortOption == option) 
+                                    MaterialTheme.colorScheme.primary 
+                                else 
+                                    MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showSortDialog = false }) {
+                    Text("Close")
+                }
+            }
+        )
+    }
+    
+    // Filter dialog
+    if (showFilterDialog) {
+        AlertDialog(
+            onDismissRequest = { showFilterDialog = false },
+            title = { Text("Filter By Fasting State") },
+            text = {
+                Column {
+                    // Add "All" option
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                selectedFastingState = null
+                                showFilterDialog = false
+                            }
+                            .padding(vertical = 12.dp, horizontal = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (selectedFastingState == null) {
+                            Icon(
+                                imageVector = Icons.Default.FilterList,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        } else {
+                            Spacer(modifier = Modifier.width(24.dp))
+                        }
+                        
+                        Spacer(modifier = Modifier.width(16.dp))
+                        
+                        Text(
+                            text = "All States",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = if (selectedFastingState == null) 
+                                MaterialTheme.colorScheme.primary 
+                            else 
+                                MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                    
+                    // Add each fasting state as an option
+                    FastingState.values().forEach { state ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    selectedFastingState = state
+                                    showFilterDialog = false
+                                }
+                                .padding(vertical = 12.dp, horizontal = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            if (selectedFastingState == state) {
+                                Icon(
+                                    imageVector = Icons.Default.FilterList,
+                                    contentDescription = null,
+                                    tint = getColorForFastingState(state),
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            } else {
+                                Box(
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                        .padding(4.dp)
+                                        .background(
+                                            color = getColorForFastingState(state).copy(alpha = 0.3f),
+                                            shape = CircleShape
+                                        )
+                                )
+                            }
+                            
+                            Spacer(modifier = Modifier.width(16.dp))
+                            
+                            Text(
+                                text = state.displayName,
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = if (selectedFastingState == state) 
+                                    getColorForFastingState(state)
+                                else 
+                                    MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showFilterDialog = false }) {
+                    Text("Close")
+                }
+            }
         )
     }
 }

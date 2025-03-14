@@ -6,7 +6,7 @@ FastTime is a simple yet powerful app designed to help you track your fasting ti
 
 - **Simple Timer**: Start and reset your fasting timer with a single tap
 - **Fasting States**: Track different fasting states (Not Fasting, Early Fast, Glycogen Depletion, Metabolic Shift, Deep Ketosis, Immune Reset, Extended Fast)
-- **Fasting Log**: Keep a record of your completed fasts
+- **Fasting Log**: Keep a record of your completed fasts with sorting and filtering options
 - **Home Screen Widget**: Monitor and control your fast directly from your home screen
 - **Visual Indicators**: Color-coded states to easily identify your current fasting progress
 
@@ -45,6 +45,10 @@ FastTime is a simple yet powerful app designed to help you track your fasting ti
 5. **Viewing Your Fasting Log**
    - Tap the "View Fasting Log" button or the history icon in the top bar
    - Browse through your completed fasts, including duration and maximum state achieved
+   - **Sorting Options**: Sort your fasting entries by:
+     - Date (newest or oldest first)
+     - Duration (longest or shortest first)
+   - **Filtering**: Filter your fasting entries by fasting state to find specific achievements
 
 6. **Settings**
    - Tap the "Settings" button or the settings icon in the top bar
