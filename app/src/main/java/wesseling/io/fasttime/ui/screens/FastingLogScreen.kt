@@ -77,6 +77,7 @@ import kotlinx.coroutines.launch
 import wesseling.io.fasttime.model.CompletedFast
 import wesseling.io.fasttime.model.DateTimePreferences
 import wesseling.io.fasttime.model.FastingState
+import wesseling.io.fasttime.model.TimeFormat
 import wesseling.io.fasttime.repository.FastingRepository
 import wesseling.io.fasttime.settings.PreferencesManager
 import wesseling.io.fasttime.ui.theme.getColorForFastingState
@@ -261,35 +262,35 @@ fun FastingLogScreen(
         }
     }
     
-    // Function to add a test fast for debugging
-    fun addTestFast() {
+    // Function to add a new fast entry
+    fun addNewFastEntry() {
         coroutineScope.launch {
             try {
-                Log.d("FastingLogScreen", "Adding test fast to repository")
+                Log.d("FastingLogScreen", "Adding new fast entry to repository")
                 
-                // Create a test fast with current time
+                // Create a new fast entry with current time
                 val currentTime = System.currentTimeMillis()
                 val startTime = currentTime - (16 * 60 * 60 * 1000) // 16 hours ago
                 
-                val testFast = CompletedFast(
+                val newFast = CompletedFast(
                     startTimeMillis = startTime,
                     endTimeMillis = currentTime,
                     durationMillis = currentTime - startTime,
                     maxFastingState = FastingState.METABOLIC_SHIFT,
-                    note = "Test fast added for debugging"
+                    note = "Fast entry created manually"
                 )
                 
-                // Save the test fast
-                repository.saveFast(testFast)
+                // Save the new fast entry
+                repository.saveFast(newFast)
                 
                 // Refresh the data
                 refreshData()
                 
                 // Show a snackbar
-                snackbarHostState.showSnackbar("Test fast added successfully")
+                snackbarHostState.showSnackbar("New fast entry created")
             } catch (e: Exception) {
-                Log.e("FastingLogScreen", "Error adding test fast", e)
-                snackbarHostState.showSnackbar("Failed to add test fast")
+                Log.e("FastingLogScreen", "Error adding new fast entry", e)
+                snackbarHostState.showSnackbar("Failed to add fast entry")
             }
         }
     }
@@ -338,13 +339,13 @@ fun FastingLogScreen(
                             contentDescription = "Refresh Fasting Log"
                         )
                     }
-                    // Add test fast button (for debugging)
+                    // Add new fast entry button
                     IconButton(
-                        onClick = { addTestFast() }
+                        onClick = { addNewFastEntry() }
                     ) {
                         Icon(
                             imageVector = Icons.Default.Add,
-                            contentDescription = "Add Test Fast"
+                            contentDescription = "Add New Fast Entry"
                         )
                     }
                     // Export button
@@ -1860,8 +1861,28 @@ fun TimePickerDialog(
     val calendar = Calendar.getInstance()
     calendar.timeInMillis = initialTimeMillis
     
+    // Get user preferences for time format
+    val context = LocalContext.current
+    val preferencesManager = remember { PreferencesManager.getInstance(context) }
+    val preferences = preferencesManager.dateTimePreferences
+    val use12HourFormat = preferences.timeFormat == TimeFormat.HOURS_12
+    
+    // Store 24-hour format internally
     var selectedHour by remember { mutableStateOf(calendar.get(Calendar.HOUR_OF_DAY)) }
     var selectedMinute by remember { mutableStateOf(calendar.get(Calendar.MINUTE)) }
+    
+    // For 12-hour format display
+    var isAM by remember { 
+        mutableStateOf(calendar.get(Calendar.HOUR_OF_DAY) < 12) 
+    }
+    
+    // Convert 24-hour to 12-hour format for display
+    val displayHour = if (use12HourFormat) {
+        val h = selectedHour % 12
+        if (h == 0) 12 else h  // Convert 0 to 12 for 12-hour format
+    } else {
+        selectedHour
+    }
     
     AlertDialog(
         onDismissRequest = onDismissRequest,
@@ -1898,21 +1919,51 @@ fun TimePickerDialog(
                         
                         IconButton(
                             onClick = { 
-                                selectedHour = if (selectedHour < 23) selectedHour + 1 else 0
+                                if (use12HourFormat) {
+                                    // In 12-hour format, cycle 1-12
+                                    val newDisplayHour = if (displayHour < 12) displayHour + 1 else 1
+                                    // Convert to 24-hour for internal storage
+                                    selectedHour = if (isAM) {
+                                        if (newDisplayHour == 12) 0 else newDisplayHour
+                                    } else {
+                                        if (newDisplayHour == 12) 12 else newDisplayHour + 12
+                                    }
+                                } else {
+                                    // In 24-hour format, cycle 0-23
+                                    selectedHour = if (selectedHour < 23) selectedHour + 1 else 0
+                                    isAM = selectedHour < 12
+                                }
                             }
                         ) {
                             Text("+", fontWeight = FontWeight.Bold)
                         }
                         
                         Text(
-                            text = String.format("%02d", selectedHour),
+                            text = if (use12HourFormat) {
+                                String.format("%d", displayHour) // No leading zero for 12-hour
+                            } else {
+                                String.format("%02d", displayHour) // Leading zero for 24-hour
+                            },
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold
                         )
                         
                         IconButton(
                             onClick = { 
-                                selectedHour = if (selectedHour > 0) selectedHour - 1 else 23
+                                if (use12HourFormat) {
+                                    // In 12-hour format, cycle 12-1
+                                    val newDisplayHour = if (displayHour > 1) displayHour - 1 else 12
+                                    // Convert to 24-hour for internal storage
+                                    selectedHour = if (isAM) {
+                                        if (newDisplayHour == 12) 0 else newDisplayHour
+                                    } else {
+                                        if (newDisplayHour == 12) 12 else newDisplayHour + 12
+                                    }
+                                } else {
+                                    // In 24-hour format, cycle 23-0
+                                    selectedHour = if (selectedHour > 0) selectedHour - 1 else 23
+                                    isAM = selectedHour < 12
+                                }
                             }
                         ) {
                             Text("-", fontWeight = FontWeight.Bold)
@@ -1956,6 +2007,72 @@ fun TimePickerDialog(
                             }
                         ) {
                             Text("-", fontWeight = FontWeight.Bold)
+                        }
+                    }
+                    
+                    // AM/PM selector for 12-hour format
+                    if (use12HourFormat) {
+                        Spacer(modifier = Modifier.width(8.dp))
+                        
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "AM/PM",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                            
+                            Spacer(modifier = Modifier.height(8.dp))
+                            
+                            // AM button
+                            Button(
+                                onClick = { 
+                                    if (!isAM) {
+                                        isAM = true
+                                        // Update the hour in 24-hour format
+                                        selectedHour -= 12
+                                        if (selectedHour < 0) selectedHour += 24
+                                    }
+                                },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = if (isAM) 
+                                        MaterialTheme.colorScheme.primary 
+                                    else 
+                                        MaterialTheme.colorScheme.surfaceVariant,
+                                    contentColor = if (isAM) 
+                                        MaterialTheme.colorScheme.onPrimary 
+                                    else 
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                ),
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            ) {
+                                Text("AM")
+                            }
+                            
+                            // PM button
+                            Button(
+                                onClick = { 
+                                    if (isAM) {
+                                        isAM = false
+                                        // Update the hour in 24-hour format
+                                        selectedHour += 12
+                                        if (selectedHour >= 24) selectedHour -= 24
+                                    }
+                                },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = if (!isAM) 
+                                        MaterialTheme.colorScheme.primary 
+                                    else 
+                                        MaterialTheme.colorScheme.surfaceVariant,
+                                    contentColor = if (!isAM) 
+                                        MaterialTheme.colorScheme.onPrimary 
+                                    else 
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                ),
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            ) {
+                                Text("PM")
+                            }
                         }
                     }
                 }
