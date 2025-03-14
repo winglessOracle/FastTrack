@@ -78,6 +78,7 @@ import wesseling.io.fasttime.model.CompletedFast
 import wesseling.io.fasttime.model.DateTimePreferences
 import wesseling.io.fasttime.model.FastingState
 import wesseling.io.fasttime.repository.FastingRepository
+import wesseling.io.fasttime.settings.PreferencesManager
 import wesseling.io.fasttime.ui.theme.getColorForFastingState
 import wesseling.io.fasttime.util.DateTimeFormatter
 import java.io.File
@@ -101,7 +102,8 @@ fun FastingLogScreen(
     onBackPressed: () -> Unit
 ) {
     val context = LocalContext.current
-    val preferences = remember { DateTimePreferences() }
+    val preferencesManager = remember { PreferencesManager.getInstance(context) }
+    val preferences = remember { preferencesManager.dateTimePreferences }
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     
@@ -1345,17 +1347,18 @@ fun AchievementItem(
 }
 
 fun shareFast(context: Context, fast: CompletedFast) {
-    val shareText = fast.toShareText()
-        val shareIntent = Intent().apply {
-            action = Intent.ACTION_SEND
+    val preferencesManager = PreferencesManager.getInstance(context)
+    val preferences = preferencesManager.dateTimePreferences
+    val shareText = fast.toShareText(preferences)
+    val shareIntent = Intent().apply {
+        action = Intent.ACTION_SEND
         putExtra(Intent.EXTRA_TEXT, shareText)
-            type = "text/plain"
+        type = "text/plain"
     }
     context.startActivity(Intent.createChooser(shareIntent, "Share Fasting Achievement"))
 }
 
-fun CompletedFast.toShareText(): String {
-    val preferences = DateTimePreferences()
+fun CompletedFast.toShareText(preferences: DateTimePreferences): String {
     val startDate = DateTimeFormatter.formatDateTime(startTimeMillis, preferences)
     val duration = DateTimeFormatter.formatDuration(durationMillis)
     val fastingStateName = maxFastingState.displayName
