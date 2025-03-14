@@ -81,10 +81,13 @@ import wesseling.io.fasttime.ui.theme.getColorForFastingState
 import wesseling.io.fasttime.util.DateTimeFormatter
 import java.io.File
 import java.io.FileWriter
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.Calendar
+import android.content.ActivityNotFoundException
+import wesseling.io.fasttime.settings.PreferencesManager
 
 // Add these enum classes for sorting and filtering
 enum class SortOption(val displayName: String) {
@@ -100,7 +103,8 @@ fun FastingLogScreen(
     onBackPressed: () -> Unit
 ) {
     val context = LocalContext.current
-    val preferences = remember { DateTimePreferences() }
+    val preferencesManager = remember { PreferencesManager.getInstance(context) }
+    val preferences = remember { preferencesManager.dateTimePreferences }
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     
@@ -198,40 +202,90 @@ fun FastingLogScreen(
                 
                 // Create CSV content
                 val csvContent = StringBuilder()
-                csvContent.append("Start Time,End Time,Duration,Max Fasting State\n")
+                csvContent.append("Start Time,End Time,Duration,Max Fasting State,Notes\n")
                 
                 fasts.forEach { fast ->
+                    // Escape quotes in notes to prevent CSV issues
+                    val safeNote = fast.note.replace("\"", "\"\"")
+                    
                     csvContent.append("${DateTimeFormatter.formatDateTime(fast.startTimeMillis, preferences)},")
                     csvContent.append("${DateTimeFormatter.formatDateTime(fast.endTimeMillis, preferences)},")
                     csvContent.append("${DateTimeFormatter.formatDuration(fast.durationMillis)},")
-                    csvContent.append("${fast.maxFastingState.displayName}\n")
+                    csvContent.append("${fast.maxFastingState.displayName},")
+                    csvContent.append("\"$safeNote\"\n")
                 }
                 
                 val fullContent = csvContent.toString()
                 
-                // Create file in app's cache directory
-                val fileName = "fasting_log_${SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.getDefault()).format(Date())}.csv"
-                val file = File(context.cacheDir, fileName)
-                FileWriter(file).use { it.write(fullContent) }
-                
-                // Share the file
-                val uri = Uri.fromFile(file)
-                val shareIntent = Intent().apply {
-                    action = Intent.ACTION_SEND
-                    putExtra(Intent.EXTRA_STREAM, uri)
-                    putExtra(Intent.EXTRA_SUBJECT, "FastTrack Fasting Log")
-                    putExtra(Intent.EXTRA_TEXT, "Here's my fasting log from FastTrack!")
-                    type = "text/csv"
-                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                }
-                
-                context.startActivity(Intent.createChooser(shareIntent, "Share Fasting Log"))
-                
-                coroutineScope.launch {
-                    snackbarHostState.showSnackbar("Fasting log exported successfully")
+                try {
+                    // Create file in app's cache directory
+                    val fileName = "fasting_log_${SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.getDefault()).format(Date())}.csv"
+                    val file = File(context.cacheDir, fileName)
+                    
+                    try {
+                        FileWriter(file).use { it.write(fullContent) }
+                    } catch (e: IOException) {
+                        Log.e("FastingLogScreen", "Error writing to file: ${e.message}", e)
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar("Failed to write export file")
+                        }
+                        return@launch
+                    }
+                    
+                    if (!file.exists() || file.length() == 0L) {
+                        Log.e("FastingLogScreen", "File was not created or is empty")
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar("Failed to create export file")
+                        }
+                        return@launch
+                    }
+                    
+                    // Share the file using FileProvider
+                    val authority = "${context.packageName}.provider"
+                    val uri = try {
+                        androidx.core.content.FileProvider.getUriForFile(context, authority, file)
+                    } catch (e: IllegalArgumentException) {
+                        Log.e("FastingLogScreen", "Error getting URI from FileProvider: ${e.message}", e)
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar("Failed to prepare file for sharing")
+                        }
+                        return@launch
+                    }
+                    
+                    val shareIntent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        putExtra(Intent.EXTRA_STREAM, uri)
+                        putExtra(Intent.EXTRA_SUBJECT, "FastTrack Fasting Log")
+                        putExtra(Intent.EXTRA_TEXT, "Here's my fasting log from FastTrack!")
+                        type = "text/csv"
+                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    }
+                    
+                    try {
+                        context.startActivity(Intent.createChooser(shareIntent, "Share Fasting Log"))
+                        
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar("Fasting log exported successfully")
+                        }
+                    } catch (e: ActivityNotFoundException) {
+                        Log.e("FastingLogScreen", "No app found to handle sharing: ${e.message}", e)
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar("No app found to handle sharing")
+                        }
+                    } catch (e: Exception) {
+                        Log.e("FastingLogScreen", "Error sharing file: ${e.message}", e)
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar("Failed to share fasting logs")
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e("FastingLogScreen", "Error preparing export: ${e.message}", e)
+                    coroutineScope.launch {
+                        snackbarHostState.showSnackbar("Failed to prepare export")
+                    }
                 }
             } catch (e: Exception) {
-                Log.e("FastingLogScreen", "Error exporting all fasts", e)
+                Log.e("FastingLogScreen", "Error exporting all fasts: ${e.message}", e)
                 coroutineScope.launch {
                     snackbarHostState.showSnackbar("Failed to export fasting logs")
                 }
@@ -1339,17 +1393,18 @@ fun AchievementItem(
 }
 
 fun shareFast(context: Context, fast: CompletedFast) {
-    val shareText = fast.toShareText()
-        val shareIntent = Intent().apply {
-            action = Intent.ACTION_SEND
+    val preferencesManager = PreferencesManager.getInstance(context)
+    val preferences = preferencesManager.dateTimePreferences
+    val shareText = fast.toShareText(preferences)
+    val shareIntent = Intent().apply {
+        action = Intent.ACTION_SEND
         putExtra(Intent.EXTRA_TEXT, shareText)
-            type = "text/plain"
+        type = "text/plain"
     }
     context.startActivity(Intent.createChooser(shareIntent, "Share Fasting Achievement"))
 }
 
-fun CompletedFast.toShareText(): String {
-    val preferences = DateTimePreferences()
+fun CompletedFast.toShareText(preferences: DateTimePreferences): String {
     val startDate = DateTimeFormatter.formatDateTime(startTimeMillis, preferences)
     val duration = DateTimeFormatter.formatDuration(durationMillis)
     val fastingStateName = maxFastingState.displayName
@@ -1641,12 +1696,24 @@ fun DatePickerDialog(
     onDateSelected: (Long) -> Unit,
     initialDate: Long
 ) {
+    val context = LocalContext.current
+    val preferencesManager = remember { PreferencesManager.getInstance(context) }
+    val preferences = remember { preferencesManager.dateTimePreferences }
+    
     val calendar = Calendar.getInstance()
     calendar.timeInMillis = initialDate
     
     var selectedYear by remember { mutableStateOf(calendar.get(Calendar.YEAR)) }
     var selectedMonth by remember { mutableStateOf(calendar.get(Calendar.MONTH)) }
     var selectedDay by remember { mutableStateOf(calendar.get(Calendar.DAY_OF_MONTH)) }
+    
+    // Format for displaying the selected date according to user preferences
+    val formattedDate = remember(selectedYear, selectedMonth, selectedDay) {
+        val cal = Calendar.getInstance().apply {
+            set(selectedYear, selectedMonth, selectedDay)
+        }
+        DateTimeFormatter.formatDate(cal.timeInMillis, preferences)
+    }
     
     AlertDialog(
         onDismissRequest = onDismissRequest,
@@ -1663,6 +1730,17 @@ fun DatePickerDialog(
                     .fillMaxWidth()
                     .padding(vertical = 16.dp)
             ) {
+                // Display the formatted date according to user preferences
+                Text(
+                    text = "Selected date: $formattedDate",
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                )
+                
                 // Year picker
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -1848,11 +1926,24 @@ fun TimePickerDialog(
     onTimeSelected: (hour: Int, minute: Int) -> Unit,
     initialTimeMillis: Long
 ) {
+    val context = LocalContext.current
+    val preferencesManager = remember { PreferencesManager.getInstance(context) }
+    val preferences = remember { preferencesManager.dateTimePreferences }
+    
     val calendar = Calendar.getInstance()
     calendar.timeInMillis = initialTimeMillis
     
     var selectedHour by remember { mutableStateOf(calendar.get(Calendar.HOUR_OF_DAY)) }
     var selectedMinute by remember { mutableStateOf(calendar.get(Calendar.MINUTE)) }
+    
+    // Format for displaying the selected time according to user preferences
+    val formattedTime = remember(selectedHour, selectedMinute) {
+        val cal = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, selectedHour)
+            set(Calendar.MINUTE, selectedMinute)
+        }
+        DateTimeFormatter.formatTime(cal.timeInMillis, preferences)
+    }
     
     AlertDialog(
         onDismissRequest = onDismissRequest,
@@ -1870,6 +1961,17 @@ fun TimePickerDialog(
                     .padding(vertical = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                // Display the formatted time according to user preferences
+                Text(
+                    text = "Selected time: $formattedTime",
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                )
+                
                 // Hour and minute pickers side by side
                 Row(
                     modifier = Modifier.fillMaxWidth(),

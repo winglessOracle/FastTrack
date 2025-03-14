@@ -17,9 +17,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -27,6 +29,8 @@ import androidx.compose.ui.unit.sp
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import wesseling.io.fasttime.settings.PreferencesManager
+import wesseling.io.fasttime.util.DateTimeFormatter
 
 /**
  * A day picker component that allows scrolling through days
@@ -37,6 +41,11 @@ fun DayPicker(
     onIndexChange: (Int) -> Unit,
     daysList: List<Triple<Int, Int, Int>>
 ) {
+    // Get preferences manager
+    val context = LocalContext.current
+    val preferencesManager = remember { PreferencesManager.getInstance(context) }
+    val preferences = remember { preferencesManager.dateTimePreferences }
+    
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -69,17 +78,17 @@ fun DayPicker(
         ) {
             val (day, month, year) = daysList[selectedIndex]
             
-            // Create a formatted date string that includes month info
-            val dateStr = SimpleDateFormat("dd MMM", Locale.getDefault()).format(
-                Calendar.getInstance().apply {
-                    set(year, month, day)
-                }.time
-            )
+            // Create a calendar with the selected date
+            val cal = Calendar.getInstance().apply {
+                set(year, month, day)
+            }
             
-            // Format as "DD MMM" (day and abbreviated month)
+            // Format the date using user preferences
+            val dateStr = DateTimeFormatter.formatDate(cal.timeInMillis, preferences)
+            
             Text(
                 text = dateStr,
-                fontSize = 16.sp, // Slightly smaller to fit the additional text
+                fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center
