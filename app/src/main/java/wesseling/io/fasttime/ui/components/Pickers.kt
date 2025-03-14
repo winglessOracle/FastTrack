@@ -1,6 +1,7 @@
 package wesseling.io.fasttime.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,12 +31,18 @@ import java.util.Locale
 
 /**
  * A day picker component that allows scrolling through days
+ * 
+ * @param selectedIndex The currently selected index in the daysList
+ * @param onIndexChange Callback when the index changes
+ * @param daysList List of days as Triple<day, month, year>
+ * @param hasError Whether to show an error state
  */
 @Composable
 fun DayPicker(
     selectedIndex: Int,
     onIndexChange: (Int) -> Unit,
-    daysList: List<Triple<Int, Int, Int>>
+    daysList: List<Triple<Int, Int, Int>>,
+    hasError: Boolean = false
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -43,6 +50,17 @@ fun DayPicker(
             .width(90.dp)
             .clip(RoundedCornerShape(8.dp))
             .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
+            .then(
+                if (hasError) {
+                    Modifier.border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.error,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                } else {
+                    Modifier
+                }
+            )
             .padding(vertical = 8.dp)
     ) {
         // Up arrow
@@ -56,7 +74,7 @@ fun DayPicker(
             Icon(
                 imageVector = Icons.Filled.ArrowDropUp,
                 contentDescription = "Select previous day", // More descriptive
-                tint = MaterialTheme.colorScheme.primary
+                tint = if (hasError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
             )
         }
         
@@ -81,7 +99,7 @@ fun DayPicker(
                 text = dateStr,
                 fontSize = 16.sp, // Slightly smaller to fit the additional text
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = if (hasError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center
             )
         }
@@ -97,7 +115,7 @@ fun DayPicker(
             Icon(
                 imageVector = Icons.Filled.ArrowDropDown,
                 contentDescription = "Select next day", // More descriptive
-                tint = MaterialTheme.colorScheme.primary
+                tint = if (hasError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
             )
         }
     }
@@ -105,13 +123,20 @@ fun DayPicker(
 
 /**
  * A number picker component that allows scrolling through numbers
+ * 
+ * @param value The current value
+ * @param onValueChange Callback when the value changes
+ * @param range The range of allowed values
+ * @param format Function to format the value for display
+ * @param hasError Whether to show an error state
  */
 @Composable
 fun NumberPicker(
     value: Int,
     onValueChange: (Int) -> Unit,
     range: IntRange,
-    format: (Int) -> String = { it.toString() }
+    format: (Int) -> String = { it.toString() },
+    hasError: Boolean = false
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -119,6 +144,17 @@ fun NumberPicker(
             .width(60.dp)
             .clip(RoundedCornerShape(8.dp))
             .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
+            .then(
+                if (hasError) {
+                    Modifier.border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.error,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                } else {
+                    Modifier
+                }
+            )
             .padding(vertical = 8.dp)
     ) {
         // Up arrow
@@ -132,7 +168,7 @@ fun NumberPicker(
             Icon(
                 imageVector = Icons.Filled.ArrowDropUp,
                 contentDescription = "Increase value", // More descriptive
-                tint = MaterialTheme.colorScheme.primary
+                tint = if (hasError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
             )
         }
         
@@ -147,7 +183,7 @@ fun NumberPicker(
                 text = format(value),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
+                color = if (hasError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
             )
         }
         
@@ -162,7 +198,7 @@ fun NumberPicker(
             Icon(
                 imageVector = Icons.Filled.ArrowDropDown,
                 contentDescription = "Decrease value", // More descriptive
-                tint = MaterialTheme.colorScheme.primary
+                tint = if (hasError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
             )
         }
     }

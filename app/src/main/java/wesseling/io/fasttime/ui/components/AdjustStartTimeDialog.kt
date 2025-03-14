@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -43,6 +44,66 @@ import wesseling.io.fasttime.util.DateTimeFormatter
 // Import the picker components
 import wesseling.io.fasttime.ui.components.DayPicker
 import wesseling.io.fasttime.ui.components.NumberPicker
+import wesseling.io.fasttime.model.TimeFormat
+
+/**
+ * Data class to hold time-related state
+ */
+private data class TimeState(
+    val hour: Int,
+    val minute: Int,
+    val dayIndex: Int,
+    val isAM: Boolean
+)
+
+/**
+ * Data class to represent validation errors
+ */
+private data class ValidationResult(
+    val isValid: Boolean,
+    val errorMessage: String? = null
+)
+
+/**
+ * Converts a 12-hour format hour to 24-hour format
+ * 
+ * @param hour12 The hour in 12-hour format (1-12)
+ * @param isAM Whether the time is AM (true) or PM (false)
+ * @return The hour in 24-hour format (0-23)
+ */
+private fun convertTo24Hour(hour12: Int, isAM: Boolean): Int {
+    return when {
+        hour12 == 12 && isAM -> 0      // 12 AM -> 0
+        hour12 == 12 && !isAM -> 12    // 12 PM -> 12
+        !isAM -> hour12 + 12           // 1-11 PM -> 13-23
+        else -> hour12                  // 1-11 AM -> 1-11
+    }
+}
+
+/**
+ * Reusable error message component
+ */
+@Composable
+private fun ErrorMessage(message: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = Icons.Filled.Error,
+            contentDescription = "Error",
+            tint = MaterialTheme.colorScheme.error,
+            modifier = Modifier.padding(end = 8.dp)
+        )
+        Text(
+            text = message,
+            color = MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
+}
 
 /**
  * Dialog for adjusting the start time of a fast
@@ -53,6 +114,10 @@ fun AdjustStartTimeDialog(
     onAdjustTime: (Long) -> Unit,
     onDismiss: () -> Unit
 ) {
+    // Constants
+    val MAX_DAYS_BACK = 30
+    val MAX_ADJUSTMENT_MILLIS = TimeUnit.DAYS.toMillis(MAX_DAYS_BACK.toLong())
+    
     // Get preferences manager
     val context = LocalContext.current
     val preferencesManager = remember { PreferencesManager.getInstance(context) }
@@ -66,36 +131,12 @@ fun AdjustStartTimeDialog(
         timeInMillis = currentStartTimeMillis
     }
     
-    // Initialize time picker with the start time
-    var selectedHour by remember { mutableIntStateOf(calendar.get(Calendar.HOUR_OF_DAY)) }
-    var selectedMinute by remember { mutableIntStateOf(calendar.get(Calendar.MINUTE)) }
-    
     // Determine if we should use 12-hour format based on user preferences
-    val use12HourFormat = preferences.timeFormat == wesseling.io.fasttime.model.TimeFormat.HOURS_12
-    
-    // For 12-hour format, we need to track AM/PM
-    var isAM by remember { mutableStateOf(calendar.get(Calendar.AM_PM) == Calendar.AM) }
-    
-    // Convert 24-hour format to 12-hour format for display if needed
-    val displayHour = if (use12HourFormat) {
-        val h = selectedHour % 12
-        if (h == 0) 12 else h  // Convert 0 to 12 for 12-hour format
-    } else {
-        selectedHour
-    }
-    
-    // Current date components
-    val currentYear = calendar.get(Calendar.YEAR)
-    val currentMonth = calendar.get(Calendar.MONTH)
-    val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
-    
-    // Calculate the maximum number of days we can go back
-    // (limit to 30 days in the past to prevent unreasonable adjustments)
-    val maxDaysBack = 30
+    val use12HourFormat = preferences.timeFormat == TimeFormat.HOURS_12
     
     // Create a list of selectable days (today and previous days)
-    val daysList = remember {
-        (0..maxDaysBack).map { daysBack ->
+    val daysList = remember(currentStartTimeMillis) {
+        (0..MAX_DAYS_BACK).map { daysBack ->
             val cal = Calendar.getInstance()
             cal.add(Calendar.DAY_OF_MONTH, -daysBack)
             Triple(
@@ -108,18 +149,37 @@ fun AdjustStartTimeDialog(
     
     // Find the index of the current day in the list
     val initialDayIndex = daysList.indexOfFirst { (day, month, year) ->
-        day == currentDay && month == currentMonth && year == currentYear
+        day == calendar.get(Calendar.DAY_OF_MONTH) && 
+        month == calendar.get(Calendar.MONTH) && 
+        year == calendar.get(Calendar.YEAR)
     }.coerceAtLeast(0)
     
-    // State for the selected day index
-    var selectedDayIndex by remember { mutableIntStateOf(initialDayIndex) }
+    // Initialize time state
+    var timeState by remember { 
+        mutableStateOf(
+            TimeState(
+                hour = calendar.get(Calendar.HOUR_OF_DAY),
+                minute = calendar.get(Calendar.MINUTE),
+                dayIndex = initialDayIndex,
+                isAM = calendar.get(Calendar.AM_PM) == Calendar.AM
+            )
+        ) 
+    }
+    
+    // Convert 24-hour format to 12-hour format for display if needed
+    val displayHour = if (use12HourFormat) {
+        val h = timeState.hour % 12
+        if (h == 0) 12 else h  // Convert 0 to 12 for 12-hour format
+    } else {
+        timeState.hour
+    }
     
     // Get the selected day components
-    val (selectedDayOfMonth, selectedMonth, selectedYear) = daysList[selectedDayIndex]
+    val (selectedDayOfMonth, selectedMonth, selectedYear) = daysList[timeState.dayIndex]
     
     // Calculate the new start time based on selected date and time
     val newStartCalendar = Calendar.getInstance().apply {
-        set(selectedYear, selectedMonth, selectedDayOfMonth, selectedHour, selectedMinute, 0)
+        set(selectedYear, selectedMonth, selectedDayOfMonth, timeState.hour, timeState.minute, 0)
         set(Calendar.MILLISECOND, 0)
     }
     val newStartTimeMillis = newStartCalendar.timeInMillis
@@ -138,15 +198,13 @@ fun AdjustStartTimeDialog(
     val currentStartTimeFormatted = DateTimeFormatter.formatDateTime(currentStartTimeMillis, preferences)
     val newStartTimeFormatted = DateTimeFormatter.formatDateTime(newStartTimeMillis, preferences)
     
-    // Determine if the adjustment is valid (not in the future)
-    val currentTime = System.currentTimeMillis()
-    val isValidAdjustment = newStartTimeMillis <= currentTime
-    
-    // Determine if the adjustment is valid for fasting (not negative elapsed time)
-    val isValidForFasting = newElapsedTimeMillis > 0
-    
-    // Check if the adjustment is reasonable (not too large)
-    val isReasonableAdjustment = adjustmentMillis < TimeUnit.DAYS.toMillis(30)
+    // Validate the adjustment
+    val validation = validateAdjustment(
+        newStartTimeMillis = newStartTimeMillis,
+        newElapsedTimeMillis = newElapsedTimeMillis,
+        adjustmentMillis = adjustmentMillis,
+        maxAdjustmentMillis = MAX_ADJUSTMENT_MILLIS
+    )
     
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -267,9 +325,12 @@ fun AdjustStartTimeDialog(
                             Spacer(modifier = Modifier.height(4.dp))
                             
                             DayPicker(
-                                selectedIndex = selectedDayIndex,
-                                onIndexChange = { selectedDayIndex = it },
-                                daysList = daysList
+                                selectedIndex = timeState.dayIndex,
+                                onIndexChange = { 
+                                    timeState = timeState.copy(dayIndex = it)
+                                },
+                                daysList = daysList,
+                                hasError = !validation.isValid && validation.errorMessage?.contains("future") == true
                             )
                         }
                         
@@ -296,14 +357,10 @@ fun AdjustStartTimeDialog(
                                     onValueChange = { newHour ->
                                         if (use12HourFormat) {
                                             // Convert 12-hour format to 24-hour format
-                                            selectedHour = when {
-                                                newHour == 12 && isAM -> 0      // 12 AM -> 0
-                                                newHour == 12 && !isAM -> 12    // 12 PM -> 12
-                                                !isAM -> newHour + 12           // 1-11 PM -> 13-23
-                                                else -> newHour                 // 1-11 AM -> 1-11
-                                            }
+                                            val newHour24 = convertTo24Hour(newHour, timeState.isAM)
+                                            timeState = timeState.copy(hour = newHour24)
                                         } else {
-                                            selectedHour = newHour
+                                            timeState = timeState.copy(hour = newHour)
                                         }
                                     },
                                     range = if (use12HourFormat) 1..12 else 0..23,
@@ -313,7 +370,8 @@ fun AdjustStartTimeDialog(
                                         } else {
                                             "%02d".format(it) // Leading zero for 24-hour format
                                         }
-                                    }
+                                    },
+                                    hasError = !validation.isValid
                                 )
                                 
                                 Text(
@@ -325,10 +383,13 @@ fun AdjustStartTimeDialog(
                                 
                                 // Minute picker
                                 NumberPicker(
-                                    value = selectedMinute,
-                                    onValueChange = { selectedMinute = it },
+                                    value = timeState.minute,
+                                    onValueChange = { 
+                                        timeState = timeState.copy(minute = it)
+                                    },
                                     range = 0..59,
-                                    format = { "%02d".format(it) }
+                                    format = { "%02d".format(it) },
+                                    hasError = !validation.isValid
                                 )
                                 
                                 // AM/PM selector for 12-hour format
@@ -336,19 +397,16 @@ fun AdjustStartTimeDialog(
                                     Spacer(modifier = Modifier.width(8.dp))
                                     
                                     NumberPicker(
-                                        value = if (isAM) 0 else 1,
+                                        value = if (timeState.isAM) 0 else 1,
                                         onValueChange = { 
-                                            isAM = it == 0
-                                            // Update the 24-hour selectedHour based on AM/PM change
-                                            selectedHour = when {
-                                                displayHour == 12 && isAM -> 0       // 12 AM -> 0
-                                                displayHour == 12 && !isAM -> 12     // 12 PM -> 12
-                                                !isAM -> displayHour + 12            // 1-11 PM -> 13-23
-                                                else -> displayHour                  // 1-11 AM -> 1-11
-                                            }
+                                            val newIsAM = it == 0
+                                            // Update the 24-hour hour based on AM/PM change
+                                            val newHour24 = convertTo24Hour(displayHour, newIsAM)
+                                            timeState = timeState.copy(hour = newHour24, isAM = newIsAM)
                                         },
                                         range = 0..1,
-                                        format = { if (it == 0) "AM" else "PM" }
+                                        format = { if (it == 0) "AM" else "PM" },
+                                        hasError = !validation.isValid
                                     )
                                 }
                             }
@@ -361,31 +419,17 @@ fun AdjustStartTimeDialog(
                     Text(
                         text = "New start time: $newStartTimeFormatted",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = if (validation.isValid) 
+                            MaterialTheme.colorScheme.onSurfaceVariant 
+                        else 
+                            MaterialTheme.colorScheme.error,
                         textAlign = TextAlign.Center
                     )
                     
-                    if (!isValidAdjustment) {
+                    // Display error message if validation failed
+                    if (!validation.isValid && validation.errorMessage != null) {
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "Start time cannot be in the future",
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    } else if (!isValidForFasting) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "Adjustment would result in negative fasting time",
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    } else if (!isReasonableAdjustment) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "Adjustment is too large (maximum 30 days)",
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
+                        ErrorMessage(validation.errorMessage)
                     }
                 }
                 
@@ -395,7 +439,10 @@ fun AdjustStartTimeDialog(
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer
+                        containerColor = if (validation.isValid && adjustmentMillis != 0L)
+                            MaterialTheme.colorScheme.primaryContainer
+                        else
+                            MaterialTheme.colorScheme.surfaceVariant
                     ),
                     shape = RoundedCornerShape(8.dp)
                 ) {
@@ -406,7 +453,10 @@ fun AdjustStartTimeDialog(
                         Text(
                             text = "New Elapsed Time",
                             style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            color = if (validation.isValid && adjustmentMillis != 0L)
+                                MaterialTheme.colorScheme.onPrimaryContainer
+                            else
+                                MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.fillMaxWidth()
                         )
@@ -417,7 +467,10 @@ fun AdjustStartTimeDialog(
                             text = newFormattedTime,
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            color = if (validation.isValid && adjustmentMillis != 0L)
+                                MaterialTheme.colorScheme.onPrimaryContainer
+                            else
+                                MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.fillMaxWidth()
                         )
@@ -431,8 +484,7 @@ fun AdjustStartTimeDialog(
                     onAdjustTime(adjustmentMillis)
                     onDismiss()
                 },
-                enabled = isValidAdjustment && isValidForFasting && 
-                          adjustmentMillis != 0L && isReasonableAdjustment,
+                enabled = validation.isValid && adjustmentMillis != 0L,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary,
@@ -457,4 +509,36 @@ fun AdjustStartTimeDialog(
         titleContentColor = MaterialTheme.colorScheme.onSurface,
         textContentColor = MaterialTheme.colorScheme.onSurfaceVariant
     )
+}
+
+/**
+ * Validates the adjustment parameters and returns a validation result
+ */
+private fun validateAdjustment(
+    newStartTimeMillis: Long,
+    newElapsedTimeMillis: Long,
+    adjustmentMillis: Long,
+    maxAdjustmentMillis: Long
+): ValidationResult {
+    val currentTime = System.currentTimeMillis()
+    
+    return when {
+        newStartTimeMillis > currentTime -> ValidationResult(
+            isValid = false,
+            errorMessage = "Start time cannot be in the future. Please select an earlier time."
+        )
+        newElapsedTimeMillis <= 0 -> ValidationResult(
+            isValid = false,
+            errorMessage = "This would result in negative fasting time. Please select a later time."
+        )
+        adjustmentMillis >= maxAdjustmentMillis -> ValidationResult(
+            isValid = false,
+            errorMessage = "Adjustment is too large (maximum 30 days). Please select a more recent date."
+        )
+        adjustmentMillis == 0L -> ValidationResult(
+            isValid = true,
+            errorMessage = "No change to current time. Adjust to apply changes."
+        )
+        else -> ValidationResult(isValid = true)
+    }
 }
