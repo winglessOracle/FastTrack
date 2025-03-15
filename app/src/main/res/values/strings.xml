@@ -4,4 +4,6 @@
     <string name="stop_timer_confirmation">Are you sure you want to stop the fasting timer?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="widget_description">Track your fasting progress with a compact widget</string>
+    <string name="large_widget_description">Track your fasting progress with a larger, easier to read widget</string>
 </resources>

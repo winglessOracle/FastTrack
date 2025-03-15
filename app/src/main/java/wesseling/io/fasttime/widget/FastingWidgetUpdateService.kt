@@ -35,6 +35,9 @@ class FastingWidgetUpdateService : Service() {
                 // Update all widgets
                 FastingWidgetProvider.updateAllWidgets(this@FastingWidgetUpdateService)
                 
+                // Also update large widgets
+                FastingWidgetLargeProvider.updateAllWidgets(this@FastingWidgetUpdateService)
+                
                 // Schedule next update with adaptive interval
                 scheduleNextUpdateWithAdaptiveInterval()
                 
@@ -93,6 +96,9 @@ class FastingWidgetUpdateService : Service() {
             
             // Schedule an immediate widget update
             FastingWidgetProvider.updateAllWidgets(this)
+            
+            // Also update large widgets
+            FastingWidgetLargeProvider.updateAllWidgets(this)
         } catch (e: Exception) {
             Log.e(TAG, "Error starting service", e)
         }
