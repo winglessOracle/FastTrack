@@ -170,11 +170,11 @@ class FastingWidgetLargeProvider : AppWidgetProvider() {
                 val currentState = fastingTimer.currentFastingState
                 
                 // Create intents for the buttons
-                val startIntent = Intent(context, FastingWidgetProvider::class.java).apply {
+                val startIntent = Intent(context, FastingWidgetLargeProvider::class.java).apply {
                     action = ACTION_START_TIMER
                 }
                 
-                val resetIntent = Intent(context, FastingWidgetProvider::class.java).apply {
+                val resetIntent = Intent(context, FastingWidgetLargeProvider::class.java).apply {
                     action = ACTION_RESET_TIMER
                 }
                 
@@ -279,6 +279,19 @@ class FastingWidgetLargeProvider : AppWidgetProvider() {
             Log.d(TAG, "onReceive: ${intent.action}")
 
             when (intent.action) {
+                ACTION_START_TIMER -> {
+                    Log.d(TAG, "Starting timer from large widget")
+                    val fastingTimer = FastingTimer.getInstance(context)
+                    fastingTimer.startTimer()
+                    updateAllWidgets(context)
+                }
+                ACTION_RESET_TIMER -> {
+                    Log.d(TAG, "Reset timer action received from large widget")
+                    // Show confirmation dialog
+                    val confirmIntent = Intent(context, WidgetConfirmationActivity::class.java)
+                    confirmIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    context.startActivity(confirmIntent)
+                }
                 ACTION_UPDATE_WIDGETS -> {
                     Log.d(TAG, "Updating large widgets from broadcast")
                     // Force update to ensure background is refreshed

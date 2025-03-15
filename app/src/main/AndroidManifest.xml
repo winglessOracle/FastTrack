@@ -78,25 +78,27 @@
                 android:resource="@xml/fasting_widget_info" />
         </receiver>
         
-        <!-- Large Widget provider -->
-        <receiver
-            android:name=".widget.FastingWidgetLargeProvider"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="wesseling.io.fasttime.widget.ACTION_UPDATE_WIDGETS" />
-            </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/fasting_widget_large_info" />
-        </receiver>
-        
         <!-- Widget update service -->
         <service
             android:name=".widget.FastingWidgetUpdateService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="dataSync" />
+
+        <!-- Large Widget provider -->
+        <receiver
+            android:name=".widget.FastingWidgetLargeProvider"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="wesseling.io.fasttime.widget.ACTION_START_TIMER" />
+                <action android:name="wesseling.io.fasttime.widget.ACTION_RESET_TIMER" />
+                <action android:name="wesseling.io.fasttime.widget.ACTION_UPDATE_WIDGETS" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/fasting_widget_large_info" />
+        </receiver>
     </application>
 
 </manifest>
