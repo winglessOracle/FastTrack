@@ -5,7 +5,6 @@
     android:minWidth="280dp"
     android:minHeight="40dp"
     android:previewImage="@drawable/widget_preview_high_quality"
-    android:previewLayout="@layout/fasting_widget_preview"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="3600000"
     android:widgetCategory="home_screen" /> 
