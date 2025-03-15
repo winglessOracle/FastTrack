@@ -147,6 +147,12 @@ fun BasicsTab() {
         
         Divider()
         
+        // Individual Differences in Fasting
+        HelpSection(
+            title = "Everyone's Fasting Journey is Unique",
+            content = "Fasting affects each person differently based on metabolism, body composition, activity level, and health history. What works for one person may not work for another. Listen to your body and adjust your fasting approach accordingly. Start slowly and gradually increase your fasting duration as your body adapts. Remember that consistency is more important than intensity, especially when beginning your fasting journey."
+        )
+        
         // Main App Usage
         HelpSectionWithItems(
             title = "Using the Main App",
@@ -190,12 +196,18 @@ fun BasicsTab() {
             items = listOf(
                 "Fed State (Gray): 0-4 hours, digestion & absorption",
                 "Early Fasting (Yellow): 4-12 hours, fat burning begins",
-                "Glycogen Depletion (Orange): 12-18 hours, fat metabolism increases",
+                "Glycogen Depletion (Orange): 12-18 hours, fat metabolism increases (minimum for achievements)",
                 "Metabolic Shift (Blue): 18-24 hours, ketosis begins",
                 "Deep Ketosis (Green): 24-48 hours, autophagy peaks",
                 "Immune Reset (Purple): 48-72 hours, stem cell production",
                 "Extended Fast (Magenta): 72+ hours, cellular rejuvenation"
             )
+        )
+        
+        // Achievement Tracking
+        HelpSection(
+            title = "Achievement Tracking",
+            content = "FastTrack only counts fasts that reach at least the Glycogen Depletion stage (12+ hours) for achievements and statistics. Shorter fasts are still tracked in your log but are not counted in your totals or achievements. This ensures that your statistics reflect meaningful fasting periods that provide metabolic benefits."
         )
         
         // Widget Usage
@@ -225,13 +237,19 @@ fun FastingTypesTab() {
     ) {
         // Introduction
         Text(
-            text = "Common Intermittent Fasting Protocols",
+            text = "Common Fasting Protocols",
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
         
         Divider()
+        
+        // Detailed Introduction
+        HelpSection(
+            title = "Finding Your Ideal Fasting Protocol",
+            content = "Fasting is not one-size-fits-all. Different protocols offer varying benefits and levels of difficulty. Consider your lifestyle, goals, and experience level when choosing a fasting method. You may need to experiment with several approaches before finding what works best for you. The protocols below range from beginner-friendly to advanced. Start with an easier protocol and gradually progress as your body adapts to fasting."
+        )
         
         // 16:8 Method
         HelpSectionWithItems(
@@ -364,7 +382,20 @@ fun TipsTab() {
             )
         )
         
-        // Hydration
+        // Electrolyte Management - New detailed section
+        HelpSectionWithItems(
+            title = "Electrolyte Management",
+            items = listOf(
+                "Sodium: Add a pinch of sea salt to water (1/4 tsp in 1L water)",
+                "Potassium: Consider potassium salt substitutes for fasts >24 hours",
+                "Magnesium: Magnesium glycinate or citrate supplements can help with muscle cramps",
+                "Balanced electrolyte mix: 1/2 tsp salt, 1/4 tsp potassium salt in 1L water",
+                "Signs of electrolyte imbalance: headaches, dizziness, muscle cramps",
+                "For extended fasts (>48h), consider commercial electrolyte supplements"
+            )
+        )
+        
+        // Hydration - Keep existing section
         HelpSectionWithItems(
             title = "Stay Hydrated",
             items = listOf(
@@ -388,15 +419,17 @@ fun TipsTab() {
             )
         )
         
-        // Breaking Your Fast
+        // Breaking Your Fast - Enhanced with more details
         HelpSectionWithItems(
-            title = "Breaking Your Fast",
+            title = "Breaking Your Fast Properly",
             items = listOf(
-                "Break your fast with a small, easily digestible meal",
-                "Avoid large, heavy meals immediately after fasting",
-                "Include protein and healthy fats",
-                "Chew food thoroughly and eat slowly",
-                "For longer fasts (24+ hours), be especially careful"
+                "For fasts <24h: Start with easily digestible foods like bone broth, avocado, or eggs",
+                "For fasts >24h: Begin with bone broth, then wait 30-60 minutes before eating solid food",
+                "For fasts >48h: Start with clear broth, wait 1 hour, then small protein/fat meal, wait 2-3 hours before normal eating",
+                "Avoid breaking fast with: processed carbs, large meals, dairy, nuts, or raw vegetables",
+                "Good first foods: bone broth, soft-boiled eggs, avocado, cooked leafy greens, fermented foods",
+                "Eat slowly and mindfully, chewing thoroughly",
+                "Listen to your body and stop eating if you feel discomfort"
             )
         )
         

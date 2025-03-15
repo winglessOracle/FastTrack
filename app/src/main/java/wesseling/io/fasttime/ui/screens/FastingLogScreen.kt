@@ -1150,26 +1150,54 @@ fun FastingLogSummary(
     
     // Helper functions to calculate fasting statistics
     fun calculateTotalFastingHours(fastsList: List<CompletedFast>): Double {
-        return fastsList.sumOf { it.durationMillis } / (1000.0 * 60 * 60)
+        // Only count hours from fasts that reach at least GLYCOGEN_DEPLETION (12+ hours)
+        return fastsList
+            .filter { 
+                it.maxFastingState != FastingState.NOT_FASTING && 
+                it.maxFastingState != FastingState.EARLY_FAST 
+            }
+            .sumOf { it.durationMillis } / (1000.0 * 60 * 60)
     }
     
     fun calculateAverageFastingHours(fastsList: List<CompletedFast>): Double {
-        if (fastsList.isEmpty()) return 0.0
-        return calculateTotalFastingHours(fastsList) / fastsList.size
+        // Filter to only include fasts that reach at least GLYCOGEN_DEPLETION (12+ hours)
+        val validFasts = fastsList.filter { 
+            it.maxFastingState != FastingState.NOT_FASTING && 
+            it.maxFastingState != FastingState.EARLY_FAST 
+        }
+        
+        if (validFasts.isEmpty()) return 0.0
+        return validFasts.sumOf { it.durationMillis } / (1000.0 * 60 * 60) / validFasts.size
     }
     
     fun calculateLongestFast(fasts: List<CompletedFast>): Double {
-        if (fasts.isEmpty()) return 0.0
-        return (fasts.maxOfOrNull { it.durationMillis } ?: 0L) / (1000.0 * 60 * 60)
+        // Filter to only include fasts that reach at least GLYCOGEN_DEPLETION (12+ hours)
+        val validFasts = fasts.filter { 
+            it.maxFastingState != FastingState.NOT_FASTING && 
+            it.maxFastingState != FastingState.EARLY_FAST 
+        }
+        
+        if (validFasts.isEmpty()) return 0.0
+        return (validFasts.maxOfOrNull { it.durationMillis } ?: 0L) / (1000.0 * 60 * 60)
     }
     
     fun calculateTotalFasts(fastsList: List<CompletedFast>): Int {
-        return fastsList.size
+        // Only count fasts that reach at least GLYCOGEN_DEPLETION (12+ hours)
+        return fastsList.count { 
+            it.maxFastingState != FastingState.NOT_FASTING && 
+            it.maxFastingState != FastingState.EARLY_FAST 
+        }
     }
     
     fun calculateHighestFastingState(fastsList: List<CompletedFast>): FastingState {
-        if (fastsList.isEmpty()) return FastingState.NOT_FASTING
-        return fastsList.maxByOrNull { it.maxFastingState.ordinal }?.maxFastingState ?: FastingState.NOT_FASTING
+        // Filter to only include fasts that reach at least GLYCOGEN_DEPLETION (12+ hours)
+        val validFasts = fastsList.filter { 
+            it.maxFastingState != FastingState.NOT_FASTING && 
+            it.maxFastingState != FastingState.EARLY_FAST 
+        }
+        
+        if (validFasts.isEmpty()) return FastingState.NOT_FASTING
+        return validFasts.maxByOrNull { it.maxFastingState.ordinal }?.maxFastingState ?: FastingState.NOT_FASTING
     }
     
     fun calculateFastingStateAchievements(fastsList: List<CompletedFast>): Map<FastingState, Int> {
