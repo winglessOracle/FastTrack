@@ -4,7 +4,7 @@
     android:initialLayout="@layout/fasting_widget"
     android:minWidth="280dp"
     android:minHeight="40dp"
-    android:previewLayout="@layout/fasting_widget_preview"
+    android:previewLayout="@layout/fasting_widget"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="3600000"
     android:widgetCategory="home_screen" /> 

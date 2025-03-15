@@ -57,10 +57,10 @@ FastTime is a simple yet powerful app designed to help you track your fasting ti
    - Each circle shows the count of fasts that reached a particular state
    - Only fasts of 12+ hours (Glycogen Depletion or better) are counted for achievements
    - **Secret Achievement**: A special medal achievement tracks your total number of deep fasts (24+ hours)
-     - Bronze: 1-9 deep fasts
-     - Silver: 10-24 deep fasts
-     - Gold: 25-49 deep fasts
-     - Legend: 50+ deep fasts
+     - 🥉 Bronze: 1-9 deep fasts
+     - 🥈 Silver: 10-24 deep fasts
+     - 🥇 Gold: 25-49 deep fasts
+     - 🏆 Legend: 50+ deep fasts
      - Your streak count decreases by 1 for each month without a 24+ hour fast
    - This achievement encourages consistent deep fasting practice
 
@@ -160,7 +160,7 @@ FastTime tracks the time you spend fasting. Here are some popular protocols to c
 5. **Consider electrolytes**: For fasts longer than 18 hours, electrolyte supplementation may help
 6. **Track patterns**: Use the fasting log to identify what works best for your body
 7. **Gradually extend fasting periods**: Slowly work up to longer fasts if that's your goal
-8. **Aim for deep fasts**: Try to complete fasts of 24+ hours to earn the special achievement and maintain your streak (it decreases by 1 each month without a deep fast)
+8. **Aim for deep fasts**: Try to complete fasts of 24+ hours to earn the special achievement
 
 ### For Advanced Fasters
 1. **Consider longer fasts**: Experiment with 24-72 hour fasts occasionally (with medical supervision)

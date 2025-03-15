@@ -349,7 +349,7 @@ fun MainScreen(
             ) {
                 // App description
                 Text(
-                    text = "Motivating you to explore healthy fasting habits with facts and fun!",
+                    text = "Track your fasting journey, celebrate achievements, and transform your health with fun!",
                     style = MaterialTheme.typography.headlineSmall,
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),

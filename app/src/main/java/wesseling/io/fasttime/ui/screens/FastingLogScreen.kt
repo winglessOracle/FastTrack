@@ -1203,8 +1203,8 @@ fun FastingLogSummary(
         return validFasts.maxByOrNull { it.maxFastingState.ordinal }?.maxFastingState ?: FastingState.NOT_FASTING
     }
     
-    fun calculateFastingStateAchievements(fastsList: List<CompletedFast>): Map<FastingState, Int> {
-        val achievements = mutableMapOf<FastingState, Int>()
+    fun calculateFastingStateAchievements(fastsList: List<CompletedFast>): Map<Any, Int> {
+        val achievements = mutableMapOf<Any, Int>()
         // Only include states from GLYCOGEN_DEPLETION (12+ hours) and beyond
         val validStates = FastingState.values().filter { 
             it != FastingState.NOT_FASTING && it != FastingState.EARLY_FAST 
@@ -1214,7 +1214,7 @@ fun FastingLogSummary(
             achievements[state] = fastsList.count { it.maxFastingState == state }
         }
         
-        // Add secret achievement for weekly deep fasts (24+ hours)
+        // Add secret achievement for deep fasts (24+ hours)
         val deepFasts = fastsList.filter { it.maxFastingState.ordinal >= FastingState.DEEP_KETOSIS.ordinal }
             .sortedBy { it.endTimeMillis }
         
@@ -1248,12 +1248,12 @@ fun FastingLogSummary(
             Log.d("FastingLogScreen", "Months since last fast: $monthsDifference")
             Log.d("FastingLogScreen", "Decayed streak: $decayedStreak")
             
-            // Use a special key for the secret achievement
-            achievements[FastingState.EXTENDED_FAST] = decayedStreak
+            // Use a special string key for the secret achievement
+            achievements["SECRET_ACHIEVEMENT"] = decayedStreak
         }
         
-        // Return a map sorted by state ordinal
-        return achievements.toSortedMap(compareBy { it.ordinal })
+        // Return the achievements map
+        return achievements
     }
     
     val totalFasts = calculateTotalFasts(fasts)
@@ -1351,20 +1351,55 @@ fun FastingLogSummary(
             
             val achievementsList = achievements.toList()
             if (achievementsList.isNotEmpty()) {
+                // Separate regular achievements from the secret achievement
+                val regularAchievements = achievementsList.filter { it.first.toString() != "SECRET_ACHIEVEMENT" }
+                val secretAchievement = achievementsList.find { it.first.toString() == "SECRET_ACHIEVEMENT" }
+                
+                // Calculate how many placeholder items we need to push the secret achievement to bottom right
+                val totalItems = regularAchievements.size
+                val rowSize = 3 // Number of columns in the grid
+                val lastRowItems = totalItems % rowSize
+                val placeholdersNeeded = if (lastRowItems == 0) {
+                    // If the last row is full, add 2 placeholders to push secret to bottom right
+                    2
+                } else {
+                    // Otherwise, add enough to push to the end of the row
+                    rowSize - lastRowItems - 1
+                }
+                
                 LazyVerticalGrid(
-                    columns = GridCells.Fixed(3),
+                    columns = GridCells.Fixed(rowSize),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(((achievementsList.size / 3 + 1) * 70).dp),
+                        .height(((totalItems / rowSize + (if (totalItems % rowSize > 0 || secretAchievement != null) 1 else 0) + 1) * 70).dp),
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    items(achievementsList) { (state, count) ->
+                    // First add all regular achievements
+                    items(regularAchievements) { (state, count) ->
                         if (count > 0) {
                             AchievementItem(
                                 state = state,
                                 count = count
                             )
+                        }
+                    }
+                    
+                    // Add placeholders to position the secret achievement at the bottom right
+                    items(placeholdersNeeded) {
+                        // Empty placeholder
+                        Box(modifier = Modifier.size(72.dp))
+                    }
+                    
+                    // Add the secret achievement at the end (bottom right)
+                    secretAchievement?.let { (state, count) ->
+                        if (count > 0) {
+                            item {
+                                AchievementItem(
+                                    state = state,
+                                    count = count
+                                )
+                            }
                         }
                     }
                 }
@@ -1401,22 +1436,27 @@ fun StatisticItem(
 
 @Composable
 fun AchievementItem(
-    state: FastingState,
+    state: Any,
     count: Int
 ) {
-    val stateColor = getColorForFastingState(state)
+    // Special handling for the secret achievement
+    val isSecretAchievement = state.toString() == "SECRET_ACHIEVEMENT"
     
-    // Special handling for the secret achievement (deep fasts)
-    val isSecretAchievement = state == FastingState.EXTENDED_FAST
+    val stateColor = if (isSecretAchievement) {
+        Color(0xFFFFD700) // Gold color for secret achievement
+    } else {
+        getColorForFastingState(state as FastingState)
+    }
+    
     val displayText = if (isSecretAchievement) {
         when {
-            count >= 50 -> "🏆 Legend" // 50+ deep fasts
-            count >= 25 -> "🥇 Gold"   // 25+ deep fasts
-            count >= 10 -> "🥈 Silver" // 10+ deep fasts
-            else -> "🥉 Bronze"        // Starting with deep fasts
+            count >= 50 -> "🏆" // 50+ deep fasts
+            count >= 25 -> "🥇" // 25+ deep fasts
+            count >= 10 -> "🥈" // 10+ deep fasts
+            else -> "🥉"        // Starting with deep fasts
         }
     } else {
-        state.displayName
+        (state as FastingState).displayName
     }
     
     Column(
