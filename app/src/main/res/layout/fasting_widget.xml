@@ -3,7 +3,7 @@
     android:id="@+id/widget_background"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="0dp"
+    android:padding="@dimen/widget_padding"
     android:clipChildren="true"
     android:clipToPadding="true">
 

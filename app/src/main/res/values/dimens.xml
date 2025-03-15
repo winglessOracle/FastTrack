@@ -2,19 +2,19 @@
 <resources>
     <!-- Widget dimensions -->
     <dimen name="widget_padding">4dp</dimen>
-    <dimen name="widget_padding_tiny">2dp</dimen>
     <dimen name="widget_padding_small">4dp</dimen>
     <dimen name="widget_padding_medium">6dp</dimen>
     
-    <dimen name="widget_margin_tiny">2dp</dimen>
     <dimen name="widget_margin_small">4dp</dimen>
     <dimen name="widget_margin_medium">16dp</dimen>
     
+    <!-- Widget text sizes -->
     <dimen name="widget_hours_text_size">16sp</dimen>
     <dimen name="widget_label_text_size">12sp</dimen>
     <dimen name="widget_state_text_size">10sp</dimen>
     <dimen name="widget_button_text_size">12sp</dimen>
     
+    <!-- Widget layout dimensions -->
     <dimen name="widget_button_height">28dp</dimen>
     <dimen name="widget_button_min_width">55dp</dimen>
 </resources> 
