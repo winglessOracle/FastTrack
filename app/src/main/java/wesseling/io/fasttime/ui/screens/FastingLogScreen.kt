@@ -19,6 +19,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -1202,13 +1205,17 @@ fun FastingLogSummary(
     
     fun calculateFastingStateAchievements(fastsList: List<CompletedFast>): Map<FastingState, Int> {
         val achievements = mutableMapOf<FastingState, Int>()
-        FastingState.values().forEach { state ->
-            // Only count achievements from GLYCOGEN_DEPLETION (12+ hours) and beyond
-            if (state != FastingState.NOT_FASTING && state != FastingState.EARLY_FAST) {
-                achievements[state] = fastsList.count { it.maxFastingState == state }
-            }
+        // Only include states from GLYCOGEN_DEPLETION (12+ hours) and beyond
+        val validStates = FastingState.values().filter { 
+            it != FastingState.NOT_FASTING && it != FastingState.EARLY_FAST 
         }
-        return achievements
+        
+        for (state in validStates) {
+            achievements[state] = fastsList.count { it.maxFastingState == state }
+        }
+        
+        // Return a map sorted by state ordinal
+        return achievements.toSortedMap(compareBy { it.ordinal })
     }
     
     val totalFasts = calculateTotalFasts(fasts)
@@ -1234,6 +1241,14 @@ fun FastingLogSummary(
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            
+            // Add informational note about 12+ hour requirement
+            Text(
+                text = "Only fasts of 12+ hours are counted",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                modifier = Modifier.padding(top = 2.dp)
             )
             
             HorizontalDivider(
@@ -1289,23 +1304,30 @@ fun FastingLogSummary(
             )
             
             // Achievements section
-                            Text(
+            Text(
                 text = "Achievements",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                for ((state, count) in achievements) {
-                    if (count > 0) {
-                        AchievementItem(
-                            state = state,
-                            count = count
-                        )
+            val achievementsList = achievements.toList()
+            if (achievementsList.isNotEmpty()) {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(((achievementsList.size / 3 + 1) * 70).dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    items(achievementsList) { (state, count) ->
+                        if (count > 0) {
+                            AchievementItem(
+                                state = state,
+                                count = count
+                            )
+                        }
                     }
                 }
             }
@@ -1346,18 +1368,20 @@ fun AchievementItem(
 ) {
     val stateColor = getColorForFastingState(state)
     
-        Column(
+    Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(horizontal = 4.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                .size(40.dp)
-                            .clip(CircleShape)
+        modifier = Modifier
+            .padding(horizontal = 4.dp, vertical = 4.dp)
+            .width(72.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(36.dp)
+                .clip(CircleShape)
                 .background(stateColor.copy(alpha = 0.2f)),
             contentAlignment = Alignment.Center
         ) {
-                    Text(
+            Text(
                 text = count.toString(),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold,
@@ -1370,7 +1394,8 @@ fun AchievementItem(
             style = MaterialTheme.typography.bodySmall,
             color = stateColor,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(top = 4.dp)
+            maxLines = 1,
+            modifier = Modifier.padding(top = 2.dp)
         )
     }
 }
