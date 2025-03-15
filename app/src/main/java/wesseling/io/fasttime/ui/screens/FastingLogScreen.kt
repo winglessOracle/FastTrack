@@ -1215,52 +1215,41 @@ fun FastingLogSummary(
         }
         
         // Add secret achievement for weekly deep fasts (24+ hours)
-        // This counts the number of consecutive weeks with at least one deep fast
         val deepFasts = fastsList.filter { it.maxFastingState.ordinal >= FastingState.DEEP_KETOSIS.ordinal }
             .sortedBy { it.endTimeMillis }
         
         if (deepFasts.isNotEmpty()) {
-            // Group fasts by week
+            // Count the total number of deep fasts (24+ hours)
+            val totalDeepFasts = deepFasts.size
+            
+            // Calculate streak decay based on months without a deep fast
+            val lastDeepFastTime = deepFasts.maxOf { it.endTimeMillis }
+            val currentTime = System.currentTimeMillis()
+            
+            // Calculate months since last deep fast
             val calendar = Calendar.getInstance()
-            val weeklyFasts = mutableMapOf<Pair<Int, Int>, Boolean>() // (year, weekOfYear) -> hasDeepFast
+            val currentMonth = calendar.apply { timeInMillis = currentTime }.get(Calendar.MONTH)
+            val currentYear = calendar.get(Calendar.YEAR)
             
-            for (fast in deepFasts) {
-                calendar.timeInMillis = fast.endTimeMillis
-                val year = calendar.get(Calendar.YEAR)
-                val weekOfYear = calendar.get(Calendar.WEEK_OF_YEAR)
-                weeklyFasts[Pair(year, weekOfYear)] = true
-            }
+            calendar.timeInMillis = lastDeepFastTime
+            val lastFastMonth = calendar.get(Calendar.MONTH)
+            val lastFastYear = calendar.get(Calendar.YEAR)
             
-            // Find consecutive weeks
-            val sortedWeeks = weeklyFasts.keys.sortedWith(compareBy({ it.first }, { it.second }))
-            var currentStreak = 1
-            var maxStreak = 1
+            // Calculate total months difference
+            val monthsDifference = (currentYear - lastFastYear) * 12 + (currentMonth - lastFastMonth)
             
-            for (i in 1 until sortedWeeks.size) {
-                val prevWeek = sortedWeeks[i-1]
-                val currWeek = sortedWeeks[i]
-                
-                // Check if weeks are consecutive
-                val isConsecutive = if (prevWeek.second == 52 && currWeek.second == 1) {
-                    // Year boundary case
-                    currWeek.first - prevWeek.first == 1
-                } else {
-                    prevWeek.first == currWeek.first && currWeek.second - prevWeek.second == 1
-                }
-                
-                if (isConsecutive) {
-                    currentStreak++
-                    maxStreak = maxOf(maxStreak, currentStreak)
-                } else {
-                    currentStreak = 1
-                }
-            }
+            // Decay streak by 1 for each month without a deep fast
+            val decayedStreak = maxOf(0, totalDeepFasts - monthsDifference)
             
-            // Only add the achievement if there's at least one streak
-            if (maxStreak > 0) {
-                // Use a special key for the secret achievement
-                achievements[FastingState.EXTENDED_FAST] = maxStreak
-            }
+            // Log streak calculation details for debugging
+            Log.d("FastingLogScreen", "Secret Achievement Calculation:")
+            Log.d("FastingLogScreen", "Total deep fasts: $totalDeepFasts")
+            Log.d("FastingLogScreen", "Last deep fast: ${SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(lastDeepFastTime))}")
+            Log.d("FastingLogScreen", "Months since last fast: $monthsDifference")
+            Log.d("FastingLogScreen", "Decayed streak: $decayedStreak")
+            
+            // Use a special key for the secret achievement
+            achievements[FastingState.EXTENDED_FAST] = decayedStreak
         }
         
         // Return a map sorted by state ordinal
@@ -1417,14 +1406,14 @@ fun AchievementItem(
 ) {
     val stateColor = getColorForFastingState(state)
     
-    // Special handling for the secret achievement (weekly deep fasts)
+    // Special handling for the secret achievement (deep fasts)
     val isSecretAchievement = state == FastingState.EXTENDED_FAST
     val displayText = if (isSecretAchievement) {
         when {
-            count >= 26 -> "🏆 Legend" // Half a year of weekly deep fasts
-            count >= 12 -> "🥇 Gold"   // Three months of weekly deep fasts
-            count >= 4 -> "🥈 Silver"  // One month of weekly deep fasts
-            else -> "🥉 Bronze"        // Starting streak
+            count >= 50 -> "🏆 Legend" // 50+ deep fasts
+            count >= 25 -> "🥇 Gold"   // 25+ deep fasts
+            count >= 10 -> "🥈 Silver" // 10+ deep fasts
+            else -> "🥉 Bronze"        // Starting with deep fasts
         }
     } else {
         state.displayName
