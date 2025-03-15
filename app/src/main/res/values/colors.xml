@@ -21,7 +21,6 @@
     <!-- Fasting state colors -->
     <color name="not_fasting_gray">#FF757575</color>
     <color name="early_fasting_yellow">#FFFFB300</color>
-    <color name="ketosis_light_green">#FF7CB342</color>
     <color name="autophagy_green">#FF43A047</color>
     <color name="deep_fasting_dark_green">#FF2E7D32</color>
 
