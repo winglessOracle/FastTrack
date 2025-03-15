@@ -1214,6 +1214,55 @@ fun FastingLogSummary(
             achievements[state] = fastsList.count { it.maxFastingState == state }
         }
         
+        // Add secret achievement for weekly deep fasts (24+ hours)
+        // This counts the number of consecutive weeks with at least one deep fast
+        val deepFasts = fastsList.filter { it.maxFastingState.ordinal >= FastingState.DEEP_KETOSIS.ordinal }
+            .sortedBy { it.endTimeMillis }
+        
+        if (deepFasts.isNotEmpty()) {
+            // Group fasts by week
+            val calendar = Calendar.getInstance()
+            val weeklyFasts = mutableMapOf<Pair<Int, Int>, Boolean>() // (year, weekOfYear) -> hasDeepFast
+            
+            for (fast in deepFasts) {
+                calendar.timeInMillis = fast.endTimeMillis
+                val year = calendar.get(Calendar.YEAR)
+                val weekOfYear = calendar.get(Calendar.WEEK_OF_YEAR)
+                weeklyFasts[Pair(year, weekOfYear)] = true
+            }
+            
+            // Find consecutive weeks
+            val sortedWeeks = weeklyFasts.keys.sortedWith(compareBy({ it.first }, { it.second }))
+            var currentStreak = 1
+            var maxStreak = 1
+            
+            for (i in 1 until sortedWeeks.size) {
+                val prevWeek = sortedWeeks[i-1]
+                val currWeek = sortedWeeks[i]
+                
+                // Check if weeks are consecutive
+                val isConsecutive = if (prevWeek.second == 52 && currWeek.second == 1) {
+                    // Year boundary case
+                    currWeek.first - prevWeek.first == 1
+                } else {
+                    prevWeek.first == currWeek.first && currWeek.second - prevWeek.second == 1
+                }
+                
+                if (isConsecutive) {
+                    currentStreak++
+                    maxStreak = maxOf(maxStreak, currentStreak)
+                } else {
+                    currentStreak = 1
+                }
+            }
+            
+            // Only add the achievement if there's at least one streak
+            if (maxStreak > 0) {
+                // Use a special key for the secret achievement
+                achievements[FastingState.EXTENDED_FAST] = maxStreak
+            }
+        }
+        
         // Return a map sorted by state ordinal
         return achievements.toSortedMap(compareBy { it.ordinal })
     }
@@ -1368,6 +1417,19 @@ fun AchievementItem(
 ) {
     val stateColor = getColorForFastingState(state)
     
+    // Special handling for the secret achievement (weekly deep fasts)
+    val isSecretAchievement = state == FastingState.EXTENDED_FAST
+    val displayText = if (isSecretAchievement) {
+        when {
+            count >= 26 -> "🏆 Legend" // Half a year of weekly deep fasts
+            count >= 12 -> "🥇 Gold"   // Three months of weekly deep fasts
+            count >= 4 -> "🥈 Silver"  // One month of weekly deep fasts
+            else -> "🥉 Bronze"        // Starting streak
+        }
+    } else {
+        state.displayName
+    }
+    
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -1378,21 +1440,26 @@ fun AchievementItem(
             modifier = Modifier
                 .size(36.dp)
                 .clip(CircleShape)
-                .background(stateColor.copy(alpha = 0.2f)),
+                .background(
+                    if (isSecretAchievement) 
+                        Color(0xFFFFD700).copy(alpha = 0.2f) 
+                    else 
+                        stateColor.copy(alpha = 0.2f)
+                ),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = count.toString(),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold,
-                color = stateColor
+                color = if (isSecretAchievement) Color(0xFFFFD700) else stateColor
             )
         }
         
         Text(
-            text = state.displayName,
+            text = displayText,
             style = MaterialTheme.typography.bodySmall,
-            color = stateColor,
+            color = if (isSecretAchievement) Color(0xFFFFD700) else stateColor,
             textAlign = TextAlign.Center,
             maxLines = 1,
             modifier = Modifier.padding(top = 2.dp)

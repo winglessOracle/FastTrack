@@ -9,6 +9,8 @@ FastTime is a simple yet powerful app designed to help you track your fasting ti
 - **Fasting Log**: Keep a record of your completed fasts with sorting and filtering options
 - **Home Screen Widget**: Monitor and control your fast directly from your home screen
 - **Visual Indicators**: Color-coded states to easily identify your current fasting progress
+- **Achievement System**: Track your fasting milestones with achievement circles
+- **Secret Weekly Achievement**: Discover a special achievement for maintaining consistent weekly deep fasts
 
 ## How to Use FastTime
 
@@ -50,7 +52,18 @@ FastTime is a simple yet powerful app designed to help you track your fasting ti
      - Duration (longest or shortest first)
    - **Filtering**: Filter your fasting entries by fasting state to find specific achievements
 
-6. **Settings**
+6. **Achievement System**
+   - The fasting log displays achievement circles for different fasting states you've reached
+   - Each circle shows the count of fasts that reached a particular state
+   - Only fasts of 12+ hours (Glycogen Depletion or better) are counted for achievements
+   - **Secret Weekly Achievement**: A special medal achievement tracks your streak of weeks with at least one 24+ hour fast
+     - Bronze: 1-3 consecutive weeks
+     - Silver: 4-11 consecutive weeks
+     - Gold: 12-25 consecutive weeks
+     - Legend: 26+ consecutive weeks (half a year or more)
+   - This achievement encourages consistent fasting practice with a healthy weekly cadence
+
+7. **Settings**
    - Tap the "Settings" button or the settings icon in the top bar
    - Customize app preferences according to your needs
 
@@ -146,6 +159,7 @@ FastTime tracks the time you spend fasting. Here are some popular protocols to c
 5. **Consider electrolytes**: For fasts longer than 18 hours, electrolyte supplementation may help
 6. **Track patterns**: Use the fasting log to identify what works best for your body
 7. **Gradually extend fasting periods**: Slowly work up to longer fasts if that's your goal
+8. **Aim for consistency**: Try to complete at least one deep fast (24+ hours) per week to build your achievement streak
 
 ### For Advanced Fasters
 1. **Consider longer fasts**: Experiment with 24-72 hour fasts occasionally (with medical supervision)
