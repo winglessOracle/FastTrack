@@ -459,7 +459,7 @@ fun SettingsScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                     
                     Text(
-                        text = "FastTrack",
+                        text = "FastTrack by Wingless Oracle",
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
@@ -471,7 +471,7 @@ fun SettingsScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "A simple fasting timer app to track your fasting periods and progress.",
+                        text = "A motivational fasting app that tracks your progress, celebrates achievements, and makes healthy fasting habits fun with facts and rewards.",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface
                     )
