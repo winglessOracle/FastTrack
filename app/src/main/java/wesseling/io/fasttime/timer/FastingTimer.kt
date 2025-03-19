@@ -26,6 +26,8 @@ import wesseling.io.fasttime.notifications.NotificationHelper
 import wesseling.io.fasttime.settings.PreferencesManager
 import java.util.concurrent.TimeUnit
 import wesseling.io.fasttime.util.DateTimeFormatter
+import android.os.Build
+import wesseling.io.fasttime.widget.FastingWidgetUpdateService
 
 /**
  * Manages the fasting timer functionality
@@ -62,6 +64,9 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
         PREFS_NAME, 
         Context.MODE_PRIVATE
     )
+    
+    // Flag to track initial app startup
+    private var isInitialStateUpdate = true
     
     init {
         initializeState()
@@ -207,6 +212,9 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
             
             // Update widgets
             updateWidgets()
+            
+            // Start the widget update service
+            startWidgetUpdateService()
         } catch (e: Exception) {
             Log.e(TAG, "Error starting timer", e)
             resetToSafeState()
@@ -478,24 +486,32 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
      */
     @Synchronized
     fun stopTimer() {
+        if (!isRunning) return
+        
         try {
-            isRunning = false
+            // Cancel the timer loop
             timerJob?.cancel()
             timerJob = null
             
-            // Ensure elapsed time is accurate before saving
-            if (startTimeMillis > 0) {
-                elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis
-            }
+            // Set state variables
+            isRunning = false
+            
+            // Final elapsed time will be kept at its current value
+            // This way we can resume a partially completed fast if desired
+            
+            // Update current fasting state (should be NOT_FASTING)
+            updateFastingState()
             
             // Save state to preferences
             saveState()
             
             // Update widgets
             updateWidgets()
+            
+            // Stop the widget update service to save battery
+            stopWidgetUpdateService()
         } catch (e: Exception) {
             Log.e(TAG, "Error stopping timer", e)
-            resetToSafeState()
         }
     }
     
@@ -624,6 +640,13 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
      */
     private fun checkAndSendFastingStateNotification() {
         try {
+            // Don't send notifications if this is the initial state update during app startup
+            if (isInitialStateUpdate) {
+                Log.d(TAG, "Skipping notification during initial state update")
+                isInitialStateUpdate = false
+                return
+            }
+            
             // Get preferences manager to check if notifications are enabled
             val preferencesManager = PreferencesManager.getInstance(appContext)
             val notificationsEnabled = preferencesManager.dateTimePreferences.enableFastingStateNotifications
@@ -763,6 +786,39 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
         } catch (e: Exception) {
             // Widget provider might not be available, ignore
             Log.d(TAG, "Could not update widgets: ${e.message}")
+        }
+    }
+    
+    /**
+     * Start the widget update service to keep widgets up to date
+     */
+    private fun startWidgetUpdateService() {
+        try {
+            val intent = Intent(appContext, FastingWidgetUpdateService::class.java)
+            
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                appContext.startForegroundService(intent)
+            } else {
+                appContext.startService(intent)
+            }
+            
+            Log.d(TAG, "Started widget update service")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error starting widget update service", e)
+        }
+    }
+    
+    /**
+     * Stop the widget update service to save battery when not fasting
+     */
+    private fun stopWidgetUpdateService() {
+        try {
+            val intent = Intent(appContext, FastingWidgetUpdateService::class.java)
+            appContext.stopService(intent)
+            
+            Log.d(TAG, "Stopped widget update service")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error stopping widget update service", e)
         }
     }
     

@@ -7,5 +7,4 @@
     android:previewLayout="@layout/fasting_widget"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="3600000"
-    android:widgetCategory="home_screen"
-    android:description="@string/widget_description" /> 
+    android:widgetCategory="home_screen" /> 

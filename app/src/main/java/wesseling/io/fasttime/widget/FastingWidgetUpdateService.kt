@@ -81,6 +81,14 @@ class FastingWidgetUpdateService : Service() {
         Log.d(TAG, "Service started")
         
         try {
+            // Check if timer is actually running; if not, stop the service to save battery
+            val fastingTimer = FastingTimer.getInstance(this)
+            if (!fastingTimer.isRunning) {
+                Log.d(TAG, "Timer not running, stopping service to save battery")
+                stopSelf()
+                return START_NOT_STICKY
+            }
+            
             // Create a notification for the foreground service
             val notification = createNotification()
             
@@ -150,6 +158,13 @@ class FastingWidgetUpdateService : Service() {
         try {
             val fastingTimer = FastingTimer.getInstance(this)
             
+            // If timer is not running, stop the service instead of scheduling updates
+            if (!fastingTimer.isRunning) {
+                Log.d(TAG, "Timer not running, stopping widget update service to save battery")
+                stopSelf()
+                return
+            }
+            
             // Get battery information
             val batteryInfo = getBatteryInfo()
             val batteryLevel = batteryInfo.first
@@ -185,7 +200,7 @@ class FastingWidgetUpdateService : Service() {
                     }
                 }
                 
-                // When not running, update very infrequently to save battery
+                // This case should never be reached now that we're stopping the service
                 else -> TimeUnit.MINUTES.toMillis(30)
             }
             
