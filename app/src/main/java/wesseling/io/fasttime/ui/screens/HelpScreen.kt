@@ -204,10 +204,10 @@ fun BasicsTab() {
             )
         )
         
-        // Achievement Tracking
+        // Add Achievement Tracking information section
         HelpSection(
             title = "Achievement Tracking",
-            content = "FastTrack only counts fasts that reach at least the Glycogen Depletion stage (12+ hours) for achievements and statistics. Shorter fasts are still tracked in your log but are not counted in your totals or achievements. This ensures that your statistics reflect meaningful fasting periods that provide metabolic benefits."
+            content = "FastTrack only counts fasts that reach at least the Glycogen Depletion state (12+ hours) toward your achievements and statistics. Shorter fasts will still be tracked during the timer and you'll still receive notifications for all fasting state changes, but shorter fasts won't be saved to your fasting log or included in your statistics. This encourages more meaningful fasting experiences while still providing feedback on all your fasting progress."
         )
         
         // Widget Usage

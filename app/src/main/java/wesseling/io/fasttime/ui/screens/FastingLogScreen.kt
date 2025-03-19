@@ -273,13 +273,13 @@ fun FastingLogScreen(
                 
                 // Create a new fast entry with current time
                 val currentTime = System.currentTimeMillis()
-                val startTime = currentTime - (16 * 60 * 60 * 1000) // 16 hours ago
+                val startTime = currentTime - (4 * 60 * 60 * 1000) // 4 hours ago
                 
                 val newFast = CompletedFast(
                     startTimeMillis = startTime,
                     endTimeMillis = currentTime,
                     durationMillis = currentTime - startTime,
-                    maxFastingState = FastingState.METABOLIC_SHIFT,
+                    maxFastingState = FastingState.GLYCOGEN_DEPLETION, // Still use GLYCOGEN_DEPLETION to ensure it shows in log
                     note = "Fast entry created manually"
                 )
                 

@@ -529,13 +529,13 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
      * The CompletedFast object contains all relevant information about the completed fasting session,
      * including start time, end time, duration, and maximum fasting state achieved.
      * 
-     * @return CompletedFast object if the timer was running or had elapsed time, null otherwise
+     * @return CompletedFast object if the timer was running or had elapsed time and reached at least 12 hours, null otherwise
      */
     @Synchronized
     fun resetTimer(): CompletedFast? {
         try {
-            // Create a completed fast object if the timer was running
-            val completedFast = if (isRunning || elapsedTimeMillis > 0) {
+            // Create a completed fast object if the timer was running and reached at least 12 hours (Glycogen Depletion)
+            val completedFast = if ((isRunning || elapsedTimeMillis > 0) && elapsedTimeMillis >= 12 * HOUR_IN_MILLIS) {
                 CompletedFast(
                     startTimeMillis = startTimeMillis,
                     endTimeMillis = System.currentTimeMillis(),
@@ -554,6 +554,8 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
             // Log the completed fast details
             if (completedFast != null) {
                 Log.d(TAG, "Created completed fast: id=${completedFast.id}, duration=${completedFast.durationMillis}, state=${completedFast.maxFastingState}")
+            } else if (elapsedTimeMillis > 0 && elapsedTimeMillis < 12 * HOUR_IN_MILLIS) {
+                Log.d(TAG, "Fast not saved: duration less than 12 hours (${TimeUnit.MILLISECONDS.toHours(elapsedTimeMillis)} hours)")
             }
             
             return completedFast
@@ -652,9 +654,11 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
             val notificationsEnabled = preferencesManager.dateTimePreferences.enableFastingStateNotifications
             
             if (notificationsEnabled) {
-                // Create and send notification
+                // Create and send notification - all fasting state changes get notifications
+                // even if the fast won't be saved to the log (less than 12 hours)
                 val notificationHelper = NotificationHelper(appContext)
                 notificationHelper.sendFastingStateNotification(currentFastingState)
+                Log.d(TAG, "Sent notification for fasting state: ${currentFastingState.name}")
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error sending notification", e)

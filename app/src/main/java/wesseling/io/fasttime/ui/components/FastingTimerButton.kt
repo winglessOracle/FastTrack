@@ -134,8 +134,9 @@ fun FastingTimerButton(
                         val fast = fastingTimer.resetTimer()
                         showConfirmationDialog = false
                         
-                        // Show summary dialog if there was a fast
-                        if (fast != null && fast.durationMillis > 0) {
+                        // Show summary dialog only if a valid fast was completed (12+ hours)
+                        // The resetTimer method now returns null for fasts under 12 hours
+                        if (fast != null) {
                             completedFast = fast
                             showSummaryDialog = true
                         }

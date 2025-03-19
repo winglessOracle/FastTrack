@@ -53,12 +53,13 @@ class WidgetConfirmationActivity : ComponentActivity() {
                                     val fastingTimer = FastingTimer.getInstance(applicationContext)
                                     val fast = fastingTimer.resetTimer()
                                     
-                                    // Show summary dialog if there was a fast
-                                    if (fast != null && fast.durationMillis > 0) {
+                                    // Show summary dialog only if a valid fast was completed (12+ hours)
+                                    // The resetTimer method now returns null for fasts under 12 hours
+                                    if (fast != null) {
                                         completedFast = fast
                                         showSummaryDialog = true
                                     } else {
-                                        // No fast to show, just finish the activity
+                                        // No fast to show or fast was too short, just finish the activity
                                         finish()
                                     }
                                 } catch (e: Exception) {
