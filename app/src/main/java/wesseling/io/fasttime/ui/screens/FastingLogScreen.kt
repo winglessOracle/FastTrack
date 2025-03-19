@@ -62,6 +62,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -72,6 +73,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -103,20 +105,24 @@ enum class SortOption(val displayName: String) {
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun FastingLogScreen(
-    onBackPressed: () -> Unit
+    onBackPressed: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
+    // Context and state management
     val context = LocalContext.current
     val preferencesManager = remember { PreferencesManager.getInstance(context) }
     val preferences = remember { preferencesManager.dateTimePreferences }
+    val lifecycleOwner = LocalLifecycleOwner.current
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     
+    // State for fasts
     var allFasts by remember { mutableStateOf<List<CompletedFast>>(emptyList()) }
     var isLoading by remember { mutableStateOf(false) }
-    var showDeleteAllDialog by remember { mutableStateOf(false) }
     var fastToDelete by remember { mutableStateOf<CompletedFast?>(null) }
     var showFastDetails by remember { mutableStateOf<CompletedFast?>(null) }
     var fastToEdit by remember { mutableStateOf<CompletedFast?>(null) }
+    var showDeleteAllDialog by remember { mutableStateOf(false) }
     var showEditConfirmation by remember { mutableStateOf(false) }
     
     // Add state variables for sorting and filtering
@@ -151,6 +157,32 @@ fun FastingLogScreen(
         }
     }
     
+    // Pull-to-refresh state
+    val pullRefreshState = rememberPullRefreshState(isLoading, { refreshData() })
+    
+    // Load data when screen is first displayed
+    LaunchedEffect(Unit) {
+        refreshData()
+    }
+    
+    // Listen for app lifecycle events to refresh data when app comes back to foreground
+    DisposableEffect(lifecycleOwner) {
+        val lifecycleObserver = object : androidx.lifecycle.LifecycleEventObserver {
+            override fun onStateChanged(source: androidx.lifecycle.LifecycleOwner, event: androidx.lifecycle.Lifecycle.Event) {
+                if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
+                    Log.d("FastingLogScreen", "App resumed, refreshing data")
+                    refreshData()
+                }
+            }
+        }
+        
+        lifecycleOwner.lifecycle.addObserver(lifecycleObserver)
+        
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(lifecycleObserver)
+        }
+    }
+    
     // Function to sort and filter fasts
     fun getSortedAndFilteredFasts(): List<CompletedFast> {
         // First apply filter
@@ -166,28 +198,6 @@ fun FastingLogScreen(
             SortOption.DATE_ASC -> filteredFasts.sortedBy { it.endTimeMillis }
             SortOption.DURATION_DESC -> filteredFasts.sortedByDescending { it.durationMillis }
             SortOption.DURATION_ASC -> filteredFasts.sortedBy { it.durationMillis }
-        }
-    }
-    
-    // Pull-to-refresh state
-    val pullRefreshState = rememberPullRefreshState(isLoading, ::refreshData)
-    
-    // Load data when screen is first displayed
-    LaunchedEffect(key1 = repository) {
-        try {
-            Log.d("FastingLogScreen", "Loading fasts from repository")
-            val fasts = repository.getAllFasts()
-            Log.d("FastingLogScreen", "Loaded ${fasts.size} fasts from repository")
-            
-            // Log details of each fast for debugging
-            fasts.forEachIndexed { index, fast ->
-                Log.d("FastingLogScreen", "Fast $index: id=${fast.id}, duration=${fast.durationMillis}, state=${fast.maxFastingState}")
-            }
-            
-            allFasts = fasts
-        } catch (e: Exception) {
-            Log.e("FastingLogScreen", "Error loading fasts", e)
-            snackbarHostState.showSnackbar("Failed to load fasting data")
         }
     }
     
@@ -333,15 +343,6 @@ fun FastingLogScreen(
                         )
                     }
                     
-                    // Refresh button
-                    IconButton(
-                        onClick = { refreshData() }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Refresh,
-                            contentDescription = "Refresh Fasting Log"
-                        )
-                    }
                     // Add new fast entry button
                     IconButton(
                         onClick = { addNewFastEntry() }
@@ -2156,72 +2157,6 @@ fun TimePickerDialog(
                             }
                         ) {
                             Text("-", fontWeight = FontWeight.Bold)
-                        }
-                    }
-                    
-                    // AM/PM selector for 12-hour format
-                    if (use12HourFormat) {
-                        Spacer(modifier = Modifier.width(8.dp))
-                        
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = "AM/PM",
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                            
-                            Spacer(modifier = Modifier.height(8.dp))
-                            
-                            // AM button
-                            Button(
-                                onClick = { 
-                                    if (!isAM) {
-                                        isAM = true
-                                        // Update the hour in 24-hour format
-                                        selectedHour -= 12
-                                        if (selectedHour < 0) selectedHour += 24
-                                    }
-                                },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = if (isAM) 
-                                        MaterialTheme.colorScheme.primary 
-                                    else 
-                                        MaterialTheme.colorScheme.surfaceVariant,
-                                    contentColor = if (isAM) 
-                                        MaterialTheme.colorScheme.onPrimary 
-                                    else 
-                                        MaterialTheme.colorScheme.onSurfaceVariant
-                                ),
-                                modifier = Modifier.padding(vertical = 4.dp)
-                            ) {
-                                Text("AM")
-                            }
-                            
-                            // PM button
-                            Button(
-                                onClick = { 
-                                    if (isAM) {
-                                        isAM = false
-                                        // Update the hour in 24-hour format
-                                        selectedHour += 12
-                                        if (selectedHour >= 24) selectedHour -= 24
-                                    }
-                                },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = if (!isAM) 
-                                        MaterialTheme.colorScheme.primary 
-                                    else 
-                                        MaterialTheme.colorScheme.surfaceVariant,
-                                    contentColor = if (!isAM) 
-                                        MaterialTheme.colorScheme.onPrimary 
-                                    else 
-                                        MaterialTheme.colorScheme.onSurfaceVariant
-                                ),
-                                modifier = Modifier.padding(vertical = 4.dp)
-                            ) {
-                                Text("PM")
-                            }
                         }
                     }
                 }
