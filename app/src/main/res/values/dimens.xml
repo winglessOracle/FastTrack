@@ -7,4 +7,12 @@
     <dimen name="widget_hours_text_size">20sp</dimen>
     <dimen name="widget_label_text_size">12sp</dimen>
     <dimen name="widget_state_text_size">11sp</dimen>
+    
+    <!-- Large Widget dimensions -->
+    <dimen name="widget_large_button_height">44dp</dimen>
+    <dimen name="widget_large_button_min_width">90dp</dimen>
+    <dimen name="widget_large_button_text_size">16sp</dimen>
+    <dimen name="widget_large_hours_text_size">28sp</dimen>
+    <dimen name="widget_large_label_text_size">16sp</dimen>
+    <dimen name="widget_large_state_text_size">14sp</dimen>
 </resources> 
