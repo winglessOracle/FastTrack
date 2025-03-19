@@ -737,15 +737,15 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
      */
     private fun updateWidgets(forceUpdate: Boolean = false) {
         try {
-            // Use a more reliable approach to update widgets
-            Log.d(TAG, "Updating widgets with current state: running=$isRunning, state=${_maxFastingState.name}, forceUpdate=$forceUpdate")
+            // Use broadcast to update widgets
+            Log.d(TAG, "Updating widgets with current state: running=$isRunning, state=${currentFastingState.name}, forceUpdate=$forceUpdate")
             
             // Send broadcast with current state information
             val widgetIntent = Intent("wesseling.io.fasttime.widget.ACTION_UPDATE_WIDGETS").apply {
                 setPackage(appContext.packageName)
                 // Add state information to help debugging
                 putExtra("IS_RUNNING", isRunning)
-                putExtra("CURRENT_STATE", _maxFastingState.ordinal)
+                putExtra("CURRENT_STATE", currentFastingState.ordinal)
                 putExtra("ELAPSED_TIME", elapsedTimeMillis)
                 putExtra("TIMESTAMP", System.currentTimeMillis())
                 putExtra("FORCE_UPDATE", forceUpdate)
@@ -754,35 +754,7 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
             }
             appContext.sendBroadcast(widgetIntent)
             
-            // Only use the direct update and delayed update for forced updates
-            // to reduce unnecessary processing
-            if (forceUpdate) {
-                // Also directly update widgets as a fallback
-                try {
-                    val widgetProviderClass = Class.forName("wesseling.io.fasttime.widget.FastingWidgetProvider")
-                    val updateMethod = widgetProviderClass.getDeclaredMethod("updateAllWidgets", Context::class.java, Boolean::class.java)
-                    updateMethod.invoke(null, appContext, forceUpdate)
-                    Log.d(TAG, "Direct widget update succeeded")
-                } catch (e: Exception) {
-                    // This is just a fallback, so log but don't throw
-                    Log.d(TAG, "Direct widget update failed: ${e.message}")
-                }
-                
-                // Schedule a delayed update to ensure the widget is updated
-                Handler(Looper.getMainLooper()).postDelayed({
-                    try {
-                        Log.d(TAG, "Performing delayed widget update")
-                        val delayedIntent = Intent("wesseling.io.fasttime.widget.ACTION_UPDATE_WIDGETS").apply {
-                            setPackage(appContext.packageName)
-                            putExtra("DELAYED_UPDATE", true)
-                            putExtra("FORCE_UPDATE", forceUpdate)
-                        }
-                        appContext.sendBroadcast(delayedIntent)
-                    } catch (e: Exception) {
-                        Log.d(TAG, "Delayed widget update failed: ${e.message}")
-                    }
-                }, 500) // 500ms delay
-            }
+            // Other redundant update mechanisms removed to prevent multiple updates
         } catch (e: Exception) {
             // Widget provider might not be available, ignore
             Log.d(TAG, "Could not update widgets: ${e.message}")
