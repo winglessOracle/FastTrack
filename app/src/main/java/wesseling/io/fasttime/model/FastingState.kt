@@ -1,20 +1,61 @@
 package wesseling.io.fasttime.model
 
+import android.content.Context
+import wesseling.io.fasttime.R
+
 /**
  * Represents different fasting states with their time thresholds and descriptions
  */
 enum class FastingState(
-    val displayName: String,
-    val description: String,
+    val nameResId: Int,
+    val descriptionResId: Int,
     val hourThreshold: Int
 ) {
-    NOT_FASTING("Fed State", "Digestion & Absorption", 0),
-    EARLY_FAST("Early Fasting", "Fat Burning Begins", 4),
-    GLYCOGEN_DEPLETION("Glycogen Depletion", "Fat Metabolism Increases", 12),
-    METABOLIC_SHIFT("Metabolic Shift", "Ketosis Begins", 18),
-    DEEP_KETOSIS("Deep Ketosis", "Autophagy Peaks", 24),
-    IMMUNE_RESET("Immune Reset", "Stem Cell Production", 48),
-    EXTENDED_FAST("Extended Fast", "Cellular Rejuvenation", 72);
+    NOT_FASTING(R.string.fasting_state_not_fasting_name, R.string.fasting_state_not_fasting_description, 0),
+    EARLY_FAST(R.string.fasting_state_early_fast_name, R.string.fasting_state_early_fast_description, 4),
+    GLYCOGEN_DEPLETION(R.string.fasting_state_glycogen_depletion_name, R.string.fasting_state_glycogen_depletion_description, 12),
+    METABOLIC_SHIFT(R.string.fasting_state_metabolic_shift_name, R.string.fasting_state_metabolic_shift_description, 18),
+    DEEP_KETOSIS(R.string.fasting_state_deep_ketosis_name, R.string.fasting_state_deep_ketosis_description, 24),
+    IMMUNE_RESET(R.string.fasting_state_immune_reset_name, R.string.fasting_state_immune_reset_description, 48),
+    EXTENDED_FAST(R.string.fasting_state_extended_fast_name, R.string.fasting_state_extended_fast_description, 72);
+
+    /**
+     * Get the localized display name for this fasting state
+     */
+    fun getDisplayName(context: Context): String {
+        return context.getString(nameResId)
+    }
+    
+    /**
+     * Get the localized description for this fasting state
+     */
+    fun getDescription(context: Context): String {
+        return context.getString(descriptionResId)
+    }
+    
+    // For backward compatibility
+    val displayName: String
+        get() = when (this) {
+            NOT_FASTING -> "Fed State"
+            EARLY_FAST -> "Early Fasting"
+            GLYCOGEN_DEPLETION -> "Glycogen Depletion" 
+            METABOLIC_SHIFT -> "Metabolic Shift"
+            DEEP_KETOSIS -> "Deep Ketosis"
+            IMMUNE_RESET -> "Immune Reset"
+            EXTENDED_FAST -> "Extended Fast"
+        }
+    
+    // For backward compatibility
+    val description: String
+        get() = when (this) {
+            NOT_FASTING -> "Digestion & Absorption"
+            EARLY_FAST -> "Fat Burning Begins"
+            GLYCOGEN_DEPLETION -> "Fat Metabolism Increases" 
+            METABOLIC_SHIFT -> "Ketosis Begins"
+            DEEP_KETOSIS -> "Autophagy Peaks"
+            IMMUNE_RESET -> "Stem Cell Production"
+            EXTENDED_FAST -> "Cellular Rejuvenation"
+        }
 
     companion object {
         /**

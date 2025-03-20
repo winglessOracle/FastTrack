@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
@@ -12,20 +13,25 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.BatteryChargingFull
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import wesseling.io.fasttime.R
 import wesseling.io.fasttime.model.DateFormat
 import wesseling.io.fasttime.model.ThemePreference
 import wesseling.io.fasttime.model.TimeFormat
 import wesseling.io.fasttime.model.UpdateFrequency
 import wesseling.io.fasttime.settings.PreferencesManager
 import wesseling.io.fasttime.util.BatteryOptimizationHelper
+import wesseling.io.fasttime.util.LocaleHelper
+import androidx.compose.foundation.clickable
 
 /**
  * Settings screen for the app
@@ -37,13 +43,22 @@ fun SettingsScreen(
 ) {
     val context = LocalContext.current
     val preferencesManager = remember { PreferencesManager.getInstance(context) }
-    // Use collectAsState to make the preferences reactive
-    val dateTimePreferences by remember { 
+    val preferences by remember { 
         mutableStateOf(preferencesManager.dateTimePreferences) 
     }.apply {
-        // This will update the UI whenever preferences change
         this.value = preferencesManager.dateTimePreferences
     }
+    
+    // Current language preference
+    val currentLanguage = remember { 
+        mutableStateOf(LocaleHelper.getCurrentLanguage(context)) 
+    }
+    
+    // Remember if we need to show a restart dialog after language change
+    var showRestartDialog by remember { mutableStateOf(false) }
+    
+    // Remember selected language for dialog
+    var selectedLanguage by remember { mutableStateOf(currentLanguage.value) }
     
     // Permission request launcher
     val requestPermissionLauncher = rememberLauncherForActivityResult(
@@ -90,13 +105,10 @@ fun SettingsScreen(
         modifier = Modifier.systemBarsPadding(),
         topBar = {
             TopAppBar(
-                title = { Text("Settings") },
+                title = { Text(stringResource(R.string.settings_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBackPressed) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
-                        )
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back_button_description))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -112,371 +124,143 @@ fun SettingsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp)
+                .padding(horizontal = 16.dp)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            // Theme Section
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        text = "Theme",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    
-                    ThemePreference.entries.forEach { theme ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            RadioButton(
-                                selected = dateTimePreferences.themePreference == theme,
-                                onClick = { preferencesManager.updateTheme(theme) },
-                                colors = RadioButtonDefaults.colors(
-                                    selectedColor = MaterialTheme.colorScheme.primary,
-                                    unselectedColor = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = theme.displayName,
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                    }
+            // Theme section
+            SectionTitle(stringResource(R.string.settings_category_theme))
+            ThemeSelector(
+                currentTheme = preferences.themePreference,
+                onThemeSelected = { theme -> 
+                    preferencesManager.updateTheme(theme)
                 }
-            }
+            )
             
-            // Date Format Section
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        text = "Date Format",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    
-                    DateFormat.entries.forEach { dateFormat ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            RadioButton(
-                                selected = dateTimePreferences.dateFormat == dateFormat,
-                                onClick = { preferencesManager.updateDateFormat(dateFormat) },
-                                colors = RadioButtonDefaults.colors(
-                                    selectedColor = MaterialTheme.colorScheme.primary,
-                                    unselectedColor = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Column {
-                                Text(
-                                    text = dateFormat.displayName,
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                                Text(
-                                    text = "Example: ${dateFormat.pattern}",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        }
-                    }
-                }
-            }
+            Divider(modifier = Modifier.padding(vertical = 16.dp))
             
-            // Time Format Section
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        text = "Time Format",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    
-                    TimeFormat.entries.forEach { timeFormat ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            RadioButton(
-                                selected = dateTimePreferences.timeFormat == timeFormat,
-                                onClick = { preferencesManager.updateTimeFormat(timeFormat) },
-                                colors = RadioButtonDefaults.colors(
-                                    selectedColor = MaterialTheme.colorScheme.primary,
-                                    unselectedColor = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Column {
-                                Text(
-                                    text = timeFormat.displayName,
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                                Text(
-                                    text = "Example: ${timeFormat.pattern}",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        }
-                    }
+            // Language section
+            SectionTitle(stringResource(R.string.settings_category_language))
+            LanguageSelector(
+                currentLanguage = currentLanguage.value,
+                onLanguageSelected = { language ->
+                    selectedLanguage = language
+                    showRestartDialog = true
                 }
-            }
+            )
             
-            // Notifications Section
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        text = "Notifications",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Switch(
-                            checked = dateTimePreferences.enableFastingStateNotifications,
-                            onCheckedChange = { checkAndRequestNotificationPermission(it) },
-                            colors = SwitchDefaults.colors(
-                                checkedThumbColor = MaterialTheme.colorScheme.primary,
-                                checkedTrackColor = MaterialTheme.colorScheme.primaryContainer,
-                                uncheckedThumbColor = MaterialTheme.colorScheme.outline,
-                                uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant
-                            )
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Column {
-                            Text(
-                                text = "Fasting State Notifications",
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                            Text(
-                                text = "Get notified when you reach a new fasting state",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
-                }
-            }
+            Divider(modifier = Modifier.padding(vertical = 16.dp))
             
-            // Battery Optimization Section
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surface
-                    )
-                ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.BatteryChargingFull,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = "Battery Optimization",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                        
-                        Spacer(modifier = Modifier.height(8.dp))
-                        
-                        // Widget Update Frequency
-                        Text(
-                            text = "Widget Update Frequency",
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        
-                        Spacer(modifier = Modifier.height(4.dp))
-                        
-                        Text(
-                            text = "Control how often the widget updates. More frequent updates provide more accurate information but use more battery.",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        
-                        Spacer(modifier = Modifier.height(8.dp))
-                        
-                        UpdateFrequency.entries.forEach { frequency ->
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 8.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                RadioButton(
-                                    selected = dateTimePreferences.updateFrequency == frequency,
-                                    onClick = { preferencesManager.updateUpdateFrequency(frequency) },
-                                    colors = RadioButtonDefaults.colors(
-                                        selectedColor = MaterialTheme.colorScheme.primary,
-                                        unselectedColor = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = frequency.displayName,
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
-                        }
-                        
-                        Spacer(modifier = Modifier.height(16.dp))
-                        
-                        var isIgnoringBatteryOptimizations by remember { 
-                            mutableStateOf(BatteryOptimizationHelper.isIgnoringBatteryOptimizations(context)) 
-                        }
-                        
-                        val batteryOptimizationLauncher = rememberLauncherForActivityResult(
-                            contract = ActivityResultContracts.StartActivityForResult()
-                        ) {
-                            // Check the status again after returning from the settings
-                            isIgnoringBatteryOptimizations = BatteryOptimizationHelper.isIgnoringBatteryOptimizations(context)
-                        }
-                        
-                        Text(
-                            text = "Disabling battery optimization allows the app to update the widget and track your fasting time more reliably, but may slightly increase battery usage.",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        
-                        if (isIgnoringBatteryOptimizations) {
-                            Text(
-                                text = "Battery optimization is disabled for this app.",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            OutlinedButton(
-                                onClick = {
-                                    batteryOptimizationLauncher.launch(
-                                        BatteryOptimizationHelper.createBatteryOptimizationSettingsIntent()
-                                    )
-                                }
-                            ) {
-                                Text("Battery Settings")
-                            }
-                        } else {
-                            Text(
-                                text = "Battery optimization is enabled for this app, which may cause widget updates to be delayed or missed.",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.error
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Button(
-                                onClick = {
-                                    BatteryOptimizationHelper.createBatteryOptimizationIntent(context)?.let {
-                                        batteryOptimizationLauncher.launch(it)
-                                    }
-                                }
-                            ) {
-                                Text("Disable Battery Optimization")
-                            }
-                        }
-                    }
+            // Date format section
+            SectionTitle(stringResource(R.string.settings_category_date_format))
+            DateFormatSelector(
+                currentDateFormat = preferences.dateFormat,
+                onDateFormatSelected = { dateFormat ->
+                    preferencesManager.updateDateFormat(dateFormat)
                 }
-            }
+            )
             
-            // About Section
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        text = "About",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    
-                    Text(
-                        text = "FastTrack",
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Text(
-                        text = "Version 1.0",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "A simple fasting timer app to track your fasting periods and progress.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
+            Divider(modifier = Modifier.padding(vertical = 16.dp))
+            
+            // Time format section
+            SectionTitle(stringResource(R.string.settings_category_time_format))
+            TimeFormatSelector(
+                currentTimeFormat = preferences.timeFormat,
+                onTimeFormatSelected = { timeFormat ->
+                    preferencesManager.updateTimeFormat(timeFormat)
                 }
-            }
+            )
+            
+            Divider(modifier = Modifier.padding(vertical = 16.dp))
+            
+            // Notifications section
+            SectionTitle(stringResource(R.string.settings_category_notifications))
+            NotificationSettings(
+                enableFastingStateNotifications = preferences.enableFastingStateNotifications,
+                onEnableFastingStateNotificationsChanged = { enabled ->
+                    checkAndRequestNotificationPermission(enabled)
+                }
+            )
+            
+            Divider(modifier = Modifier.padding(vertical = 16.dp))
+            
+            // Battery optimization section
+            SectionTitle(stringResource(R.string.settings_category_battery))
+            BatteryOptimizationSettings(
+                context = context
+            )
+            
+            Divider(modifier = Modifier.padding(vertical = 16.dp))
+            
+            // Widget update frequency section
+            SectionTitle(stringResource(R.string.settings_category_widget_updates))
+            UpdateFrequencySelector(
+                currentUpdateFrequency = preferences.updateFrequency,
+                onUpdateFrequencySelected = { frequency ->
+                    preferencesManager.updateUpdateFrequency(frequency)
+                }
+            )
+            
+            Divider(modifier = Modifier.padding(vertical = 16.dp))
+            
+            // About section
+            SectionTitle(stringResource(R.string.settings_category_about))
+            AboutSection()
+            
+            // Add some space at the bottom
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
+    
+    // Show restart dialog if needed
+    if (showRestartDialog) {
+        AlertDialog(
+            onDismissRequest = { showRestartDialog = false },
+            title = { Text(stringResource(R.string.language_dialog_title)) },
+            text = { Text(stringResource(R.string.language_dialog_message)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    // Apply language change
+                    LocaleHelper.setLanguageCode(context, selectedLanguage.code)
+                    val updatedContext = LocaleHelper.updateLocale(context, selectedLanguage.code)
+                    
+                    // Show toast with the new context to ensure it uses the new locale
+                    Toast.makeText(
+                        updatedContext, 
+                        updatedContext.getString(R.string.language_changed_message, selectedLanguage.displayName), 
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    
+                    // Hide dialog
+                    showRestartDialog = false
+                    
+                    // Refresh UI by navigating back (this will cause the activity to recreate)
+                    onBackPressed()
+                }) {
+                    Text(stringResource(R.string.language_dialog_continue))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { 
+                    showRestartDialog = false 
+                    selectedLanguage = currentLanguage.value  // Reset selection
+                }) {
+                    Text(stringResource(R.string.language_dialog_cancel))
+                }
+            }
+        )
+    }
+}
+
+/**
+ * Section title component for settings
+ */
+@Composable
+fun SectionTitle(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.titleMedium,
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier.padding(vertical = 8.dp)
+    )
 } 

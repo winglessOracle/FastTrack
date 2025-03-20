@@ -9,14 +9,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
 import wesseling.io.fasttime.R
 import wesseling.io.fasttime.model.CompletedFast
@@ -41,50 +45,28 @@ class WidgetConfirmationActivity : ComponentActivity() {
                 val repository = remember { FastingRepository.getInstance(applicationContext) }
                 
                 // Show confirmation dialog with properties to make it more compact
-                AlertDialog(
-                    onDismissRequest = { finish() },
-                    title = { Text(getString(R.string.stop_timer)) },
-                    text = { Text(getString(R.string.stop_timer_confirmation)) },
-                    confirmButton = {
-                        Button(
-                            onClick = {
-                                try {
-                                    // Reset the timer and get the completed fast
-                                    val fastingTimer = FastingTimer.getInstance(applicationContext)
-                                    val fast = fastingTimer.resetTimer()
-                                    
-                                    // Show summary dialog only if a valid fast was completed (12+ hours)
-                                    // The resetTimer method now returns null for fasts under 12 hours
-                                    if (fast != null) {
-                                        completedFast = fast
-                                        showSummaryDialog = true
-                                    } else {
-                                        // No fast to show or fast was too short, just finish the activity
-                                        finish()
-                                    }
-                                } catch (e: Exception) {
-                                    Log.e("WidgetConfirmation", "Error resetting timer", e)
-                                    finish()
-                                }
+                ConfirmationDialog(
+                    onConfirm = {
+                        try {
+                            // Reset the timer and get the completed fast
+                            val fastingTimer = FastingTimer.getInstance(applicationContext)
+                            val fast = fastingTimer.resetTimer()
+                            
+                            // Show summary dialog only if a valid fast was completed (12+ hours)
+                            // The resetTimer method now returns null for fasts under 12 hours
+                            if (fast != null) {
+                                completedFast = fast
+                                showSummaryDialog = true
+                            } else {
+                                // No fast to show or fast was too short, just finish the activity
+                                finish()
                             }
-                        ) {
-                            Text(getString(R.string.yes))
+                        } catch (e: Exception) {
+                            Log.e("WidgetConfirmation", "Error resetting timer", e)
+                            finish()
                         }
                     },
-                    dismissButton = {
-                        Button(
-                            onClick = { finish() }
-                        ) {
-                            Text(getString(R.string.no))
-                        }
-                    },
-                    // Add properties to make the dialog more compact
-                    properties = DialogProperties(
-                        dismissOnBackPress = true,
-                        dismissOnClickOutside = true,
-                        usePlatformDefaultWidth = false
-                    ),
-                    modifier = Modifier.wrapContentSize()
+                    onDismiss = { finish() }
                 )
                 
                 // Summary dialog
@@ -109,4 +91,28 @@ class WidgetConfirmationActivity : ComponentActivity() {
             }
         }
     }
+}
+
+@Composable
+fun ConfirmationDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.dialog_title_stop_timer)) },
+        text = { Text(stringResource(R.string.dialog_message_stop_timer_confirmation)) },
+        confirmButton = {
+            TextButton(
+                onClick = onConfirm,
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = MaterialTheme.colorScheme.error
+                )
+            ) {
+                Text(stringResource(R.string.action_yes))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.action_no))
+            }
+        }
+    )
 } 

@@ -12,42 +12,42 @@ import wesseling.io.fasttime.model.DateTimePreferences
 object DateTimeFormatter {
     
     /**
-     * Format a timestamp as a date string
+     * Format a timestamp as a date string with specified locale
      */
-    fun formatDate(timestamp: Long, preferences: DateTimePreferences): String {
+    fun formatDate(timestamp: Long, preferences: DateTimePreferences, locale: Locale = Locale.getDefault()): String {
         val date = Date(timestamp)
         val pattern = preferences.getDatePattern()
-        val formatter = SimpleDateFormat(pattern, Locale.getDefault())
+        val formatter = SimpleDateFormat(pattern, locale)
         return formatter.format(date)
     }
     
     /**
-     * Format a timestamp as a time string
+     * Format a timestamp as a time string with specified locale
      */
-    fun formatTime(timestamp: Long, preferences: DateTimePreferences): String {
+    fun formatTime(timestamp: Long, preferences: DateTimePreferences, locale: Locale = Locale.getDefault()): String {
         val date = Date(timestamp)
         val pattern = preferences.getTimePattern()
-        val formatter = SimpleDateFormat(pattern, Locale.getDefault())
+        val formatter = SimpleDateFormat(pattern, locale)
         return formatter.format(date)
     }
     
     /**
-     * Format a timestamp as a date and time string
+     * Format a timestamp as a date and time string with specified locale
      */
-    fun formatDateTime(timestamp: Long, preferences: DateTimePreferences): String {
+    fun formatDateTime(timestamp: Long, preferences: DateTimePreferences, locale: Locale = Locale.getDefault()): String {
         val date = Date(timestamp)
         val pattern = preferences.getDateTimePattern()
-        val formatter = SimpleDateFormat(pattern, Locale.getDefault())
+        val formatter = SimpleDateFormat(pattern, locale)
         return formatter.format(date)
     }
     
     /**
-     * Format a timestamp as a date and time string (legacy method)
+     * Format a timestamp as a date and time string with specified locale (legacy method)
      */
-    fun formatDateTime(timestamp: Long): String {
+    fun formatDateTime(timestamp: Long, locale: Locale = Locale.getDefault()): String {
         val date = Date(timestamp)
         val pattern = "MMM d, yyyy HH:mm"
-        val formatter = SimpleDateFormat(pattern, Locale.getDefault())
+        val formatter = SimpleDateFormat(pattern, locale)
         return formatter.format(date)
     }
     

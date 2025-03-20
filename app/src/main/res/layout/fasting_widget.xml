@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="46dp"
         android:scaleType="fitXY"
-        android:contentDescription="Widget background"
+        android:contentDescription="@string/widget_update_description"
         android:src="@drawable/widget_image_background"
         android:clipToOutline="true" />
 
@@ -54,12 +54,12 @@
                     android:shadowDx="1"
                     android:shadowDy="1"
                     android:shadowRadius="1"
-                    android:contentDescription="Fasting hours. Tap to adjust start time when fasting, or open app when not fasting" />
+                    android:contentDescription="@string/widget_hours_label" />
                 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="hrs"
+                    android:text="@string/widget_hours_label"
                     android:textSize="@dimen/widget_label_text_size"
                     style="@style/WidgetTextStyle"
                     android:textColor="#FFFFFF"
@@ -124,7 +124,7 @@
                 android:background="@drawable/widget_button"
                 android:minWidth="48dp"
                 style="@style/WidgetButtonGreen"
-                android:text="START"
+                android:text="@string/widget_start_timer"
                 android:textSize="@dimen/widget_button_text_size"
                 android:textColor="@android:color/white"
                 android:padding="4dp"
@@ -142,7 +142,7 @@
                 android:background="@drawable/widget_button"
                 android:minWidth="48dp"
                 style="@style/WidgetButtonRed"
-                android:text="RESET"
+                android:text="@string/widget_stop_timer"
                 android:textSize="@dimen/widget_button_text_size"
                 android:textColor="@android:color/white"
                 android:padding="4dp"

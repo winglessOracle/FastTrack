@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import wesseling.io.fasttime.R
 import wesseling.io.fasttime.model.CompletedFast
 import wesseling.io.fasttime.model.FastingState
 import wesseling.io.fasttime.repository.FastingRepository
@@ -177,7 +178,7 @@ fun FastingTimerButton(
                     // Show a toast message to confirm
                     Toast.makeText(
                         context,
-                        "Fasting session saved to log",
+                        context.getString(R.string.toast_fast_saved),
                         Toast.LENGTH_SHORT
                     ).show()
                 } catch (e: Exception) {
@@ -186,7 +187,7 @@ fun FastingTimerButton(
                     // Show error toast
                     Toast.makeText(
                         context,
-                        "Error saving fasting session",
+                        context.getString(R.string.toast_fast_save_error),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -208,7 +209,7 @@ fun FastingTimerButton(
                     // Show a toast message if adjustment failed
                     Toast.makeText(
                         context,
-                        "Cannot adjust time: Invalid adjustment value",
+                        context.getString(R.string.toast_invalid_adjustment),
                         Toast.LENGTH_SHORT
                     ).show()
                 }

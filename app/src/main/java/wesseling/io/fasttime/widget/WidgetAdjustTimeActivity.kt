@@ -5,18 +5,21 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.ui.res.stringResource
+import wesseling.io.fasttime.R
 import wesseling.io.fasttime.timer.FastingTimer
 import wesseling.io.fasttime.ui.components.AdjustStartTimeDialog
 import wesseling.io.fasttime.ui.theme.FastTrackTheme
 
 /**
- * Activity that shows the adjust start time dialog when opened from the widget
+ * Activity for adjusting the start time of a fast from the widget
  */
 class WidgetAdjustTimeActivity : ComponentActivity() {
+    
     companion object {
         private const val TAG = "WidgetAdjustTimeActivity"
     }
-
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
@@ -30,7 +33,7 @@ class WidgetAdjustTimeActivity : ComponentActivity() {
             Log.w(TAG, "Cannot adjust time: Timer is not running")
             Toast.makeText(
                 applicationContext,
-                "Cannot adjust time: Timer is not running",
+                getString(R.string.toast_timer_not_running),
                 Toast.LENGTH_SHORT
             ).show()
             finish()
@@ -50,7 +53,7 @@ class WidgetAdjustTimeActivity : ComponentActivity() {
                                 Log.e(TAG, "Failed to adjust start time")
                                 Toast.makeText(
                                     applicationContext,
-                                    "Could not adjust start time. Please try a different time.",
+                                    getString(R.string.toast_invalid_time_adjustment),
                                     Toast.LENGTH_SHORT
                                 ).show()
                             } else {
@@ -59,7 +62,7 @@ class WidgetAdjustTimeActivity : ComponentActivity() {
                                 // Show success message
                                 Toast.makeText(
                                     applicationContext,
-                                    "Start time adjusted successfully",
+                                    getString(R.string.toast_time_adjusted),
                                     Toast.LENGTH_SHORT
                                 ).show()
                                 
@@ -70,7 +73,7 @@ class WidgetAdjustTimeActivity : ComponentActivity() {
                             Log.e(TAG, "Error adjusting start time", e)
                             Toast.makeText(
                                 applicationContext,
-                                "An error occurred while adjusting time",
+                                getString(R.string.toast_adjustment_error),
                                 Toast.LENGTH_SHORT
                             ).show()
                         } finally {

@@ -3,6 +3,7 @@ package wesseling.io.fasttime
 import android.app.Application
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Process
 import android.util.Log
@@ -11,8 +12,9 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import wesseling.io.fasttime.timer.FastingTimer
-import wesseling.io.fasttime.widget.WidgetBackgroundHelper
 import wesseling.io.fasttime.util.BitmapPool
+import wesseling.io.fasttime.util.LocaleHelper
+import wesseling.io.fasttime.widget.WidgetBackgroundHelper
 
 /**
  * Custom Application class for FastTrack app
@@ -24,11 +26,43 @@ class FastTrackApplication : Application(), LifecycleEventObserver {
         super.onCreate()
         Log.d(TAG, "Application onCreate")
         
+        // Apply saved language settings
+        applyLanguageSettings()
+        
         // Register for process lifecycle events
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
         
         // Initialize singletons with application context
         initializeSingletons(applicationContext)
+    }
+    
+    /**
+     * Apply saved language settings
+     */
+    private fun applyLanguageSettings() {
+        val languageCode = LocaleHelper.getLanguageCode(this)
+        Log.d(TAG, "Applying saved language: $languageCode")
+        LocaleHelper.updateLocale(this, languageCode)
+    }
+    
+    /**
+     * Called when configuration changes, including locale changes
+     */
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        Log.d(TAG, "Configuration changed")
+        applyLanguageSettings()
+    }
+    
+    /**
+     * Called when a Context is attached to this Application
+     * Ensures all new contexts have the correct locale
+     */
+    override fun attachBaseContext(base: Context) {
+        // Apply the saved language settings to the base context
+        val languageCode = LocaleHelper.getLanguageCode(base)
+        val updatedContext = LocaleHelper.updateLocale(base, languageCode)
+        super.attachBaseContext(updatedContext)
     }
     
     override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {

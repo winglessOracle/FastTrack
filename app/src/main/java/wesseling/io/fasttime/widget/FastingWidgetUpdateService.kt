@@ -196,10 +196,10 @@ class FastingWidgetUpdateService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 CHANNEL_ID,
-                "Fasting Widget Updates",
+                getString(R.string.notification_channel_widget_updates),
                 NotificationManager.IMPORTANCE_LOW
             ).apply {
-                description = "Used to keep the fasting widget updated"
+                description = getString(R.string.notification_channel_widget_updates_description)
                 setShowBadge(false)
             }
             
@@ -296,8 +296,8 @@ class FastingWidgetUpdateService : Service() {
      * Create a notification for the foreground service
      */
     private fun createNotification() = NotificationCompat.Builder(this, CHANNEL_ID)
-        .setContentTitle("FastTrack Widget")
-        .setContentText("Keeping your widget updated")
+        .setContentTitle(getString(R.string.notification_widget_content_title))
+        .setContentText(getString(R.string.notification_widget_content_text))
         .setSmallIcon(R.drawable.ic_play_arrow)
         .setPriority(NotificationCompat.PRIORITY_LOW)
         .setOngoing(true)

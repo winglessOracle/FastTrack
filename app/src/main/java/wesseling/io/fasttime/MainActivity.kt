@@ -1,6 +1,7 @@
 package wesseling.io.fasttime
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -70,6 +71,9 @@ import wesseling.io.fasttime.ui.screens.FastingLogScreen
 import wesseling.io.fasttime.ui.screens.HelpScreen
 import wesseling.io.fasttime.ui.screens.SettingsScreen
 import wesseling.io.fasttime.ui.theme.FastTrackTheme
+import wesseling.io.fasttime.util.BatteryOptimizationHelper
+import wesseling.io.fasttime.util.DateTimeFormatter
+import wesseling.io.fasttime.util.LocaleHelper
 
 class MainActivity : ComponentActivity() {
     companion object {
@@ -101,6 +105,17 @@ class MainActivity : ComponentActivity() {
                 preferencesManager.toggleFastingStateNotifications(false)
             }
         }
+    }
+    
+    /**
+     * Apply saved language settings when context is attached
+     */
+    override fun attachBaseContext(newBase: Context) {
+        // Get saved language code
+        val languageCode = LocaleHelper.getLanguageCode(newBase)
+        // Apply the locale
+        val updatedContext = LocaleHelper.updateLocale(newBase, languageCode)
+        super.attachBaseContext(updatedContext)
     }
     
     override fun onCreate(savedInstanceState: Bundle?) {
