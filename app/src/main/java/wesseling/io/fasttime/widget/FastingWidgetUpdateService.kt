@@ -272,7 +272,7 @@ class FastingWidgetUpdateService : Service() {
             
             // Check timer status - but don't stop immediately if not running
             // This gives the timer a chance to start if it's in the process of starting
-            var timerRunning = false
+            var timerRunning: Boolean
             try {
                 val fastingTimer = FastingTimer.getInstance(this)
                 timerRunning = fastingTimer.isRunning

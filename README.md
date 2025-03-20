@@ -8,9 +8,11 @@ FastTime is a simple yet powerful app designed to help you track your fasting ti
 - **Fasting States**: Track different fasting states (Not Fasting, Early Fast, Glycogen Depletion, Metabolic Shift, Deep Ketosis, Immune Reset, Extended Fast)
 - **Fasting Log**: Keep a record of your completed fasts (12+ hours) with sorting and filtering options
 - **Home Screen Widget**: Monitor and control your fast directly from your home screen
+- **Full Localization**: Support for multiple languages throughout the app and widget
 - **Visual Indicators**: Color-coded states to easily identify your current fasting progress
 - **Achievement System**: Track your fasting milestones with achievement circles
-- **Energy Efficient**: Optimized for minimal battery consumption
+- **Enhanced Reliability**: Multiple recovery mechanisms ensure consistent operation
+- **Adaptive Updates**: Smart algorithms balance update frequency with battery conservation
 - **Secret Achievement**: Discover a special achievement for completing weekly deep fasts (24+ hours)
 - **Clean Code Architecture**: Well-organized, maintainable code with minimal redundancy
 
@@ -78,13 +80,15 @@ FastTime is a simple yet powerful app designed to help you track your fasting ti
 
 2. **Using the Widget**
    - **Start Button**: Tap to begin a new fast
-   - **Reset Button**: Tap to end your current fast (requires confirmation)
+   - **Stop Button**: Tap to end your current fast (single confirmation dialog)
    - **Hours Display**: Shows your current fasting duration
      - When fasting: Tap to adjust your start time
      - When not fasting: Tap to open the main app
    - **State Display**: Shows your current fasting state
      - Tap the state pill (colored text) to view detailed information about your current fasting state
-   - **Energy Efficient**: The widget is optimized to minimize battery consumption
+   - **Localized Experience**: The widget fully supports your preferred language
+   - **Enhanced Reliability**: Multiple recovery mechanisms ensure consistent operation
+   - **Adaptive Updates**: Intelligent update frequencies balance timely information with battery life
 
 3. **Widget Colors**
    - The widget background color changes based on your fasting state
@@ -175,9 +179,12 @@ FastTime tracks the time you spend fasting. Here are some popular protocols to c
 
 ## Troubleshooting
 
-- If the widget doesn't update, try removing and adding it again
-- Make sure battery optimization is disabled for FastTime to ensure proper background operation
-- If you encounter any issues, restart the app or your device
+- The app now includes multiple recovery mechanisms to ensure stability
+- Timer operations are protected by safeguards to prevent data loss
+- Widgets are designed to automatically recover from interruptions
+- Language settings are preserved throughout all app components
+- If you experience any issues, try restarting the app or your device
+- For battery optimization settings, refer to your device manufacturer's instructions
 
 ---
 

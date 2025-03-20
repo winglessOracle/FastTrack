@@ -155,13 +155,14 @@
     <string name="help_weekly_content">FastTrack includes a special medal achievement that tracks your weekly deep fasts (24+ hours or better). This encourages regular deep fasting on a weekly basis. Bronze medal is earned for 1-9 deep fasts, Silver for 10-24, Gold for 25-49, and Legend status for 50+ weekly deep fasts. Aim for at least one deep fast per week to maximize your fasting benefits and achievement progress.</string>
     
     <string name="help_widget">Widget Features</string>
-    <string name="help_widget_item_1">Add the FastTrack widget to your home screen</string>
+    <string name="help_widget_item_1">Add the FastTrack widget to your home screen for easy access</string>
     <string name="help_widget_item_2">Tap START to begin a fast directly from your home screen</string>
-    <string name="help_widget_item_3">Tap RESET to end your fast</string>
+    <string name="help_widget_item_3">Tap STOP to end your fast (single confirmation dialog)</string>
     <string name="help_widget_item_4">Tap the hours to adjust the start time (when fasting) or open the app (when not fasting)</string>
     <string name="help_widget_item_5">Tap the state pill (colored text showing your current fasting state) to view detailed information about that fasting state</string>
-    <string name="help_widget_item_6">The widget updates automatically to show your current fasting state</string>
-    <string name="help_widget_item_7">Energy-efficient design minimizes battery consumption</string>
+    <string name="help_widget_item_6">The widget updates automatically with full support for your preferred language</string>
+    <string name="help_widget_item_7">Enhanced reliability with multiple recovery mechanisms ensures consistent operation</string>
+    <string name="help_widget_item_8">Adaptive update intervals balance frequent updates with battery conservation</string>
     
     <!-- Fasting Types tab -->
     <string name="help_ideal_protocol">Finding Your Ideal Fasting Protocol</string>
@@ -220,10 +221,11 @@
     <!-- Tips tab -->
     <string name="help_battery">Battery Optimization &amp; Energy Efficiency</string>
     <string name="help_battery_item_1">FastTrack is designed to be energy-efficient and minimize battery consumption</string>
-    <string name="help_battery_item_2">The app and widget use optimized background processes</string>
+    <string name="help_battery_item_2">The app and widget use optimized background processes with multiple reliability safeguards</string>
     <string name="help_battery_item_3">For best performance, ensure FastTrack is exempt from battery optimization settings on your device</string>
-    <string name="help_battery_item_4">Go to your device\'s Battery settings and add FastTrack to apps exempt from optimization</string>
-    <string name="help_battery_item_5">This ensures timers and notifications work correctly without excessive battery drain</string>
+    <string name="help_battery_item_4">The app implements adaptive update intervals based on your fasting state and battery level</string>
+    <string name="help_battery_item_5">Multiple recovery mechanisms ensure timers and notifications work correctly even if temporarily interrupted</string>
+    <string name="help_battery_item_6">The app intelligently balances update frequency with battery conservation</string>
     
     <string name="help_getting_started">Getting Started</string>
     <string name="help_getting_started_item_1">Start with shorter fasting windows (12-14 hours)</string>

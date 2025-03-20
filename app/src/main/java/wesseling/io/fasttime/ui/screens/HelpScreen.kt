@@ -233,7 +233,8 @@ fun BasicsTab() {
                 stringResource(R.string.help_widget_item_4),
                 stringResource(R.string.help_widget_item_5),
                 stringResource(R.string.help_widget_item_6),
-                stringResource(R.string.help_widget_item_7)
+                stringResource(R.string.help_widget_item_7),
+                stringResource(R.string.help_widget_item_8)
             )
         )
     }

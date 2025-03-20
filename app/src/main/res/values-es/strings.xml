@@ -156,13 +156,14 @@
     <string name="help_weekly_content">FastTrack incluye un logro especial de medalla que rastrea tus ayunos profundos semanales (24+ horas o mejores). Esto fomenta el ayuno profundo regular semanalmente. La medalla de bronce se gana por 1-9 ayunos profundos, Plata por 10-24, Oro por 25-49, y el estado Leyenda por 50+ ayunos profundos semanales. Apunta a al menos un ayuno profundo por semana para maximizar los beneficios de tu ayuno y el progreso de tus logros.</string>
     
     <string name="help_widget">Características del Widget</string>
-    <string name="help_widget_item_1">Añade el widget de FastTrack a tu pantalla de inicio</string>
+    <string name="help_widget_item_1">Añade el widget de FastTrack a tu pantalla de inicio para fácil acceso</string>
     <string name="help_widget_item_2">Toca INICIAR para comenzar un ayuno directamente desde tu pantalla de inicio</string>
-    <string name="help_widget_item_3">Toca DETENER para finalizar tu ayuno</string>
+    <string name="help_widget_item_3">Toca PARAR para finalizar tu ayuno (diálogo de confirmación único)</string>
     <string name="help_widget_item_4">Toca las horas para ajustar la hora de inicio (durante un ayuno) o abrir la aplicación (cuando no estás ayunando)</string>
     <string name="help_widget_item_5">Toca la píldora de estado (texto coloreado que muestra tu estado actual de ayuno) para ver información detallada sobre ese estado de ayuno</string>
-    <string name="help_widget_item_6">El widget se actualiza automáticamente para mostrar tu estado actual de ayuno</string>
-    <string name="help_widget_item_7">Diseño eficiente en energía que minimiza el consumo de batería</string>
+    <string name="help_widget_item_6">El widget se actualiza automáticamente con soporte completo para tu idioma preferido</string>
+    <string name="help_widget_item_7">Fiabilidad mejorada con múltiples mecanismos de recuperación asegura un funcionamiento consistente</string>
+    <string name="help_widget_item_8">Intervalos de actualización adaptables equilibran actualizaciones frecuentes con conservación de batería</string>
     
     <!-- Fasting Types tab -->
     <string name="help_ideal_protocol">Encontrando Tu Protocolo de Ayuno Ideal</string>
@@ -221,10 +222,11 @@
     <!-- Tips tab -->
     <string name="help_battery">Optimización de Batería y Eficiencia Energética</string>
     <string name="help_battery_item_1">FastTrack está diseñado para ser eficiente en energía y minimizar el consumo de batería</string>
-    <string name="help_battery_item_2">La aplicación y el widget utilizan procesos en segundo plano optimizados</string>
+    <string name="help_battery_item_2">La aplicación y el widget utilizan procesos en segundo plano optimizados con múltiples mecanismos de seguridad</string>
     <string name="help_battery_item_3">Para un mejor rendimiento, asegúrate de que FastTrack esté exento de la configuración de optimización de batería en tu dispositivo</string>
-    <string name="help_battery_item_4">Ve a la configuración de Batería de tu dispositivo y añade FastTrack a las aplicaciones exentas de optimización</string>
-    <string name="help_battery_item_5">Esto asegura que los temporizadores y notificaciones funcionen correctamente sin un drenaje excesivo de batería</string>
+    <string name="help_battery_item_4">La aplicación implementa intervalos de actualización adaptables según tu estado de ayuno y nivel de batería</string>
+    <string name="help_battery_item_5">Múltiples mecanismos de recuperación garantizan que los temporizadores y notificaciones funcionen correctamente incluso si se interrumpen temporalmente</string>
+    <string name="help_battery_item_6">La aplicación equilibra de manera inteligente la frecuencia de actualización con la conservación de la batería</string>
     
     <string name="help_getting_started">Cómo Empezar</string>
     <string name="help_getting_started_item_1">Comienza con ventanas de ayuno más cortas (12-14 horas)</string>
