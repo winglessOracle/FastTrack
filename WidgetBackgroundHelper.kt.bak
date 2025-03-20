@@ -11,9 +11,17 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.util.Log
 import android.util.LruCache
+import androidx.compose.ui.graphics.Color as ComposeColor
 import wesseling.io.fasttime.model.FastingState
 import wesseling.io.fasttime.model.ThemePreference
 import wesseling.io.fasttime.settings.PreferencesManager
+import wesseling.io.fasttime.ui.theme.NotFastingGray
+import wesseling.io.fasttime.ui.theme.EarlyFastingYellow
+import wesseling.io.fasttime.ui.theme.GlycogenDepletionOrange
+import wesseling.io.fasttime.ui.theme.MetabolicShiftBlue
+import wesseling.io.fasttime.ui.theme.DeepKetosisGreen
+import wesseling.io.fasttime.ui.theme.ImmuneResetPurple
+import wesseling.io.fasttime.ui.theme.ExtendedFastMagenta
 import java.io.File
 import java.io.FileOutputStream
 
@@ -22,24 +30,6 @@ import java.io.FileOutputStream
  */
 object WidgetBackgroundHelper {
     private const val TAG = "WidgetBackgroundHelper"
-    
-    // Dark theme colors - slightly brighter for better visibility
-    private const val NOT_FASTING_GRAY_DARK = "#9E9E9E"
-    private const val EARLY_FASTING_YELLOW_DARK = "#FFB74D"
-    private const val GLYCOGEN_DEPLETION_ORANGE_DARK = "#FF9800"
-    private const val METABOLIC_SHIFT_BLUE_DARK = "#64B5F6"
-    private const val DEEP_KETOSIS_GREEN_DARK = "#4CAF50"
-    private const val IMMUNE_RESET_PURPLE_DARK = "#B39DDB"
-    private const val EXTENDED_FAST_MAGENTA_DARK = "#EC4899"
-    
-    // Light theme colors
-    private const val NOT_FASTING_GRAY_LIGHT = "#757575"
-    private const val EARLY_FASTING_YELLOW_LIGHT = "#F59E0B"
-    private const val GLYCOGEN_DEPLETION_ORANGE_LIGHT = "#EA580C"
-    private const val METABOLIC_SHIFT_BLUE_LIGHT = "#3B82F6"
-    private const val DEEP_KETOSIS_GREEN_LIGHT = "#059669"
-    private const val IMMUNE_RESET_PURPLE_LIGHT = "#8B5CF6"
-    private const val EXTENDED_FAST_MAGENTA_LIGHT = "#DB2777"
     
     // In-memory cache for background drawables
     private val memoryCache = LruCache<String, Drawable>(8) // Cache up to 8 drawables
@@ -81,13 +71,13 @@ object WidgetBackgroundHelper {
         
         // Get the color for the current fasting state
         val colorString = when (fastingState) {
-            FastingState.NOT_FASTING -> if (useDarkTheme) NOT_FASTING_GRAY_DARK else NOT_FASTING_GRAY_LIGHT
-            FastingState.EARLY_FAST -> if (useDarkTheme) EARLY_FASTING_YELLOW_DARK else EARLY_FASTING_YELLOW_LIGHT
-            FastingState.GLYCOGEN_DEPLETION -> if (useDarkTheme) GLYCOGEN_DEPLETION_ORANGE_DARK else GLYCOGEN_DEPLETION_ORANGE_LIGHT
-            FastingState.METABOLIC_SHIFT -> if (useDarkTheme) METABOLIC_SHIFT_BLUE_DARK else METABOLIC_SHIFT_BLUE_LIGHT
-            FastingState.DEEP_KETOSIS -> if (useDarkTheme) DEEP_KETOSIS_GREEN_DARK else DEEP_KETOSIS_GREEN_LIGHT
-            FastingState.IMMUNE_RESET -> if (useDarkTheme) IMMUNE_RESET_PURPLE_DARK else IMMUNE_RESET_PURPLE_LIGHT
-            FastingState.EXTENDED_FAST -> if (useDarkTheme) EXTENDED_FAST_MAGENTA_DARK else EXTENDED_FAST_MAGENTA_LIGHT
+            FastingState.NOT_FASTING -> if (useDarkTheme) "#9E9E9E" else "#757575"
+            FastingState.EARLY_FAST -> if (useDarkTheme) "#FFB74D" else "#F59E0B"
+            FastingState.GLYCOGEN_DEPLETION -> if (useDarkTheme) "#FF9800" else "#EA580C"
+            FastingState.METABOLIC_SHIFT -> if (useDarkTheme) "#64B5F6" else "#3B82F6"
+            FastingState.DEEP_KETOSIS -> if (useDarkTheme) "#4CAF50" else "#059669"
+            FastingState.IMMUNE_RESET -> if (useDarkTheme) "#B39DDB" else "#8B5CF6"
+            FastingState.EXTENDED_FAST -> if (useDarkTheme) "#EC4899" else "#DB2777"
         }
         
         return Color.parseColor(colorString)
@@ -95,6 +85,7 @@ object WidgetBackgroundHelper {
     
     /**
      * Get a background drawable for the widget based on the fasting state
+     * This method checks memory cache first, then file cache, then creates a new drawable
      */
     fun getBackgroundDrawable(
         context: Context,
@@ -106,12 +97,33 @@ object WidgetBackgroundHelper {
         val cacheKey = "widget_bg_${stateColor}_${borderColor}_${borderWidth.toInt()}"
         
         try {
-            // Check memory cache first (fastest)
-            val cachedDrawable = memoryCache.get(cacheKey)
-            if (cachedDrawable != null) {
+            // 1. Check memory cache first (fastest)
+            val cachedBitmap = memoryCache.get(cacheKey)
+            if (cachedBitmap != null) {
                 Log.d(TAG, "Using memory-cached background: $cacheKey")
-                return cachedDrawable
+                return BitmapDrawable(context.resources, cachedBitmap)
             }
+            
+            // 2. Check file cache next
+            val file = File(context.cacheDir, "$cacheKey.png")
+            if (file.exists() && file.length() > 0) {
+                try {
+                    // Load bitmap from file
+                    val bitmap = android.graphics.BitmapFactory.decodeFile(file.absolutePath)
+                    if (bitmap != null) {
+                        // Add to memory cache for future use
+                        memoryCache.put(cacheKey, bitmap)
+                        Log.d(TAG, "Loaded background from file cache: $cacheKey")
+                        return BitmapDrawable(context.resources, bitmap)
+                    }
+                } catch (e: Exception) {
+                    Log.w(TAG, "Failed to load cached drawable from file, will recreate", e)
+                    // Continue to create a new one if loading failed
+                }
+            }
+            
+            // 3. Create new drawable
+            Log.d(TAG, "Creating new background drawable: $cacheKey")
             
             // Create the bitmap with gradient and border
             val width = 800 // Width of the drawable
@@ -129,13 +141,22 @@ object WidgetBackgroundHelper {
                 borderColor, borderWidth
             )
             
-            // Create drawable from bitmap
-            val drawable = BitmapDrawable(context.resources, bitmap)
-            
             // Save to memory cache
-            memoryCache.put(cacheKey, drawable)
+            memoryCache.put(cacheKey, bitmap)
             
-            return drawable
+            // Save to file cache in the background
+            Thread {
+                try {
+                    FileOutputStream(file).use { out ->
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 90, out)
+                    }
+                    Log.d(TAG, "Saved background to file cache: $cacheKey")
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to save background to file cache", e)
+                }
+            }.start()
+            
+            return BitmapDrawable(context.resources, bitmap)
         } catch (e: Exception) {
             Log.e(TAG, "Error creating background drawable", e)
             
@@ -149,6 +170,7 @@ object WidgetBackgroundHelper {
     
     /**
      * Clean up old cache files that haven't been accessed recently
+     * Call this periodically to prevent cache from growing too large
      */
     fun cleanupCacheFiles(context: Context) {
         try {
@@ -241,5 +263,12 @@ object WidgetBackgroundHelper {
         val g = Math.max(Color.green(color) * (1 - factor), 0f).toInt()
         val b = Math.max(Color.blue(color) * (1 - factor), 0f).toInt()
         return Color.argb(a, r, g, b)
+    }
+    
+    /**
+     * Convert a bitmap to a drawable
+     */
+    fun bitmapToDrawable(context: Context, bitmap: Bitmap): Drawable {
+        return BitmapDrawable(context.resources, bitmap)
     }
 } 

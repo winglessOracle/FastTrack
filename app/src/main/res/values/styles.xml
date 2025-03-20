@@ -24,11 +24,6 @@
         <item name="android:textStyle">normal</item>
     </style>
 
-    <style name="WidgetButtonTextStyle" parent="WidgetTextStyle">
-        <item name="android:fontFamily">sans-serif-condensed-medium</item>
-        <item name="android:textAllCaps">true</item>
-    </style>
-
     <style name="WidgetHoursTextStyle" parent="WidgetTextStyle">
         <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:textStyle">bold</item>
