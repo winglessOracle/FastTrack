@@ -61,7 +61,7 @@ fun SettingsScreen(
     // Function to check and request notification permission
     val checkAndRequestNotificationPermission: (Boolean) -> Unit = { enable ->
         if (enable) {
-            // Only check permission when enabling notifications
+            // Runtime permission for notifications is only required on Android 13+ (API 33)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 when {
                     ContextCompat.checkSelfPermission(
@@ -77,7 +77,7 @@ fun SettingsScreen(
                     }
                 }
             } else {
-                // For older Android versions, no runtime permission needed
+                // For Android 12 and below, no runtime permission needed for notifications
                 preferencesManager.toggleFastingStateNotifications(true)
             }
         } else {

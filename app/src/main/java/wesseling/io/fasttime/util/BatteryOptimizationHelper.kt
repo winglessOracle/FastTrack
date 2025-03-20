@@ -3,7 +3,6 @@ package wesseling.io.fasttime.util
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings
 import android.util.Log
@@ -19,7 +18,7 @@ import android.util.Log
  * 2. Create intents to request exemption from battery optimizations
  * 3. Navigate users to the system battery optimization settings
  * 
- * The implementation is version-aware and includes error handling to ensure the app
+ * The implementation includes error handling to ensure the app
  * functions correctly across different Android versions.
  */
 object BatteryOptimizationHelper {
@@ -33,22 +32,13 @@ object BatteryOptimizationHelper {
      * perform background operations more reliably, which is essential for widget updates
      * and scheduled notifications.
      * 
-     * The method is version-aware:
-     * - For Android Marshmallow (API 23) and above, it uses PowerManager.isIgnoringBatteryOptimizations
-     * - For older versions, it returns true as the battery optimization feature wasn't available
-     * 
      * @param context The application context
-     * @return true if the app is exempt from battery optimizations or running on an Android version
-     *         before Marshmallow, false otherwise
+     * @return true if the app is exempt from battery optimizations, false otherwise
      */
     fun isIgnoringBatteryOptimizations(context: Context): Boolean {
         return try {
             val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                powerManager.isIgnoringBatteryOptimizations(context.packageName)
-            } else {
-                true // On older Android versions, we can't check or request this
-            }
+            powerManager.isIgnoringBatteryOptimizations(context.packageName)
         } catch (e: Exception) {
             Log.e(TAG, "Error checking battery optimization status", e)
             false
@@ -62,24 +52,14 @@ object BatteryOptimizationHelper {
      * the app from battery optimizations. This is useful for ensuring reliable background
      * operations, especially for widget updates and notifications.
      * 
-     * The method is version-aware:
-     * - For Android Marshmallow (API 23) and above, it creates an intent with
-     *   ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-     * - For older versions, it returns null as the feature wasn't available
-     * 
      * @param context The application context
-     * @return An Intent to request battery optimization exemption, or null if not applicable
-     *         or if an error occurs
+     * @return An Intent to request battery optimization exemption, or null if an error occurs
      */
     fun createBatteryOptimizationIntent(context: Context): Intent? {
         return try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                Intent().apply {
-                    action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-                    data = Uri.parse("package:${context.packageName}")
-                }
-            } else {
-                null
+            Intent().apply {
+                action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+                data = Uri.parse("package:${context.packageName}")
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error creating battery optimization intent", e)
@@ -93,10 +73,6 @@ object BatteryOptimizationHelper {
      * This method creates an intent that, when launched, will open the system's battery
      * optimization settings screen. This allows users to manually adjust battery optimization
      * settings for the app if the direct request approach is not suitable or fails.
-     * 
-     * Unlike the direct exemption request, this intent works on all Android versions that
-     * support the battery optimization settings screen, though the actual settings UI and
-     * options may vary across different Android versions and manufacturer customizations.
      * 
      * @return An Intent to open the battery optimization settings screen
      */

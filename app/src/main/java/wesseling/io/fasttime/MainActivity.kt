@@ -124,12 +124,14 @@ class MainActivity : ComponentActivity() {
                 val endTime = intent.getLongExtra(END_TIME, 0)
                 val duration = intent.getLongExtra(DURATION, 0)
                 
-                // Replace deprecated getSerializableExtra with the newer version
+                // Get the fasting state from intent extras with version-specific handling
                 val maxState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    // The type-safe version available on API 33+
                     intent.getSerializableExtra(MAX_STATE, FastingState::class.java) ?: FastingState.NOT_FASTING
                 } else {
+                    // Fallback for older Android versions with proper type safety
                     @Suppress("DEPRECATION")
-                    intent.getSerializableExtra(MAX_STATE) as? FastingState ?: FastingState.NOT_FASTING
+                    (intent.getSerializableExtra(MAX_STATE) as? FastingState) ?: FastingState.NOT_FASTING
                 }
                 
                 if (startTime > 0 && endTime > 0 && duration > 0) {

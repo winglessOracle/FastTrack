@@ -274,10 +274,6 @@ class FastingWidgetUpdateService : Service() {
      * by querying the PowerManager system service. Power save mode is an Android feature
      * that restricts background activities to conserve battery.
      * 
-     * The implementation is version-aware:
-     * - For Android Lollipop (API 21) and above, it uses PowerManager.isPowerSaveMode
-     * - For older versions, it defaults to false as the feature wasn't available
-     * 
      * When the device is in power save mode, the app adjusts its behavior to further
      * reduce battery consumption by extending update intervals.
      * 
@@ -285,11 +281,7 @@ class FastingWidgetUpdateService : Service() {
      */
     private fun isPowerSaveMode(): Boolean {
         val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            powerManager.isPowerSaveMode
-        } else {
-            false
-        }
+        return powerManager.isPowerSaveMode
     }
     
     /**
