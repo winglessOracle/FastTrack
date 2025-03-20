@@ -51,7 +51,7 @@ object FastingDocumentation {
                     "Autophagy (cellular cleanup) starts increasing",
                     "Improved mental clarity for many people"
                 ),
-                scientificDetails = "Between 12-18 hours of fasting, your liver glycogen stores become depleted, and your body increases fat oxidation. The liver begins converting fatty acids into ketone bodies (acetoacetate, beta-hydroxybutyrate, and acetone), which serve as an alternative fuel source for the brain and other organs. This marks the beginning of metabolic flexibility.",
+                scientificDetails = "Between 12-18 hours of fasting, your liver glycogen stores become depleted, and your body increases fat oxidation. The liver begins converting fatty acids into ketone bodies (acetoacetate, beta-hydroxybutyrate, and acetone), which serve as an alternative fuel source for the brain and other organs. This marks the beginning of metabolic flexibility. During this phase, initial autophagy processes begin, where your cells start to remove damaged components. This cellular cleanup process will intensify in later fasting stages.",
                 warnings = listOf(
                     "Initial adaptation to fat metabolism may cause temporary fatigue",
                     "People with certain medical conditions should consult healthcare providers",
@@ -103,7 +103,7 @@ object FastingDocumentation {
                     "Mental clarity and focus enhanced due to high ketone levels",
                     "Significant anti-inflammatory effects throughout the body"
                 ),
-                scientificDetails = "Between 48-72 hours, a process called 'autophagy-dependent immune system reconfiguration' begins. Studies show that prolonged fasting reduces circulating IGF-1 levels and PKA activity, promoting stem cell-based regeneration of immune cells. The gut microbiome undergoes significant changes, and the intestinal lining begins to regenerate. Fat oxidation remains high while protein breakdown is minimized through metabolic adaptations.",
+                scientificDetails = "Between 48-72 hours, a process called 'autophagy-dependent immune system reconfiguration' begins. Studies show that prolonged fasting reduces circulating IGF-1 levels and PKA activity, promoting stem cell-based regeneration of immune cells. This doesn't completely reset your immunity, but rather enhances specific aspects of immune function through cellular regeneration and reduced inflammation. The gut microbiome undergoes significant changes, and the intestinal lining begins to regenerate. Fat oxidation remains high while protein breakdown is minimized through metabolic adaptations.",
                 warnings = listOf(
                     "Extended fasting at this duration requires careful preparation",
                     "Electrolyte supplementation becomes essential",

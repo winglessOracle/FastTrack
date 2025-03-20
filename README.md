@@ -181,4 +181,39 @@ FastTime tracks the time you spend fasting. Here are some popular protocols to c
 
 ---
 
-FastTime is designed to be a helpful tool in your fasting journey. Remember that fasting should be approached mindfully, and it's always a good idea to consult with a healthcare professional before starting any fasting regimen. 
+FastTime is designed to be a helpful tool in your fasting journey. Remember that fasting should be approached mindfully, and it's always a good idea to consult with a healthcare professional before starting any fasting regimen.
+
+## Scientific References
+
+The fasting states and physiological information in this app are based on current scientific research. Here are some key references:
+
+### Fasting States and Metabolic Changes
+1. Anton, S. D., Moehl, K., Donahoo, W. T., et al. (2018). Flipping the Metabolic Switch: Understanding and Applying the Health Benefits of Fasting. *Obesity*, 26(2), 254-268. doi: 10.1002/oby.22065
+
+2. de Cabo, R., & Mattson, M. P. (2019). Effects of Intermittent Fasting on Health, Aging, and Disease. *New England Journal of Medicine*, 381(26), 2541-2551. doi: 10.1056/NEJMra1905136
+
+3. Mattson, M. P., Longo, V. D., & Harvie, M. (2017). Impact of intermittent fasting on health and disease processes. *Ageing Research Reviews*, 39, 46-58. doi: 10.1016/j.arr.2016.10.005
+
+### Autophagy and Cellular Repair
+4. Bagherniya, M., Butler, A. E., Barreto, G. E., & Sahebkar, A. (2018). The effect of fasting or calorie restriction on autophagy induction: A review of the literature. *Ageing Research Reviews*, 47, 183-197. doi: 10.1016/j.arr.2018.08.004
+
+5. Alirezaei, M., Kemball, C. C., Flynn, C. T., et al. (2010). Short-term fasting induces profound neuronal autophagy. *Autophagy*, 6(6), 702-710. doi: 10.4161/auto.6.6.12376
+
+### Immune System Effects
+6. Cheng, C. W., Adams, G. B., Perin, L., et al. (2014). Prolonged Fasting Reduces IGF-1/PKA to Promote Hematopoietic-Stem-Cell-Based Regeneration and Reverse Immunosuppression. *Cell Stem Cell*, 14(6), 810-823. doi: 10.1016/j.stem.2014.04.014
+
+7. Jordan, S., Tung, N., Casanova-Acebes, M., et al. (2019). Dietary Intake Regulates the Circulating Inflammatory Monocyte Pool. *Cell*, 178(5), 1102-1114.e17. doi: 10.1016/j.cell.2019.07.050
+
+### Ketosis and Brain Function
+8. Newman, J. C., & Verdin, E. (2014). Ketone bodies as signaling metabolites. *Trends in Endocrinology & Metabolism*, 25(1), 42-52. doi: 10.1016/j.tem.2013.09.002
+
+9. Puchalska, P., & Crawford, P. A. (2017). Multi-dimensional Roles of Ketone Bodies in Fuel Metabolism, Signaling, and Therapeutics. *Cell Metabolism*, 25(2), 262-284. doi: 10.1016/j.cmet.2016.12.022
+
+### Clinical Applications
+10. Wilhelmi de Toledo, F., Grundler, F., Bergouignan, A., et al. (2019). Safety, health improvement and well-being during a 4 to 21-day fasting period in an observational study including 1422 subjects. *PLoS One*, 14(1), e0209353. doi: 10.1371/journal.pone.0209353
+
+11. Stekovic, S., Hofer, S. J., Tripolt, N., et al. (2019). Alternate Day Fasting Improves Physiological and Molecular Markers of Aging in Healthy, Non-obese Humans. *Cell Metabolism*, 30(3), 462-476.e6. doi: 10.1016/j.cmet.2019.07.016
+
+---
+
+*Disclaimer: The information provided in this app is for educational purposes only and is not intended as medical advice. Always consult with healthcare professionals before starting any fasting regimen, especially for extended fasts.* 
