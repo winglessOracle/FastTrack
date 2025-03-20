@@ -170,6 +170,7 @@ fun BasicsTab() {
             title = "Fasting Log Features",
             items = listOf(
                 "View a summary of your fasting achievements",
+                "Only fasts of 12+ hours are saved to the log",
                 "Sort entries by date (newest/oldest first)",
                 "Sort entries by duration (longest/shortest first)",
                 "Filter entries by fasting state to find specific achievements",
@@ -210,6 +211,12 @@ fun BasicsTab() {
             content = "FastTrack only counts fasts that reach at least the Glycogen Depletion state (12+ hours) toward your achievements and statistics. Shorter fasts will still be tracked during the timer and you'll still receive notifications for all fasting state changes, but shorter fasts won't be saved to your fasting log or included in your statistics. This encourages more meaningful fasting experiences while still providing feedback on all your fasting progress."
         )
         
+        // Add Weekly Deep Fast Achievement section
+        HelpSection(
+            title = "Weekly Deep Fast Achievement",
+            content = "FastTrack includes a special medal achievement that tracks your weekly deep fasts (24+ hours or better). This encourages regular deep fasting on a weekly basis. Bronze medal is earned for 1-9 deep fasts, Silver for 10-24, Gold for 25-49, and Legend status for 50+ weekly deep fasts. Aim for at least one deep fast per week to maximize your fasting benefits and achievement progress."
+        )
+        
         // Widget Usage
         HelpSectionWithItems(
             title = "Widget Features",
@@ -219,7 +226,8 @@ fun BasicsTab() {
                 "Tap RESET to end your fast",
                 "Tap the hours to adjust the start time (when fasting) or open the app (when not fasting)",
                 "Tap the state pill (colored text showing your current fasting state) to view detailed information about that fasting state",
-                "The widget updates automatically to show your current fasting state"
+                "The widget updates automatically to show your current fasting state",
+                "Energy-efficient design minimizes battery consumption"
             )
         )
     }
@@ -357,6 +365,18 @@ fun TipsTab() {
         )
         
         Divider()
+        
+        // Battery Optimization & Energy Efficiency
+        HelpSectionWithItems(
+            title = "Battery Optimization & Energy Efficiency",
+            items = listOf(
+                "FastTrack is designed to be energy-efficient and minimize battery consumption",
+                "The app and widget use optimized background processes",
+                "For best performance, ensure FastTrack is exempt from battery optimization settings on your device",
+                "Go to your device's Battery settings and add FastTrack to apps exempt from optimization",
+                "This ensures timers and notifications work correctly without excessive battery drain"
+            )
+        )
         
         // Getting Started
         HelpSectionWithItems(

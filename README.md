@@ -6,11 +6,12 @@ FastTime is a simple yet powerful app designed to help you track your fasting ti
 
 - **Simple Timer**: Start and reset your fasting timer with a single tap
 - **Fasting States**: Track different fasting states (Not Fasting, Early Fast, Glycogen Depletion, Metabolic Shift, Deep Ketosis, Immune Reset, Extended Fast)
-- **Fasting Log**: Keep a record of your completed fasts with sorting and filtering options
+- **Fasting Log**: Keep a record of your completed fasts (12+ hours) with sorting and filtering options
 - **Home Screen Widget**: Monitor and control your fast directly from your home screen
 - **Visual Indicators**: Color-coded states to easily identify your current fasting progress
 - **Achievement System**: Track your fasting milestones with achievement circles
-- **Secret Achievement**: Discover a special achievement for completing deep fasts (24+ hours)
+- **Energy Efficient**: Optimized for minimal battery consumption
+- **Secret Achievement**: Discover a special achievement for completing weekly deep fasts (24+ hours)
 
 ## How to Use FastTime
 
@@ -42,11 +43,11 @@ FastTime is a simple yet powerful app designed to help you track your fasting ti
 4. **Ending a Fast**
    - Tap the "Reset" button when you want to end your fast
    - A confirmation dialog will appear to prevent accidental resets
-   - After confirming, your fast will be recorded in the fasting log
+   - After confirming, your fast will be recorded in the fasting log if it's 12+ hours
 
 5. **Viewing Your Fasting Log**
    - Tap the "View Fasting Log" button or the history icon in the top bar
-   - Browse through your completed fasts, including duration and maximum state achieved
+   - Browse through your completed fasts (12+ hours), including duration and maximum state achieved
    - **Sorting Options**: Sort your fasting entries by:
      - Date (newest or oldest first)
      - Duration (longest or shortest first)
@@ -56,13 +57,12 @@ FastTime is a simple yet powerful app designed to help you track your fasting ti
    - The fasting log displays achievement circles for different fasting states you've reached
    - Each circle shows the count of fasts that reached a particular state
    - Only fasts of 12+ hours (Glycogen Depletion or better) are counted for achievements
-   - **Secret Achievement**: A special medal achievement tracks your total number of deep fasts (24+ hours)
+   - **Secret Achievement**: A special medal achievement tracks your weekly deep fasts (24+ hours)
      - 🥉 Bronze: 1-9 deep fasts
      - 🥈 Silver: 10-24 deep fasts
      - 🥇 Gold: 25-49 deep fasts
      - 🏆 Legend: 50+ deep fasts
-     - Your streak count decreases by 1 for each month without a 24+ hour fast
-   - This achievement encourages consistent deep fasting practice
+     - The achievement encourages regular deep fasting on a weekly basis
 
 7. **Settings**
    - Tap the "Settings" button or the settings icon in the top bar
@@ -83,6 +83,7 @@ FastTime is a simple yet powerful app designed to help you track your fasting ti
      - When not fasting: Tap to open the main app
    - **State Display**: Shows your current fasting state
      - Tap the state pill (colored text) to view detailed information about your current fasting state
+   - **Energy Efficient**: The widget is optimized to minimize battery consumption
 
 3. **Widget Colors**
    - The widget background color changes based on your fasting state
