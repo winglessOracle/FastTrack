@@ -26,7 +26,8 @@ fun FastingStateInfoDialog(
     fastingState: FastingState,
     onDismiss: () -> Unit
 ) {
-    val stateInfo = FastingDocumentation.getDocumentationForState(fastingState)
+    val context = LocalContext.current
+    val stateInfo = FastingDocumentation.getDocumentationForState(fastingState, context)
     
     Dialog(
         onDismissRequest = onDismiss,
@@ -72,7 +73,7 @@ fun FastingStateInfoDialog(
                 Spacer(modifier = Modifier.height(8.dp))
                 
                 Text(
-                    text = stateInfo.scientificDetails,
+                    text = stateInfo.getLocalizedScientificDetails(),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -89,7 +90,7 @@ fun FastingStateInfoDialog(
                 
                 Spacer(modifier = Modifier.height(8.dp))
                 
-                stateInfo.benefits.forEach { benefit ->
+                stateInfo.getLocalizedBenefits().forEach { benefit ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -129,7 +130,7 @@ fun FastingStateInfoDialog(
                         
                         Spacer(modifier = Modifier.height(8.dp))
                         
-                        stateInfo.warnings.forEach { warning ->
+                        stateInfo.getLocalizedWarnings().forEach { warning ->
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()

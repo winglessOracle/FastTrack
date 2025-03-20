@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App general -->
+    <string name="app_name">FastTrack</string>
+    
+    <!-- Common actions -->
+    <string name="action_yes">Sì</string>
+    <string name="action_no">No</string>
+    <string name="action_cancel">Annulla</string>
+    <string name="action_close">Chiudi</string>
+    <string name="action_save">Salva</string>
+    <string name="action_edit">Modifica</string>
+    <string name="action_adjust_time">Regola Ora di Inizio</string>
+    <string name="action_delete">Elimina</string>
+    <string name="action_clear">Cancella</string>
+    
+    <!-- Dialog titles -->
+    <string name="dialog_title_stop_timer">Ferma Timer</string>
+    <string name="dialog_message_stop_timer_confirmation">Sei sicuro di voler fermare il timer del digiuno?</string>
+    <string name="dialog_title_delete_all_fasts">Elimina Tutti i Registri di Digiuno</string>
+    <string name="dialog_message_delete_all_fasts">Sei sicuro di voler eliminare tutti i tuoi registri di digiuno? Questa azione non può essere annullata.</string>
+    <string name="dialog_title_delete_fast">Elimina Registro di Digiuno</string>
+    <string name="dialog_message_delete_fast">Sei sicuro di voler eliminare questo registro di digiuno? Questa azione non può essere annullata.</string>
+    <string name="dialog_title_edit_fast">Modifica Digiuno</string>
+    <string name="dialog_message_edit_fast_confirmation">Sei sicuro di voler modificare questo digiuno? Questa azione non può essere annullata.</string>
+    <string name="dialog_title_sort_by">Ordina Per</string>
+    <string name="dialog_title_filter_by">Filtra Per Stato di Digiuno</string>
+    <string name="dialog_title_confirm_edit">Conferma Modifica</string>
+    
+    <!-- Toast messages -->
+    <string name="toast_timer_not_running">Impossibile regolare l\'ora: Il timer non è in esecuzione</string>
+    <string name="toast_invalid_time_adjustment">Impossibile regolare l\'ora di inizio. Prova un orario diverso.</string>
+    <string name="toast_time_adjusted">Ora di inizio regolata con successo</string>
+    <string name="toast_adjustment_error">Si è verificato un errore durante la regolazione dell\'ora</string>
+    <string name="toast_fast_saved">Sessione di digiuno salvata nel registro</string>
+    <string name="toast_fast_save_error">Errore durante il salvataggio della sessione di digiuno</string>
+    <string name="toast_invalid_adjustment">Impossibile regolare l\'ora: Valore di regolazione non valido</string>
+    
+    <!-- Fasting states names -->
+    <string name="fasting_state_not_fasting_name">Stato Alimentato</string>
+    <string name="fasting_state_early_fast_name">Digiuno Iniziale</string>
+    <string name="fasting_state_glycogen_depletion_name">Esaurimento Glicogeno</string>
+    <string name="fasting_state_metabolic_shift_name">Cambiamento Metabolico</string>
+    <string name="fasting_state_deep_ketosis_name">Chetosi Profonda</string>
+    <string name="fasting_state_immune_reset_name">Reset Immunitario</string>
+    <string name="fasting_state_extended_fast_name">Digiuno Prolungato</string>
+    
+    <!-- Fasting states descriptions -->
+    <string name="fasting_state_not_fasting_description">Digestione &amp; Assorbimento</string>
+    <string name="fasting_state_early_fast_description">Inizio della Combustione dei Grassi</string>
+    <string name="fasting_state_glycogen_depletion_description">Aumento del Metabolismo dei Grassi</string>
+    <string name="fasting_state_metabolic_shift_description">Inizio della Chetosi</string>
+    <string name="fasting_state_deep_ketosis_description">Picco di Autofagia</string>
+    <string name="fasting_state_immune_reset_description">Produzione di Cellule Staminali</string>
+    <string name="fasting_state_extended_fast_description">Ringiovanimento Cellulare</string>
+    
+    <!-- Date Format Names -->
+    <string name="date_format_mdy_slash">MM/GG/AAAA (US)</string>
+    <string name="date_format_dmy_slash">GG/MM/AAAA (IT/UE)</string>
+    <string name="date_format_ymd_dash">AAAA-MM-GG (ISO)</string>
+    <string name="date_format_mdy_text">Mese G, AAAA</string>
+    
+    <!-- Time Format Names -->
+    <string name="time_format_24h">24 ore (13:30)</string>
+    <string name="time_format_12h">12 ore (1:30 PM)</string>
+    
+    <!-- Theme Names -->
+    <string name="theme_system">Predefinito di sistema</string>
+    <string name="theme_light">Chiaro</string>
+    <string name="theme_dark">Scuro</string>
+    
+    <!-- Update Frequency -->
+    <string name="update_frequency_very_frequent">Molto Frequente (Maggiore Consumo di Batteria)</string>
+    <string name="update_frequency_balanced">Bilanciato (Consigliato)</string>
+    <string name="update_frequency_battery_saving">Risparmio Batteria</string>
+    <string name="update_frequency_minimal">Minimo (Massimo Risparmio di Batteria)</string>
+    
+    <!-- Settings screen -->
+    <string name="settings_title">Impostazioni</string>
+    <string name="settings_category_theme">Tema</string>
+    <string name="settings_category_date_format">Formato Data</string>
+    <string name="settings_category_time_format">Formato Ora</string>
+    <string name="settings_category_notifications">Notifiche</string>
+    <string name="settings_category_language">Lingua</string>
+    <string name="settings_category_battery">Ottimizzazione Batteria</string>
+    <string name="settings_category_widget_updates">Frequenza di Aggiornamento Widget</string>
+    <string name="settings_category_about">Informazioni</string>
+    <string name="settings_date_format_example">Esempio: %s</string>
+    <string name="settings_time_format_example">Esempio: %s</string>
+    <string name="settings_notifications_fasting_state">Notifiche Stato di Digiuno</string>
+    <string name="settings_notifications_fasting_state_description">Ricevi notifiche quando raggiungi un nuovo stato di digiuno</string>
+    <string name="settings_battery_opt_description">Controlla la frequenza di aggiornamento del widget. Aggiornamenti più frequenti forniscono informazioni più precise ma consumano più batteria.</string>
+    <string name="settings_battery_opt_explanation">La disattivazione dell\'ottimizzazione della batteria consente all\'app di aggiornare il widget e monitorare il tuo tempo di digiuno in modo più affidabile, ma può aumentare leggermente il consumo della batteria.</string>
+    <string name="settings_battery_opt_disabled">L\'ottimizzazione della batteria è disattivata per questa app.</string>
+    <string name="settings_battery_opt_enabled">L\'ottimizzazione della batteria è attivata per questa app, il che potrebbe causare ritardi o perdite negli aggiornamenti del widget.</string>
+    <string name="settings_battery_settings">Impostazioni Batteria</string>
+    <string name="settings_disable_battery_opt">Disattiva Ottimizzazione Batteria</string>
+    <string name="settings_about_app">FastTrack</string>
+    <string name="settings_about_version">Versione 1.0</string>
+    <string name="settings_about_description">Una semplice app timer per il digiuno per tenere traccia dei tuoi periodi di digiuno e dei progressi.</string>
+    
+    <!-- Language settings -->
+    <string name="language_selection">Lingua</string>
+    <string name="language_system_default">Predefinito di sistema</string>
+    <string name="language_english">Inglese</string>
+    <string name="language_spanish">Spagnolo</string>
+    <string name="language_german">Tedesco</string>
+    <string name="language_french">Francese</string>
+    <string name="language_italian">Italiano</string>
+    
+    <!-- Language dialog -->
+    <string name="language_dialog_title">Cambia Lingua</string>
+    <string name="language_dialog_message">L\'app deve riavviarsi per applicare il cambio di lingua. Continuare?</string>
+    <string name="language_dialog_continue">Continua</string>
+    <string name="language_dialog_cancel">Annulla</string>
+    <string name="language_select_dialog_title">Seleziona Lingua</string>
+    <string name="language_changed_message">Lingua cambiata in %s</string>
+    
+    <!-- Help screen -->
+    <string name="help_title">Aiuto &amp; Informazioni</string>
+    <string name="help_tab_basics">Nozioni di Base</string>
+    <string name="help_tab_fasting_types">Tipi di Digiuno</string>
+    <string name="help_tab_tips">Consigli</string>
+    <string name="help_intro">FastTrack ti aiuta a tenere traccia del tuo tempo di digiuno con precisione</string>
+    <string name="help_medical_disclaimer">Consulta sempre un professionista sanitario prima di iniziare qualsiasi regime di digiuno</string>
+    <string name="help_unique_journey">Il percorso di digiuno di ognuno è unico</string>
+    <string name="help_unique_journey_content">Il digiuno colpisce ogni persona in modo diverso in base al metabolismo, alla composizione corporea, al livello di attività e alla storia sanitaria. Ciò che funziona per una persona potrebbe non funzionare per un\'altra. Ascolta il tuo corpo e adatta il tuo approccio al digiuno di conseguenza. Inizia lentamente e aumenta gradualmente la durata del digiuno man mano che il tuo corpo si adatta. Ricorda che la costanza è più importante dell\'intensità, specialmente quando inizi il tuo percorso di digiuno.</string>
+    
+    <string name="help_using_app">Utilizzo dell\'App Principale</string>
+    <string name="help_app_item_1">Tocca AVVIA per iniziare il tuo timer di digiuno</string>
+    <string name="help_app_item_2">L\'app tiene traccia automaticamente della tua durata di digiuno</string>
+    <string name="help_app_item_3">Il tuo stato di digiuno cambia in base alla durata</string>
+    <string name="help_app_item_4">Tocca RESET per terminare il tuo digiuno e salvarlo nel tuo registro</string>
+    <string name="help_app_item_5">Visualizza la tua cronologia di digiuno nel Registro Digiuno</string>
+    
+    <!-- Fasting state scientific details -->
+    <string name="fasting_state_details_not_fasting">Durante lo stato alimentato (0-4 ore dopo aver mangiato), il tuo corpo dà priorità all\'utilizzo del glucosio derivante dal cibo come fonte di energia primaria. I livelli di insulina aumentano per facilitare l\'assorbimento del glucosio da parte delle cellule e promuovere l\'immagazzinamento di energia. Questo è il momento in cui il tuo corpo sta attivamente digerendo e assorbendo i nutrienti dal tuo pasto.</string>
+    <string name="fasting_state_details_early_fast">Dopo 4-12 ore senza cibo, il tuo glicogeno epatico (glucosio immagazzinato) inizia ad essere utilizzato. Man mano che i livelli di insulina diminuiscono, il tuo corpo inizia gradualmente a utilizzare i grassi immagazzinati come fonte di energia attraverso un processo chiamato lipolisi. Questo è l\'inizio del passaggio metabolico dall\'utilizzo del glucosio a quello dei grassi.</string>
+    <string name="fasting_state_details_glycogen_depletion">Tra 12-18 ore di digiuno, le tue riserve di glicogeno epatico si esauriscono e il tuo corpo aumenta l\'ossidazione dei grassi. Il fegato inizia a convertire gli acidi grassi in corpi chetonici (acetoacetato, beta-idrossibutirrato e acetone), che servono come fonte alternativa di energia per il cervello e altri organi. Questo segna l\'inizio della flessibilità metabolica. Durante questa fase, iniziano i processi iniziali di autofagia, in cui le tue cellule iniziano a rimuovere componenti danneggiati. Questo processo di pulizia cellulare si intensificherà nelle fasi successive del digiuno.</string>
+    <string name="fasting_state_details_metabolic_shift">Tra 18-24 ore, avviene un significativo cambiamento metabolico mentre il tuo corpo dipende maggiormente dai chetoni come fonte di energia. La secrezione dell\'ormone della crescita aumenta per preservare la massa muscolare e promuovere l\'utilizzo dei grassi. L\'autofagia (pulizia cellulare) accelera, rimuovendo componenti cellulari e proteine danneggiate. Questo periodo rappresenta una transizione verso una chetosi più profonda.</string>
+    <string name="fasting_state_details_deep_ketosis">Tra 24-48 ore, il tuo corpo entra in una chetosi profonda, con i chetoni che diventano una fonte primaria di energia. L\'autofagia raggiunge livelli massimi, promuovendo il rinnovamento e la riparazione cellulare. I livelli dell\'ormone della crescita aumentano significativamente (fino a 5 volte il livello di base), aiutando a preservare la massa muscolare magra mentre l\'ossidazione dei grassi accelera. La sensibilità all\'insulina migliora drasticamente durante questa fase.</string>
+    <string name="fasting_state_details_immune_reset">Tra 48-72 ore, inizia un processo chiamato \"riconfigurazione del sistema immunitario dipendente dall\'autofagia\". Gli studi dimostrano che il digiuno prolungato riduce i livelli circolanti di IGF-1 e l\'attività della PKA, promuovendo la rigenerazione delle cellule immunitarie basata sulle cellule staminali. Questo non azzera completamente la tua immunità, ma migliora piuttosto aspetti specifici della funzione immunitaria attraverso la rigenerazione cellulare e la riduzione dell\'infiammazione. Il microbioma intestinale subisce cambiamenti significativi, e il rivestimento intestinale inizia a rigenerarsi. L\'ossidazione dei grassi rimane elevata mentre la decomposizione delle proteine viene minimizzata attraverso adattamenti metabolici.</string>
+    <string name="fasting_state_details_extended_fast">Oltre le 72 ore, il digiuno innesca una significativa rigenerazione delle cellule staminali e un ringiovanimento del sistema immunitario. Le ricerche del Dr. Valter Longo e altri mostrano che il digiuno prolungato può \"ripristinare\" il sistema immunitario attraverso l\'attivazione delle cellule staminali. Il corpo entra in uno stato di profonda autofagia e rinnovamento cellulare. Le vie di crescita come IGF-1 rimangono soppresse, il che è stato collegato a benefici di longevità negli studi di ricerca.</string>
+    
+    <!-- Fasting state benefits -->
+    <!-- Not fasting benefits -->
+    <string name="fasting_state_benefit_not_fasting_1">Digestione e assorbimento dei nutrienti</string>
+    <string name="fasting_state_benefit_not_fasting_2">Immagazzinamento di energia per uso futuro</string>
+    <string name="fasting_state_benefit_not_fasting_3">Sintesi proteica e riparazione tissutale</string>
+    <string name="fasting_state_benefit_not_fasting_4">Ricostituzione delle riserve di glicogeno</string>
+    
+    <!-- Early fasting benefits -->
+    <string name="fasting_state_benefit_early_fast_1">I livelli di glucosio nel sangue e insulina iniziano a diminuire</string>
+    <string name="fasting_state_benefit_early_fast_2">Il tuo corpo inizia a passare dall\'utilizzo del glucosio al glicogeno immagazzinato</string>
+    <string name="fasting_state_benefit_early_fast_3">Inizia una certa combustione dei grassi quando il glicogeno si esaurisce</string>
+    <string name="fasting_state_benefit_early_fast_4">Il sistema digestivo si riposa, riducendo l\'infiammazione</string>
+    
+    <!-- Glycogen depletion benefits -->
+    <string name="fasting_state_benefit_glycogen_depletion_1">Le riserve di glicogeno epatico diventano significativamente esaurite</string>
+    <string name="fasting_state_benefit_glycogen_depletion_2">La decomposizione dei grassi (lipolisi) aumenta sostanzialmente</string>
+    <string name="fasting_state_benefit_glycogen_depletion_3">I chetoni nel sangue iniziano ad aumentare leggermente</string>
+    <string name="fasting_state_benefit_glycogen_depletion_4">L\'autofagia (pulizia cellulare) inizia ad aumentare</string>
+    <string name="fasting_state_benefit_glycogen_depletion_5">Miglioramento della chiarezza mentale per molte persone</string>
+    
+    <!-- Metabolic shift benefits -->
+    <string name="fasting_state_benefit_metabolic_shift_1">La chetosi diventa più significativa mentre il metabolismo dei grassi aumenta</string>
+    <string name="fasting_state_benefit_metabolic_shift_2">I livelli di chetoni nel sangue aumentano ulteriormente, fornendo una fonte alternativa di energia</string>
+    <string name="fasting_state_benefit_metabolic_shift_3">La produzione dell\'ormone della crescita aumenta per preservare la massa muscolare</string>
+    <string name="fasting_state_benefit_metabolic_shift_4">L\'autofagia continua ad accelerare</string>
+    <string name="fasting_state_benefit_metabolic_shift_5">Riduzione dell\'infiammazione in tutto il corpo</string>
+    
+    <!-- Deep ketosis benefits -->
+    <string name="fasting_state_benefit_deep_ketosis_1">Il corpo dipende principalmente da grassi e chetoni per l\'energia</string>
+    <string name="fasting_state_benefit_deep_ketosis_2">L\'autofagia raggiunge il picco, rimuovendo cellule e proteine danneggiate</string>
+    <string name="fasting_state_benefit_deep_ketosis_3">L\'infiammazione diminuisce significativamente</string>
+    <string name="fasting_state_benefit_deep_ketosis_4">I livelli di insulina rimangono molto bassi, migliorando la sensibilità all\'insulina</string>
+    <string name="fasting_state_benefit_deep_ketosis_5">L\'Ormone della Crescita Umano (HGH) aumenta notevolmente, supportando la preservazione muscolare</string>
+    
+    <!-- Immune reset benefits -->
+    <string name="fasting_state_benefit_immune_reset_1">La produzione di cellule staminali aumenta (inizia la rigenerazione del sistema immunitario)</string>
+    <string name="fasting_state_benefit_immune_reset_2">La sensibilità all\'insulina migliora drasticamente</string>
+    <string name="fasting_state_benefit_immune_reset_3">Il rivestimento intestinale inizia a rigenerarsi</string>
+    <string name="fasting_state_benefit_immune_reset_4">Chiarezza mentale e concentrazione migliorate grazie agli alti livelli di chetoni</string>
+    <string name="fasting_state_benefit_immune_reset_5">Effetti anti-infiammatori significativi in tutto il corpo</string>
+    
+    <!-- Extended fast benefits -->
+    <string name="fasting_state_benefit_extended_fast_1">La rigenerazione delle cellule staminali aumenta ulteriormente</string>
+    <string name="fasting_state_benefit_extended_fast_2">Il sistema immunitario subisce un significativo ringiovanimento</string>
+    <string name="fasting_state_benefit_extended_fast_3">Le vie di crescita come IGF-1 rimangono soppresse, potenzialmente estendendo la longevità</string>
+    <string name="fasting_state_benefit_extended_fast_4">Massimi benefici dell\'autofagia in tutto il corpo</string>
+    <string name="fasting_state_benefit_extended_fast_5">Profondo reset metabolico e riduzione dell\'infiammazione</string>
+    
+    <!-- Fasting state warnings -->
+    <!-- Not fasting warnings -->
+    <string name="fasting_state_warning_not_fasting_1">Periodi prolungati senza digiuno possono portare a livelli di insulina costantemente elevati</string>
+    <string name="fasting_state_warning_not_fasting_2">L\'alimentazione continua senza intervalli di digiuno può ridurre la flessibilità metabolica</string>
+    <string name="fasting_state_warning_not_fasting_3">La digestione costante senza pause può stressare il sistema digestivo</string>
+    
+    <!-- Early fasting warnings -->
+    <string name="fasting_state_warning_early_fast_1">Potresti sperimentare crampi di fame mentre il tuo corpo si adatta</string>
+    <string name="fasting_state_warning_early_fast_2">Le fluttuazioni di zucchero nel sangue possono causare lieve irritabilità o difficoltà di concentrazione in alcune persone</string>
+    <string name="fasting_state_warning_early_fast_3">Coloro che hanno condizioni mediche che influenzano lo zucchero nel sangue dovrebbero consultare i professionisti della salute</string>
+    
+    <!-- Glycogen depletion warnings -->
+    <string name="fasting_state_warning_glycogen_depletion_1">L\'adattamento iniziale al metabolismo dei grassi può causare affaticamento temporaneo</string>
+    <string name="fasting_state_warning_glycogen_depletion_2">Le persone con determinate condizioni mediche dovrebbero consultare i professionisti della salute</string>
+    <string name="fasting_state_warning_glycogen_depletion_3">Un\'adeguata idratazione diventa sempre più importante durante questa fase</string>
+    
+    <!-- Metabolic shift warnings -->
+    <string name="fasting_state_warning_metabolic_shift_1">Alcune persone possono sperimentare sintomi di \"influenza chetonica\" mentre il corpo si adatta</string>
+    <string name="fasting_state_warning_metabolic_shift_2">Coloro che hanno condizioni mediche dovrebbero consultare i professionisti della salute</string>
+    <string name="fasting_state_warning_metabolic_shift_3">L\'equilibrio degli elettroliti diventa sempre più importante</string>
+    
+    <!-- Deep ketosis warnings -->
+    <string name="fasting_state_warning_deep_ketosis_1">Il digiuno prolungato dovrebbe essere affrontato con conoscenze adeguate</string>
+    <string name="fasting_state_warning_deep_ketosis_2">Non raccomandato per chi è sottopeso o ha disturbi alimentari</string>
+    <string name="fasting_state_warning_deep_ketosis_3">Potrebbe richiedere integrazione di elettroliti per prevenire squilibri</string>
+    <string name="fasting_state_warning_deep_ketosis_4">Consulta un professionista della salute prima di tentare digiuni di più di 24 ore</string>
+    
+    <!-- Immune reset warnings -->
+    <string name="fasting_state_warning_immune_reset_1">Il digiuno prolungato a questa durata richiede una preparazione attenta</string>
+    <string name="fasting_state_warning_immune_reset_2">L\'integrazione di elettroliti diventa essenziale</string>
+    <string name="fasting_state_warning_immune_reset_3">Interrompere correttamente il digiuno è cruciale per evitare disturbi digestivi</string>
+    <string name="fasting_state_warning_immune_reset_4">Non raccomandato per persone con determinate condizioni mediche</string>
+    <string name="fasting_state_warning_immune_reset_5">Dovrebbe essere fatto sotto supervisione per chi è nuovo al digiuno prolungato</string>
+    
+    <!-- Extended fast warnings -->
+    <string name="fasting_state_warning_extended_fast_1">Il rischio di decomposizione muscolare aumenta leggermente, sebbene il grasso rimanga il combustibile principale</string>
+    <string name="fasting_state_warning_extended_fast_2">Il digiuno prolungato dovrebbe essere fatto solo sotto adeguata supervisione medica</string>
+    <string name="fasting_state_warning_extended_fast_3">Non raccomandato per chi è sottopeso o ha disturbi alimentari</string>
+    <string name="fasting_state_warning_extended_fast_4">Richiede un protocollo attento di rialimentazione quando si interrompe il digiuno</string>
+    <string name="fasting_state_warning_extended_fast_5">Potenziale per squilibri elettrolitici se non gestiti adeguatamente</string>
+    <string name="fasting_state_warning_extended_fast_6">Consulta un professionista della salute prima di tentare digiuni di più di 72 ore</string>
+    
+    <!-- Content descriptions -->
+    <string name="back_button_description">Indietro</string>
+    <string name="language_icon_description">Selezione lingua</string>
+    <string name="battery_icon_description">Impostazioni ottimizzazione batteria</string>
+    
+    <!-- Format strings -->
+    <string name="language_name_format">%s</string>
+    <string name="radio_select_format">Seleziona %s</string>
+    
+    <!-- Common dialog actions -->
+    <string name="action_continue">Continua</string>
+    <string name="action_dismiss">Chiudi</string>
+    
+    <!-- Error messages -->
+    <string name="error_generic">Si è verificato un errore</string>
+    <string name="error_save_failed">Impossibile salvare i dati</string>
+    <string name="error_load_failed">Impossibile caricare i dati</string>
+    <string name="error_fast_overlap">Questo digiuno si sovrappone a un digiuno esistente (%1$s - %2$s)</string>
+    <string name="error_start_before_end">L\'ora di inizio deve essere precedente all\'ora di fine</string>
+    <string name="error_future_end_time">L\'ora di fine non può essere nel futuro</string>
+    <string name="error_invalid_fast">Voce di digiuno non valida</string>
+    <string name="error_fast_not_found">Digiuno non trovato per l\'aggiornamento</string>
+    <string name="error_with_message">Errore: %s</string>
+    
+    <!-- Widget text -->
+    <string name="widget_update_description">Aggiornamento del widget</string>
+    <string name="widget_state_label">Stato di digiuno attuale</string>
+    <string name="widget_start_timer">Inizia</string>
+    <string name="widget_stop_timer">Ferma</string>
+    <string name="widget_hours_label">Ore</string>
+    
+    <!-- UI Elements -->
+    <string name="fasting_log_title">Registro Digiuno</string>
+    
+    <!-- Plurals for fasting sessions -->
+    <plurals name="fasting_sessions_count">
+        <item quantity="one">%d sessione</item>
+        <item quantity="other">%d sessioni</item>
+    </plurals>
+</resources> 

@@ -11,6 +11,144 @@ object FastingDocumentation {
     /**
      * Get detailed documentation for a specific fasting state
      */
+    fun getDocumentationForState(state: FastingState, context: Context): FastingStateInfo {
+        return when (state) {
+            FastingState.NOT_FASTING -> FastingStateInfo(
+                titleResourceId = R.string.fasting_state_title_not_fasting,
+                benefitResourceIds = listOf(
+                    R.string.fasting_state_benefit_not_fasting_1,
+                    R.string.fasting_state_benefit_not_fasting_2,
+                    R.string.fasting_state_benefit_not_fasting_3,
+                    R.string.fasting_state_benefit_not_fasting_4
+                ),
+                scientificDetailsResourceId = R.string.fasting_state_details_not_fasting,
+                warningResourceIds = listOf(
+                    R.string.fasting_state_warning_not_fasting_1,
+                    R.string.fasting_state_warning_not_fasting_2,
+                    R.string.fasting_state_warning_not_fasting_3
+                ),
+                context = context
+            )
+            
+            FastingState.EARLY_FAST -> FastingStateInfo(
+                titleResourceId = R.string.fasting_state_title_early_fast,
+                benefitResourceIds = listOf(
+                    R.string.fasting_state_benefit_early_fast_1,
+                    R.string.fasting_state_benefit_early_fast_2,
+                    R.string.fasting_state_benefit_early_fast_3,
+                    R.string.fasting_state_benefit_early_fast_4
+                ),
+                scientificDetailsResourceId = R.string.fasting_state_details_early_fast,
+                warningResourceIds = listOf(
+                    R.string.fasting_state_warning_early_fast_1,
+                    R.string.fasting_state_warning_early_fast_2,
+                    R.string.fasting_state_warning_early_fast_3
+                ),
+                context = context
+            )
+            
+            FastingState.GLYCOGEN_DEPLETION -> FastingStateInfo(
+                titleResourceId = R.string.fasting_state_title_glycogen_depletion,
+                benefitResourceIds = listOf(
+                    R.string.fasting_state_benefit_glycogen_depletion_1,
+                    R.string.fasting_state_benefit_glycogen_depletion_2,
+                    R.string.fasting_state_benefit_glycogen_depletion_3,
+                    R.string.fasting_state_benefit_glycogen_depletion_4,
+                    R.string.fasting_state_benefit_glycogen_depletion_5
+                ),
+                scientificDetailsResourceId = R.string.fasting_state_details_glycogen_depletion,
+                warningResourceIds = listOf(
+                    R.string.fasting_state_warning_glycogen_depletion_1,
+                    R.string.fasting_state_warning_glycogen_depletion_2,
+                    R.string.fasting_state_warning_glycogen_depletion_3
+                ),
+                context = context
+            )
+            
+            FastingState.METABOLIC_SHIFT -> FastingStateInfo(
+                titleResourceId = R.string.fasting_state_title_metabolic_shift,
+                benefitResourceIds = listOf(
+                    R.string.fasting_state_benefit_metabolic_shift_1,
+                    R.string.fasting_state_benefit_metabolic_shift_2,
+                    R.string.fasting_state_benefit_metabolic_shift_3,
+                    R.string.fasting_state_benefit_metabolic_shift_4,
+                    R.string.fasting_state_benefit_metabolic_shift_5
+                ),
+                scientificDetailsResourceId = R.string.fasting_state_details_metabolic_shift,
+                warningResourceIds = listOf(
+                    R.string.fasting_state_warning_metabolic_shift_1,
+                    R.string.fasting_state_warning_metabolic_shift_2,
+                    R.string.fasting_state_warning_metabolic_shift_3
+                ),
+                context = context
+            )
+            
+            FastingState.DEEP_KETOSIS -> FastingStateInfo(
+                titleResourceId = R.string.fasting_state_title_deep_ketosis,
+                benefitResourceIds = listOf(
+                    R.string.fasting_state_benefit_deep_ketosis_1,
+                    R.string.fasting_state_benefit_deep_ketosis_2,
+                    R.string.fasting_state_benefit_deep_ketosis_3,
+                    R.string.fasting_state_benefit_deep_ketosis_4,
+                    R.string.fasting_state_benefit_deep_ketosis_5
+                ),
+                scientificDetailsResourceId = R.string.fasting_state_details_deep_ketosis,
+                warningResourceIds = listOf(
+                    R.string.fasting_state_warning_deep_ketosis_1,
+                    R.string.fasting_state_warning_deep_ketosis_2,
+                    R.string.fasting_state_warning_deep_ketosis_3,
+                    R.string.fasting_state_warning_deep_ketosis_4
+                ),
+                context = context
+            )
+            
+            FastingState.IMMUNE_RESET -> FastingStateInfo(
+                titleResourceId = R.string.fasting_state_title_immune_reset,
+                benefitResourceIds = listOf(
+                    R.string.fasting_state_benefit_immune_reset_1,
+                    R.string.fasting_state_benefit_immune_reset_2,
+                    R.string.fasting_state_benefit_immune_reset_3,
+                    R.string.fasting_state_benefit_immune_reset_4,
+                    R.string.fasting_state_benefit_immune_reset_5
+                ),
+                scientificDetailsResourceId = R.string.fasting_state_details_immune_reset,
+                warningResourceIds = listOf(
+                    R.string.fasting_state_warning_immune_reset_1,
+                    R.string.fasting_state_warning_immune_reset_2,
+                    R.string.fasting_state_warning_immune_reset_3,
+                    R.string.fasting_state_warning_immune_reset_4,
+                    R.string.fasting_state_warning_immune_reset_5
+                ),
+                context = context
+            )
+            
+            FastingState.EXTENDED_FAST -> FastingStateInfo(
+                titleResourceId = R.string.fasting_state_title_extended_fast,
+                benefitResourceIds = listOf(
+                    R.string.fasting_state_benefit_extended_fast_1,
+                    R.string.fasting_state_benefit_extended_fast_2,
+                    R.string.fasting_state_benefit_extended_fast_3,
+                    R.string.fasting_state_benefit_extended_fast_4,
+                    R.string.fasting_state_benefit_extended_fast_5
+                ),
+                scientificDetailsResourceId = R.string.fasting_state_details_extended_fast,
+                warningResourceIds = listOf(
+                    R.string.fasting_state_warning_extended_fast_1,
+                    R.string.fasting_state_warning_extended_fast_2,
+                    R.string.fasting_state_warning_extended_fast_3,
+                    R.string.fasting_state_warning_extended_fast_4,
+                    R.string.fasting_state_warning_extended_fast_5,
+                    R.string.fasting_state_warning_extended_fast_6
+                ),
+                context = context
+            )
+        }
+    }
+    
+    /**
+     * Get detailed documentation for a specific fasting state
+     * Legacy method for backward compatibility
+     */
     fun getDocumentationForState(state: FastingState): FastingStateInfo {
         return when (state) {
             FastingState.NOT_FASTING -> FastingStateInfo(
@@ -143,10 +281,58 @@ object FastingDocumentation {
      */
     data class FastingStateInfo(
         val titleResourceId: Int,  // Resource ID for localized title
-        val benefits: List<String>,
-        val scientificDetails: String,
-        val warnings: List<String>
+        
+        // Legacy fields for backward compatibility
+        val benefits: List<String> = emptyList(),
+        val scientificDetails: String = "",
+        val warnings: List<String> = emptyList()
     ) {
+        // New fields for localized content
+        private var _benefitResourceIds: List<Int>? = null
+        private var _scientificDetailsResourceId: Int? = null
+        private var _warningResourceIds: List<Int>? = null
+        
+        // Context for resource resolution
+        private var _context: Context? = null
+        
+        // Secondary constructor for localized content
+        constructor(
+            titleResourceId: Int,
+            benefitResourceIds: List<Int>,
+            scientificDetailsResourceId: Int,
+            warningResourceIds: List<Int>,
+            context: Context
+        ) : this(titleResourceId) {
+            _benefitResourceIds = benefitResourceIds
+            _scientificDetailsResourceId = scientificDetailsResourceId
+            _warningResourceIds = warningResourceIds
+            _context = context
+        }
+        
+        // Getter for localized benefits
+        fun getLocalizedBenefits(): List<String> {
+            if (_context != null && _benefitResourceIds != null) {
+                return _benefitResourceIds!!.map { _context!!.getString(it) }
+            }
+            return benefits
+        }
+        
+        // Getter for localized scientific details
+        fun getLocalizedScientificDetails(): String {
+            if (_context != null && _scientificDetailsResourceId != null) {
+                return _context!!.getString(_scientificDetailsResourceId!!)
+            }
+            return scientificDetails
+        }
+        
+        // Getter for localized warnings
+        fun getLocalizedWarnings(): List<String> {
+            if (_context != null && _warningResourceIds != null) {
+                return _warningResourceIds!!.map { _context!!.getString(it) }
+            }
+            return warnings
+        }
+        
         // For backward compatibility - using an empty string as this field should no longer be used
         val title: String = ""
         

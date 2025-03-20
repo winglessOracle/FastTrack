@@ -103,6 +103,9 @@
     <string name="language_system_default">System Default</string>
     <string name="language_english">English</string>
     <string name="language_spanish">Spanish</string>
+    <string name="language_german">German</string>
+    <string name="language_french">French</string>
+    <string name="language_italian">Italian</string>
     
     <!-- Help screen -->
     <string name="help_title">Help &amp; Information</string>
@@ -489,6 +492,105 @@
     <string name="fasting_state_title_deep_ketosis">Deep Ketosis &amp; Increased Autophagy (24-48 hours)</string>
     <string name="fasting_state_title_immune_reset">Immune System Reset &amp; Peak Fat Burning (48-72 hours)</string>
     <string name="fasting_state_title_extended_fast">Prolonged Fasting Benefits (72+ hours)</string>
+    
+    <!-- Fasting state scientific details -->
+    <string name="fasting_state_details_not_fasting">During the fed state (0-4 hours after eating), your body prioritizes using glucose from food as its primary energy source. Insulin levels rise to facilitate glucose uptake by cells and to promote energy storage. This is when your body is actively digesting and absorbing nutrients from your meal.</string>
+    <string name="fasting_state_details_early_fast">After 4-12 hours without food, your liver glycogen (stored glucose) begins to be used. As insulin levels fall, your body gradually shifts toward using stored fat for energy through a process called lipolysis. This is the beginning of the metabolic switch from glucose to fat utilization.</string>
+    <string name="fasting_state_details_glycogen_depletion">Between 12-18 hours of fasting, your liver glycogen stores become depleted, and your body increases fat oxidation. The liver begins converting fatty acids into ketone bodies (acetoacetate, beta-hydroxybutyrate, and acetone), which serve as an alternative fuel source for the brain and other organs. This marks the beginning of metabolic flexibility. During this phase, initial autophagy processes begin, where your cells start to remove damaged components. This cellular cleanup process will intensify in later fasting stages.</string>
+    <string name="fasting_state_details_metabolic_shift">Between 18-24 hours, a significant metabolic shift occurs as your body relies more heavily on ketones for energy. Growth hormone secretion increases to preserve muscle mass and promote fat utilization. Autophagy (cellular cleanup) accelerates, removing damaged cellular components and proteins. This period represents a transition into deeper ketosis.</string>
+    <string name="fasting_state_details_deep_ketosis">Between 24-48 hours, your body enters deep ketosis, with ketones becoming a primary fuel source. Autophagy reaches peak levels, promoting cellular renewal and repair. Growth hormone levels increase significantly (up to 5x baseline), helping preserve lean muscle mass while fat burning accelerates. Insulin sensitivity improves dramatically during this phase.</string>
+    <string name="fasting_state_details_immune_reset">Between 48-72 hours, a process called \'autophagy-dependent immune system reconfiguration\' begins. Studies show that prolonged fasting reduces circulating IGF-1 levels and PKA activity, promoting stem cell-based regeneration of immune cells. This doesn\'t completely reset your immunity, but rather enhances specific aspects of immune function through cellular regeneration and reduced inflammation. The gut microbiome undergoes significant changes, and the intestinal lining begins to regenerate. Fat oxidation remains high while protein breakdown is minimized through metabolic adaptations.</string>
+    <string name="fasting_state_details_extended_fast">Beyond 72 hours, fasting triggers significant stem cell regeneration and immune system rejuvenation. Research by Dr. Valter Longo and others shows that prolonged fasting can \'reset\' the immune system through stem cell activation. The body enters a state of profound autophagy and cellular renewal. Growth pathways like IGF-1 remain suppressed, which has been linked to longevity benefits in research studies.</string>
+    
+    <!-- Fasting state benefits -->
+    <!-- Not fasting benefits -->
+    <string name="fasting_state_benefit_not_fasting_1">Digestion and absorption of nutrients</string>
+    <string name="fasting_state_benefit_not_fasting_2">Energy storage for later use</string>
+    <string name="fasting_state_benefit_not_fasting_3">Protein synthesis and tissue repair</string>
+    <string name="fasting_state_benefit_not_fasting_4">Replenishment of glycogen stores</string>
+    
+    <!-- Early fasting benefits -->
+    <string name="fasting_state_benefit_early_fast_1">Blood glucose and insulin levels begin to drop</string>
+    <string name="fasting_state_benefit_early_fast_2">Your body starts to transition from using glucose to stored glycogen</string>
+    <string name="fasting_state_benefit_early_fast_3">Some fat-burning begins as glycogen is depleted</string>
+    <string name="fasting_state_benefit_early_fast_4">Digestive system gets a break, reducing inflammation</string>
+    
+    <!-- Glycogen depletion benefits -->
+    <string name="fasting_state_benefit_glycogen_depletion_1">Liver glycogen stores become significantly depleted</string>
+    <string name="fasting_state_benefit_glycogen_depletion_2">Fat breakdown (lipolysis) increases substantially</string>
+    <string name="fasting_state_benefit_glycogen_depletion_3">Blood ketones begin to rise slightly</string>
+    <string name="fasting_state_benefit_glycogen_depletion_4">Autophagy (cellular cleanup) starts increasing</string>
+    <string name="fasting_state_benefit_glycogen_depletion_5">Improved mental clarity for many people</string>
+    
+    <!-- Metabolic shift benefits -->
+    <string name="fasting_state_benefit_metabolic_shift_1">Ketosis becomes more significant as fat metabolism ramps up</string>
+    <string name="fasting_state_benefit_metabolic_shift_2">Blood ketone levels rise further, providing an alternative energy source</string>
+    <string name="fasting_state_benefit_metabolic_shift_3">Growth hormone production increases to preserve muscle mass</string>
+    <string name="fasting_state_benefit_metabolic_shift_4">Autophagy continues to accelerate</string>
+    <string name="fasting_state_benefit_metabolic_shift_5">Reduced inflammation throughout the body</string>
+    
+    <!-- Deep ketosis benefits -->
+    <string name="fasting_state_benefit_deep_ketosis_1">The body relies primarily on fat and ketones for energy</string>
+    <string name="fasting_state_benefit_deep_ketosis_2">Autophagy peaks, removing damaged cells and proteins</string>
+    <string name="fasting_state_benefit_deep_ketosis_3">Inflammation decreases significantly</string>
+    <string name="fasting_state_benefit_deep_ketosis_4">Insulin levels remain very low, improving insulin sensitivity</string>
+    <string name="fasting_state_benefit_deep_ketosis_5">Human Growth Hormone (HGH) surges, supporting muscle preservation</string>
+    
+    <!-- Immune reset benefits -->
+    <string name="fasting_state_benefit_immune_reset_1">Stem cell production increases (immune system regeneration begins)</string>
+    <string name="fasting_state_benefit_immune_reset_2">Insulin sensitivity improves dramatically</string>
+    <string name="fasting_state_benefit_immune_reset_3">The gut lining starts regenerating</string>
+    <string name="fasting_state_benefit_immune_reset_4">Mental clarity and focus enhanced due to high ketone levels</string>
+    <string name="fasting_state_benefit_immune_reset_5">Significant anti-inflammatory effects throughout the body</string>
+    
+    <!-- Extended fast benefits -->
+    <string name="fasting_state_benefit_extended_fast_1">Stem cell regeneration increases further</string>
+    <string name="fasting_state_benefit_extended_fast_2">The immune system undergoes significant rejuvenation</string>
+    <string name="fasting_state_benefit_extended_fast_3">Growth pathways like IGF-1 remain suppressed, potentially extending longevity</string>
+    <string name="fasting_state_benefit_extended_fast_4">Maximum autophagy benefits throughout the body</string>
+    <string name="fasting_state_benefit_extended_fast_5">Profound metabolic reset and inflammation reduction</string>
+    
+    <!-- Fasting state warnings -->
+    <!-- Not fasting warnings -->
+    <string name="fasting_state_warning_not_fasting_1">Extended periods without fasting may lead to consistently elevated insulin levels</string>
+    <string name="fasting_state_warning_not_fasting_2">Continuous feeding without fasting intervals can reduce metabolic flexibility</string>
+    <string name="fasting_state_warning_not_fasting_3">Constant digestion without breaks can stress the digestive system</string>
+    
+    <!-- Early fasting warnings -->
+    <string name="fasting_state_warning_early_fast_1">You may experience hunger pangs as your body adjusts</string>
+    <string name="fasting_state_warning_early_fast_2">Blood sugar fluctuations may cause mild irritability or difficulty concentrating for some people</string>
+    <string name="fasting_state_warning_early_fast_3">Those with medical conditions affecting blood sugar should consult healthcare providers</string>
+    
+    <!-- Glycogen depletion warnings -->
+    <string name="fasting_state_warning_glycogen_depletion_1">Initial adaptation to fat metabolism may cause temporary fatigue</string>
+    <string name="fasting_state_warning_glycogen_depletion_2">People with certain medical conditions should consult healthcare providers</string>
+    <string name="fasting_state_warning_glycogen_depletion_3">Proper hydration becomes increasingly important during this phase</string>
+    
+    <!-- Metabolic shift warnings -->
+    <string name="fasting_state_warning_metabolic_shift_1">Some people may experience \'keto flu\' symptoms as the body adapts</string>
+    <string name="fasting_state_warning_metabolic_shift_2">Those with medical conditions should consult healthcare providers</string>
+    <string name="fasting_state_warning_metabolic_shift_3">Electrolyte balance becomes increasingly important</string>
+    
+    <!-- Deep ketosis warnings -->
+    <string name="fasting_state_warning_deep_ketosis_1">Extended fasting should be approached with proper knowledge</string>
+    <string name="fasting_state_warning_deep_ketosis_2">Not recommended for those who are underweight or have eating disorders</string>
+    <string name="fasting_state_warning_deep_ketosis_3">May require electrolyte supplementation to prevent imbalances</string>
+    <string name="fasting_state_warning_deep_ketosis_4">Consult healthcare provider before attempting fasts longer than 24 hours</string>
+    
+    <!-- Immune reset warnings -->
+    <string name="fasting_state_warning_immune_reset_1">Extended fasting at this duration requires careful preparation</string>
+    <string name="fasting_state_warning_immune_reset_2">Electrolyte supplementation becomes essential</string>
+    <string name="fasting_state_warning_immune_reset_3">Breaking the fast properly is crucial to avoid digestive distress</string>
+    <string name="fasting_state_warning_immune_reset_4">Not recommended for those with certain medical conditions</string>
+    <string name="fasting_state_warning_immune_reset_5">Should be done under supervision for those new to extended fasting</string>
+    
+    <!-- Extended fast warnings -->
+    <string name="fasting_state_warning_extended_fast_1">Risk of muscle breakdown increases slightly, though fat remains the primary fuel</string>
+    <string name="fasting_state_warning_extended_fast_2">Extended fasting should only be done with proper medical supervision</string>
+    <string name="fasting_state_warning_extended_fast_3">Not recommended for those who are underweight or have eating disorders</string>
+    <string name="fasting_state_warning_extended_fast_4">Requires careful refeeding protocol when breaking the fast</string>
+    <string name="fasting_state_warning_extended_fast_5">Potential for electrolyte imbalances if not properly managed</string>
+    <string name="fasting_state_warning_extended_fast_6">Consult healthcare provider before attempting fasts longer than 72 hours</string>
     
     <!-- Time formatting -->
     <string name="format_hours_minutes">%1$d h %2$02d min</string>

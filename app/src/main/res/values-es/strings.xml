@@ -101,9 +101,12 @@
     
     <!-- Language settings -->
     <string name="language_selection">Idioma</string>
-    <string name="language_system_default">Predeterminado del Sistema</string>
+    <string name="language_system_default">Predeterminado del sistema</string>
     <string name="language_english">Inglés</string>
     <string name="language_spanish">Español</string>
+    <string name="language_german">Alemán</string>
+    <string name="language_french">Francés</string>
+    <string name="language_italian">Italiano</string>
     
     <!-- Help screen -->
     <string name="help_title">Ayuda e Información</string>
@@ -473,61 +476,102 @@
     <string name="widget_stop_timer">Parar</string>
     <string name="widget_hours_label">Horas</string>
     
-    <!-- Fasting legend time ranges -->
-    <string name="fasting_time_range_0_4">0-4 horas</string>
-    <string name="fasting_time_range_4_12">4-12 horas</string>
-    <string name="fasting_time_range_12_18">12-18 horas</string>
-    <string name="fasting_time_range_18_24">18-24 horas</string>
-    <string name="fasting_time_range_24_48">24-48 horas</string>
-    <string name="fasting_time_range_48_72">48-72 horas</string>
-    <string name="fasting_time_range_72_plus">72+ horas</string>
+    <!-- Fasting state scientific details -->
+    <string name="fasting_state_details_not_fasting">Durante el estado alimentado (0-4 horas después de comer), tu cuerpo prioriza el uso de glucosa de los alimentos como su fuente principal de energía. Los niveles de insulina aumentan para facilitar la absorción de glucosa por las células y promover el almacenamiento de energía. Este es el momento en que tu cuerpo está digiriendo y absorbiendo activamente los nutrientes de tu comida.</string>
+    <string name="fasting_state_details_early_fast">Después de 4-12 horas sin alimentos, tu glucógeno hepático (glucosa almacenada) comienza a ser utilizado. A medida que los niveles de insulina disminuyen, tu cuerpo cambia gradualmente hacia el uso de grasa almacenada para obtener energía mediante un proceso llamado lipólisis. Este es el comienzo del cambio metabólico de la glucosa a la utilización de grasas.</string>
+    <string name="fasting_state_details_glycogen_depletion">Entre 12-18 horas de ayuno, tus reservas de glucógeno hepático se agotan, y tu cuerpo aumenta la oxidación de grasas. El hígado comienza a convertir los ácidos grasos en cuerpos cetónicos (acetoacetato, beta-hidroxibutirato y acetona), que sirven como fuente alternativa de energía para el cerebro y otros órganos. Esto marca el comienzo de la flexibilidad metabólica. Durante esta fase, comienzan los procesos iniciales de autofagia, donde tus células empiezan a eliminar componentes dañados. Este proceso de limpieza celular se intensificará en etapas posteriores del ayuno.</string>
+    <string name="fasting_state_details_metabolic_shift">Entre 18-24 horas, ocurre un cambio metabólico significativo a medida que tu cuerpo depende más de las cetonas para obtener energía. La secreción de hormona de crecimiento aumenta para preservar la masa muscular y promover la utilización de grasas. La autofagia (limpieza celular) se acelera, eliminando componentes celulares y proteínas dañadas. Este período representa una transición hacia una cetosis más profunda.</string>
+    <string name="fasting_state_details_deep_ketosis">Entre 24-48 horas, tu cuerpo entra en cetosis profunda, con las cetonas convirtiéndose en una fuente primaria de energía. La autofagia alcanza niveles máximos, promoviendo la renovación y reparación celular. Los niveles de hormona de crecimiento aumentan significativamente (hasta 5 veces el nivel basal), ayudando a preservar la masa muscular magra mientras la quema de grasa se acelera. La sensibilidad a la insulina mejora dramáticamente durante esta fase.</string>
+    <string name="fasting_state_details_immune_reset">Entre 48-72 horas, comienza un proceso llamado \"reconfiguración del sistema inmunológico dependiente de la autofagia\". Los estudios muestran que el ayuno prolongado reduce los niveles circulantes de IGF-1 y la actividad de PKA, promoviendo la regeneración de células inmunes basada en células madre. Esto no reinicia completamente tu inmunidad, sino que mejora aspectos específicos de la función inmune a través de la regeneración celular y la reducción de la inflamación. El microbioma intestinal experimenta cambios significativos, y el revestimiento intestinal comienza a regenerarse. La oxidación de grasas permanece alta mientras que la descomposición de proteínas se minimiza a través de adaptaciones metabólicas.</string>
+    <string name="fasting_state_details_extended_fast">Más allá de las 72 horas, el ayuno desencadena una regeneración significativa de células madre y un rejuvenecimiento del sistema inmunológico. Las investigaciones del Dr. Valter Longo y otros muestran que el ayuno prolongado puede \"reiniciar\" el sistema inmunológico a través de la activación de células madre. El cuerpo entra en un estado de profunda autofagia y renovación celular. Las vías de crecimiento como IGF-1 permanecen suprimidas, lo que se ha relacionado con beneficios de longevidad en estudios de investigación.</string>
     
-    <!-- Fasting documentation titles -->
-    <string name="fasting_state_title_not_fasting">Estado Alimentado (0-4 horas)</string>
-    <string name="fasting_state_title_early_fast">Estado de Ayuno Temprano (4-12 horas)</string>
-    <string name="fasting_state_title_glycogen_depletion">Agotamiento de Glucógeno (12-18 horas)</string>
-    <string name="fasting_state_title_metabolic_shift">Cambio Metabólico (18-24 horas)</string>
-    <string name="fasting_state_title_deep_ketosis">Cetosis Profunda y Aumento de Autofagia (24-48 horas)</string>
-    <string name="fasting_state_title_immune_reset">Reinicio del Sistema Inmune y Máxima Quema de Grasa (48-72 horas)</string>
-    <string name="fasting_state_title_extended_fast">Beneficios del Ayuno Prolongado (72+ horas)</string>
+    <!-- Fasting state benefits -->
+    <!-- Not fasting benefits -->
+    <string name="fasting_state_benefit_not_fasting_1">Digestión y absorción de nutrientes</string>
+    <string name="fasting_state_benefit_not_fasting_2">Almacenamiento de energía para uso posterior</string>
+    <string name="fasting_state_benefit_not_fasting_3">Síntesis de proteínas y reparación de tejidos</string>
+    <string name="fasting_state_benefit_not_fasting_4">Reposición de reservas de glucógeno</string>
     
-    <!-- Time formatting -->
-    <string name="format_hours_minutes">%1$d h %2$02d min</string>
-    <string name="format_minutes_only">%d min</string>
-    <string name="format_hours_minutes_detailed">%1$d horas %2$d minutos</string>
-    <string name="format_minutes_only_detailed">%d minutos</string>
-    <string name="format_seconds_only_detailed">%d segundos</string>
+    <!-- Early fasting benefits -->
+    <string name="fasting_state_benefit_early_fast_1">Los niveles de glucosa en sangre e insulina comienzan a descender</string>
+    <string name="fasting_state_benefit_early_fast_2">Tu cuerpo comienza a transición del uso de glucosa al glucógeno almacenado</string>
+    <string name="fasting_state_benefit_early_fast_3">Comienza cierta quema de grasa a medida que se agota el glucógeno</string>
+    <string name="fasting_state_benefit_early_fast_4">El sistema digestivo descansa, reduciendo la inflamación</string>
     
-    <!-- Input validation -->
-    <string name="validation_time_invalid">Formato de hora inválido</string>
-    <string name="validation_date_invalid">Formato de fecha inválido</string>
+    <!-- Glycogen depletion benefits -->
+    <string name="fasting_state_benefit_glycogen_depletion_1">Las reservas de glucógeno hepático se agotan significativamente</string>
+    <string name="fasting_state_benefit_glycogen_depletion_2">La descomposición de grasas (lipólisis) aumenta sustancialmente</string>
+    <string name="fasting_state_benefit_glycogen_depletion_3">Las cetonas en sangre comienzan a aumentar ligeramente</string>
+    <string name="fasting_state_benefit_glycogen_depletion_4">La autofagia (limpieza celular) comienza a aumentar</string>
+    <string name="fasting_state_benefit_glycogen_depletion_5">Mejor claridad mental para muchas personas</string>
     
-    <!-- Sorting options -->
-    <string name="sort_date_newest">Fecha (Más Reciente Primero)</string>
-    <string name="sort_date_oldest">Fecha (Más Antiguo Primero)</string>
-    <string name="sort_duration_longest">Duración (Más Largo Primero)</string>
-    <string name="sort_duration_shortest">Duración (Más Corto Primero)</string>
+    <!-- Metabolic shift benefits -->
+    <string name="fasting_state_benefit_metabolic_shift_1">La cetosis se vuelve más significativa a medida que el metabolismo de las grasas se acelera</string>
+    <string name="fasting_state_benefit_metabolic_shift_2">Los niveles de cetonas en sangre aumentan más, proporcionando una fuente de energía alternativa</string>
+    <string name="fasting_state_benefit_metabolic_shift_3">La producción de hormona de crecimiento aumenta para preservar la masa muscular</string>
+    <string name="fasting_state_benefit_metabolic_shift_4">La autofagia continúa acelerándose</string>
+    <string name="fasting_state_benefit_metabolic_shift_5">Reducción de la inflamación en todo el cuerpo</string>
     
-    <!-- Fast entry notes -->
-    <string name="fast_entry_manual_note">Entrada de ayuno creada manualmente</string>
+    <!-- Deep ketosis benefits -->
+    <string name="fasting_state_benefit_deep_ketosis_1">El cuerpo depende principalmente de grasas y cetonas para obtener energía</string>
+    <string name="fasting_state_benefit_deep_ketosis_2">La autofagia alcanza su punto máximo, eliminando células y proteínas dañadas</string>
+    <string name="fasting_state_benefit_deep_ketosis_3">La inflamación disminuye significativamente</string>
+    <string name="fasting_state_benefit_deep_ketosis_4">Los niveles de insulina permanecen muy bajos, mejorando la sensibilidad a la insulina</string>
+    <string name="fasting_state_benefit_deep_ketosis_5">La Hormona de Crecimiento Humano (HGH) aumenta considerablemente, apoyando la preservación muscular</string>
     
-    <!-- Adjust Start Time Dialog -->
-    <string name="adjust_time_instructions">Si olvidaste iniciar el temporizador cuando comenzaste a ayunar, puedes ajustar la hora de inicio aquí.</string>
-    <string name="adjust_time_current_elapsed">Tiempo Transcurrido Actual</string>
-    <string name="adjust_time_started_on">Comenzó a ayunar el:</string>
-    <string name="adjust_time_set_new">Establecer Nueva Hora de Inicio</string>
-    <string name="adjust_time_day">Día</string>
-    <string name="adjust_time_time">Hora</string>
-    <string name="adjust_time_new_elapsed">Nuevo Tiempo Transcurrido</string>
-    <string name="adjust_time_apply">Aplicar Ajuste</string>
-    <string name="adjust_time_error_future">La hora de inicio no puede estar en el futuro. Por favor, selecciona una hora anterior.</string>
-    <string name="adjust_time_error_negative">Esto resultaría en un tiempo de ayuno negativo. Por favor, selecciona una hora más tardía.</string>
-    <string name="adjust_time_error_too_large">El ajuste es demasiado grande (máximo 30 días). Por favor, selecciona una fecha más reciente.</string>
-    <string name="adjust_time_no_change">Sin cambios en la hora actual. Ajusta para aplicar cambios.</string>
-    <string name="adjust_time_error_icon">Error</string>
-    <string name="adjust_time_clock_icon">Icono de Reloj</string>
-    <string name="adjust_time_new_start_time">Nueva hora de inicio: %s</string>
+    <!-- Immune reset benefits -->
+    <string name="fasting_state_benefit_immune_reset_1">Aumenta la producción de células madre (comienza la regeneración del sistema inmunológico)</string>
+    <string name="fasting_state_benefit_immune_reset_2">La sensibilidad a la insulina mejora dramáticamente</string>
+    <string name="fasting_state_benefit_immune_reset_3">El revestimiento intestinal comienza a regenerarse</string>
+    <string name="fasting_state_benefit_immune_reset_4">Claridad mental y concentración mejoradas debido a los altos niveles de cetonas</string>
+    <string name="fasting_state_benefit_immune_reset_5">Efectos antiinflamatorios significativos en todo el cuerpo</string>
     
-    <!-- No logs to export message -->
-    <string name="no_fasting_logs_to_export">No hay registros de ayuno para exportar</string>
+    <!-- Extended fast benefits -->
+    <string name="fasting_state_benefit_extended_fast_1">La regeneración de células madre aumenta aún más</string>
+    <string name="fasting_state_benefit_extended_fast_2">El sistema inmunológico experimenta un rejuvenecimiento significativo</string>
+    <string name="fasting_state_benefit_extended_fast_3">Las vías de crecimiento como IGF-1 permanecen suprimidas, potencialmente extendiendo la longevidad</string>
+    <string name="fasting_state_benefit_extended_fast_4">Máximos beneficios de autofagia en todo el cuerpo</string>
+    <string name="fasting_state_benefit_extended_fast_5">Reinicio metabólico profundo y reducción de la inflamación</string>
+    
+    <!-- Fasting state warnings -->
+    <!-- Not fasting warnings -->
+    <string name="fasting_state_warning_not_fasting_1">Períodos prolongados sin ayuno pueden llevar a niveles de insulina constantemente elevados</string>
+    <string name="fasting_state_warning_not_fasting_2">La alimentación continua sin intervalos de ayuno puede reducir la flexibilidad metabólica</string>
+    <string name="fasting_state_warning_not_fasting_3">La digestión constante sin descansos puede estresar el sistema digestivo</string>
+    
+    <!-- Early fasting warnings -->
+    <string name="fasting_state_warning_early_fast_1">Puedes experimentar punzadas de hambre mientras tu cuerpo se adapta</string>
+    <string name="fasting_state_warning_early_fast_2">Las fluctuaciones de azúcar en sangre pueden causar irritabilidad leve o dificultad para concentrarse en algunas personas</string>
+    <string name="fasting_state_warning_early_fast_3">Aquellos con condiciones médicas que afectan el azúcar en sangre deben consultar a profesionales de la salud</string>
+    
+    <!-- Glycogen depletion warnings -->
+    <string name="fasting_state_warning_glycogen_depletion_1">La adaptación inicial al metabolismo de las grasas puede causar fatiga temporal</string>
+    <string name="fasting_state_warning_glycogen_depletion_2">Las personas con ciertas condiciones médicas deben consultar a profesionales de la salud</string>
+    <string name="fasting_state_warning_glycogen_depletion_3">La hidratación adecuada se vuelve cada vez más importante durante esta fase</string>
+    
+    <!-- Metabolic shift warnings -->
+    <string name="fasting_state_warning_metabolic_shift_1">Algunas personas pueden experimentar síntomas de \"gripe cetónica\" mientras el cuerpo se adapta</string>
+    <string name="fasting_state_warning_metabolic_shift_2">Aquellos con condiciones médicas deben consultar a profesionales de la salud</string>
+    <string name="fasting_state_warning_metabolic_shift_3">El equilibrio de electrolitos se vuelve cada vez más importante</string>
+    
+    <!-- Deep ketosis warnings -->
+    <string name="fasting_state_warning_deep_ketosis_1">El ayuno prolongado debe abordarse con conocimiento adecuado</string>
+    <string name="fasting_state_warning_deep_ketosis_2">No recomendado para quienes tienen bajo peso o trastornos alimentarios</string>
+    <string name="fasting_state_warning_deep_ketosis_3">Puede requerir suplementación de electrolitos para prevenir desequilibrios</string>
+    <string name="fasting_state_warning_deep_ketosis_4">Consulta a un profesional de la salud antes de intentar ayunos de más de 24 horas</string>
+    
+    <!-- Immune reset warnings -->
+    <string name="fasting_state_warning_immune_reset_1">El ayuno prolongado a esta duración requiere una preparación cuidadosa</string>
+    <string name="fasting_state_warning_immune_reset_2">La suplementación de electrolitos se vuelve esencial</string>
+    <string name="fasting_state_warning_immune_reset_3">Romper el ayuno correctamente es crucial para evitar malestar digestivo</string>
+    <string name="fasting_state_warning_immune_reset_4">No recomendado para personas con ciertas condiciones médicas</string>
+    <string name="fasting_state_warning_immune_reset_5">Debe hacerse bajo supervisión para quienes son nuevos en el ayuno prolongado</string>
+    
+    <!-- Extended fast warnings -->
+    <string name="fasting_state_warning_extended_fast_1">El riesgo de descomposición muscular aumenta ligeramente, aunque la grasa sigue siendo el combustible principal</string>
+    <string name="fasting_state_warning_extended_fast_2">El ayuno prolongado solo debe realizarse con supervisión médica adecuada</string>
+    <string name="fasting_state_warning_extended_fast_3">No recomendado para quienes tienen bajo peso o trastornos alimentarios</string>
+    <string name="fasting_state_warning_extended_fast_4">Requiere un protocolo cuidadoso de realimentación al romper el ayuno</string>
+    <string name="fasting_state_warning_extended_fast_5">Potencial para desequilibrios de electrolitos si no se manejan adecuadamente</string>
+    <string name="fasting_state_warning_extended_fast_6">Consulta a un profesional de la salud antes de intentar ayunos de más de 72 horas</string>
 </resources> 

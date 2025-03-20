@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App general -->
+    <string name="app_name">FastTrack</string>
+    
+    <!-- Common actions -->
+    <string name="action_yes">Oui</string>
+    <string name="action_no">Non</string>
+    <string name="action_cancel">Annuler</string>
+    <string name="action_close">Fermer</string>
+    <string name="action_save">Enregistrer</string>
+    <string name="action_edit">Modifier</string>
+    <string name="action_adjust_time">Ajuster l\'heure de début</string>
+    <string name="action_delete">Supprimer</string>
+    <string name="action_clear">Effacer</string>
+    
+    <!-- Dialog titles -->
+    <string name="dialog_title_stop_timer">Arrêter le Minuteur</string>
+    <string name="dialog_message_stop_timer_confirmation">Êtes-vous sûr de vouloir arrêter le minuteur de jeûne ?</string>
+    <string name="dialog_title_delete_all_fasts">Supprimer Tous les Journaux de Jeûne</string>
+    <string name="dialog_message_delete_all_fasts">Êtes-vous sûr de vouloir supprimer tous vos journaux de jeûne ? Cette action ne peut pas être annulée.</string>
+    <string name="dialog_title_delete_fast">Supprimer le Journal de Jeûne</string>
+    <string name="dialog_message_delete_fast">Êtes-vous sûr de vouloir supprimer ce journal de jeûne ? Cette action ne peut pas être annulée.</string>
+    <string name="dialog_title_edit_fast">Modifier le Jeûne</string>
+    <string name="dialog_message_edit_fast_confirmation">Êtes-vous sûr de vouloir modifier ce jeûne ? Cette action ne peut pas être annulée.</string>
+    <string name="dialog_title_sort_by">Trier Par</string>
+    <string name="dialog_title_filter_by">Filtrer Par État de Jeûne</string>
+    <string name="dialog_title_confirm_edit">Confirmer la Modification</string>
+    
+    <!-- Toast messages -->
+    <string name="toast_timer_not_running">Impossible d\'ajuster l\'heure : Le minuteur n\'est pas en cours</string>
+    <string name="toast_invalid_time_adjustment">Impossible d\'ajuster l\'heure de début. Veuillez essayer une heure différente.</string>
+    <string name="toast_time_adjusted">Heure de début ajustée avec succès</string>
+    <string name="toast_adjustment_error">Une erreur s\'est produite lors de l\'ajustement de l\'heure</string>
+    <string name="toast_fast_saved">Session de jeûne enregistrée dans le journal</string>
+    <string name="toast_fast_save_error">Erreur lors de l\'enregistrement de la session de jeûne</string>
+    <string name="toast_invalid_adjustment">Impossible d\'ajuster l\'heure : Valeur d\'ajustement invalide</string>
+    
+    <!-- Fasting states names -->
+    <string name="fasting_state_not_fasting_name">État Nourri</string>
+    <string name="fasting_state_early_fast_name">Jeûne Précoce</string>
+    <string name="fasting_state_glycogen_depletion_name">Épuisement du Glycogène</string>
+    <string name="fasting_state_metabolic_shift_name">Changement Métabolique</string>
+    <string name="fasting_state_deep_ketosis_name">Cétose Profonde</string>
+    <string name="fasting_state_immune_reset_name">Réinitialisation Immunitaire</string>
+    <string name="fasting_state_extended_fast_name">Jeûne Prolongé</string>
+    
+    <!-- Fasting states descriptions -->
+    <string name="fasting_state_not_fasting_description">Digestion &amp; Absorption</string>
+    <string name="fasting_state_early_fast_description">Début de la Combustion des Graisses</string>
+    <string name="fasting_state_glycogen_depletion_description">Augmentation du Métabolisme des Graisses</string>
+    <string name="fasting_state_metabolic_shift_description">Début de la Cétose</string>
+    <string name="fasting_state_deep_ketosis_description">Pic d\'Autophagie</string>
+    <string name="fasting_state_immune_reset_description">Production de Cellules Souches</string>
+    <string name="fasting_state_extended_fast_description">Rajeunissement Cellulaire</string>
+    
+    <!-- Date Format Names -->
+    <string name="date_format_mdy_slash">MM/JJ/AAAA (US)</string>
+    <string name="date_format_dmy_slash">JJ/MM/AAAA (FR/UE)</string>
+    <string name="date_format_ymd_dash">AAAA-MM-JJ (ISO)</string>
+    <string name="date_format_mdy_text">Mois J, AAAA</string>
+    
+    <!-- Time Format Names -->
+    <string name="time_format_24h">24 heures (13:30)</string>
+    <string name="time_format_12h">12 heures (1:30 PM)</string>
+    
+    <!-- Theme Names -->
+    <string name="theme_system">Système par défaut</string>
+    <string name="theme_light">Clair</string>
+    <string name="theme_dark">Sombre</string>
+    
+    <!-- Update Frequency -->
+    <string name="update_frequency_very_frequent">Très Fréquent (Consommation de Batterie Plus Élevée)</string>
+    <string name="update_frequency_balanced">Équilibré (Recommandé)</string>
+    <string name="update_frequency_battery_saving">Économie de Batterie</string>
+    <string name="update_frequency_minimal">Minimal (Économie Maximale de Batterie)</string>
+    
+    <!-- Settings screen -->
+    <string name="settings_title">Paramètres</string>
+    <string name="settings_category_theme">Thème</string>
+    <string name="settings_category_date_format">Format de Date</string>
+    <string name="settings_category_time_format">Format d\'Heure</string>
+    <string name="settings_category_notifications">Notifications</string>
+    <string name="settings_category_language">Langue</string>
+    <string name="settings_category_battery">Optimisation de la Batterie</string>
+    <string name="settings_category_widget_updates">Fréquence de Mise à Jour du Widget</string>
+    <string name="settings_category_about">À propos</string>
+    <string name="settings_date_format_example">Exemple : %s</string>
+    <string name="settings_time_format_example">Exemple : %s</string>
+    <string name="settings_notifications_fasting_state">Notifications d\'État de Jeûne</string>
+    <string name="settings_notifications_fasting_state_description">Recevez des notifications lorsque vous atteignez un nouvel état de jeûne</string>
+    <string name="settings_battery_opt_description">Contrôlez la fréquence de mise à jour du widget. Des mises à jour plus fréquentes fournissent des informations plus précises mais consomment plus de batterie.</string>
+    <string name="settings_battery_opt_explanation">La désactivation de l\'optimisation de la batterie permet à l\'application de mettre à jour le widget et de suivre votre temps de jeûne plus fiablement, mais peut légèrement augmenter la consommation de batterie.</string>
+    <string name="settings_battery_opt_disabled">L\'optimisation de la batterie est désactivée pour cette application.</string>
+    <string name="settings_battery_opt_enabled">L\'optimisation de la batterie est activée pour cette application, ce qui peut entraîner des retards ou des omissions dans les mises à jour du widget.</string>
+    <string name="settings_battery_settings">Paramètres de Batterie</string>
+    <string name="settings_disable_battery_opt">Désactiver l\'Optimisation de la Batterie</string>
+    <string name="settings_about_app">FastTrack</string>
+    <string name="settings_about_version">Version 1.0</string>
+    <string name="settings_about_description">Une application simple de minuteur de jeûne pour suivre vos périodes de jeûne et vos progrès.</string>
+    
+    <!-- Language settings -->
+    <string name="language_selection">Langue</string>
+    <string name="language_system_default">Par défaut du système</string>
+    <string name="language_english">Anglais</string>
+    <string name="language_spanish">Espagnol</string>
+    <string name="language_german">Allemand</string>
+    <string name="language_french">Français</string>
+    <string name="language_italian">Italien</string>
+    
+    <!-- Language dialog -->
+    <string name="language_dialog_title">Changer de Langue</string>
+    <string name="language_dialog_message">L\'application doit redémarrer pour appliquer le changement de langue. Continuer ?</string>
+    <string name="language_dialog_continue">Continuer</string>
+    <string name="language_dialog_cancel">Annuler</string>
+    <string name="language_select_dialog_title">Sélectionner la Langue</string>
+    <string name="language_changed_message">Langue changée en %s</string>
+    
+    <!-- Help screen -->
+    <string name="help_title">Aide &amp; Informations</string>
+    <string name="help_tab_basics">Bases</string>
+    <string name="help_tab_fasting_types">Types de Jeûne</string>
+    <string name="help_tab_tips">Conseils</string>
+    <string name="help_intro">FastTrack vous aide à suivre votre temps de jeûne avec précision</string>
+    <string name="help_medical_disclaimer">Consultez toujours un professionnel de la santé avant de commencer tout régime de jeûne</string>
+    <string name="help_unique_journey">Le parcours de jeûne de chacun est unique</string>
+    <string name="help_unique_journey_content">Le jeûne affecte chaque personne différemment selon son métabolisme, sa composition corporelle, son niveau d\'activité et ses antécédents de santé. Ce qui fonctionne pour une personne peut ne pas fonctionner pour une autre. Écoutez votre corps et ajustez votre approche du jeûne en conséquence. Commencez lentement et augmentez progressivement votre durée de jeûne à mesure que votre corps s\'adapte. N\'oubliez pas que la constance est plus importante que l\'intensité, surtout lorsque vous commencez votre parcours de jeûne.</string>
+    
+    <string name="help_using_app">Utilisation de l\'Application Principale</string>
+    <string name="help_app_item_1">Appuyez sur DÉMARRER pour commencer votre minuteur de jeûne</string>
+    <string name="help_app_item_2">L\'application suit automatiquement votre durée de jeûne</string>
+    <string name="help_app_item_3">Votre état de jeûne change en fonction de la durée</string>
+    <string name="help_app_item_4">Appuyez sur RÉINITIALISER pour terminer votre jeûne et l\'enregistrer dans votre journal</string>
+    <string name="help_app_item_5">Consultez votre historique de jeûne dans le Journal de Jeûne</string>
+    
+    <!-- Content descriptions -->
+    <string name="back_button_description">Retour</string>
+    <string name="language_icon_description">Sélection de langue</string>
+    <string name="battery_icon_description">Paramètres d\'optimisation de la batterie</string>
+    
+    <!-- Format strings -->
+    <string name="language_name_format">%s</string>
+    <string name="radio_select_format">Sélectionner %s</string>
+    
+    <!-- Common dialog actions -->
+    <string name="action_continue">Continuer</string>
+    <string name="action_dismiss">Fermer</string>
+    
+    <!-- Error messages -->
+    <string name="error_generic">Une erreur s\'est produite</string>
+    <string name="error_save_failed">Impossible d\'enregistrer les données</string>
+    <string name="error_load_failed">Impossible de charger les données</string>
+    <string name="error_fast_overlap">Ce jeûne chevauche un jeûne existant (%1$s - %2$s)</string>
+    <string name="error_start_before_end">L\'heure de début doit être antérieure à l\'heure de fin</string>
+    <string name="error_future_end_time">L\'heure de fin ne peut pas être dans le futur</string>
+    <string name="error_invalid_fast">Entrée de jeûne invalide</string>
+    <string name="error_fast_not_found">Jeûne non trouvé pour mise à jour</string>
+    <string name="error_with_message">Erreur : %s</string>
+    
+    <!-- Widget text -->
+    <string name="widget_update_description">Mise à jour du widget</string>
+    <string name="widget_state_label">État de jeûne actuel</string>
+    <string name="widget_start_timer">Démarrer</string>
+    <string name="widget_stop_timer">Arrêter</string>
+    <string name="widget_hours_label">Heures</string>
+    
+    <!-- Fasting state scientific details -->
+    <string name="fasting_state_details_not_fasting">Pendant l\'état nourri (0-4 heures après avoir mangé), votre corps donne la priorité à l\'utilisation du glucose provenant de la nourriture comme source d\'énergie primaire. Les niveaux d\'insuline augmentent pour faciliter l\'absorption du glucose par les cellules et favoriser le stockage d\'énergie. C\'est le moment où votre corps digère et absorbe activement les nutriments de votre repas.</string>
+    <string name="fasting_state_details_early_fast">Après 4-12 heures sans nourriture, votre glycogène hépatique (glucose stocké) commence à être utilisé. À mesure que les niveaux d\'insuline baissent, votre corps se tourne progressivement vers l\'utilisation des graisses stockées comme énergie via un processus appelé lipolyse. C\'est le début du changement métabolique du glucose à l\'utilisation des graisses.</string>
+    <string name="fasting_state_details_glycogen_depletion">Entre 12 et 18 heures de jeûne, vos réserves de glycogène hépatique s\'épuisent et votre corps augmente l\'oxydation des graisses. Le foie commence à convertir les acides gras en corps cétoniques (acétoacétate, bêta-hydroxybutyrate et acétone), qui servent de source d\'énergie alternative pour le cerveau et d\'autres organes. Cela marque le début de la flexibilité métabolique. Pendant cette phase, les processus initiaux d\'autophagie commencent, où vos cellules commencent à éliminer les composants endommagés. Ce processus de nettoyage cellulaire s\'intensifiera dans les phases ultérieures du jeûne.</string>
+    <string name="fasting_state_details_metabolic_shift">Entre 18 et 24 heures, un changement métabolique significatif se produit alors que votre corps dépend davantage des cétones pour l\'énergie. La sécrétion d\'hormone de croissance augmente pour préserver la masse musculaire et favoriser l\'utilisation des graisses. L\'autophagie (nettoyage cellulaire) s\'accélère, éliminant les composants cellulaires et les protéines endommagés. Cette période représente une transition vers une cétose plus profonde.</string>
+    <string name="fasting_state_details_deep_ketosis">Entre 24 et 48 heures, votre corps entre en cétose profonde, les cétones devenant une source d\'énergie primaire. L\'autophagie atteint des niveaux maximaux, favorisant le renouvellement et la réparation cellulaires. Les niveaux d\'hormone de croissance augmentent considérablement (jusqu\'à 5 fois le niveau de base), aidant à préserver la masse musculaire maigre tandis que la combustion des graisses s\'accélère. La sensibilité à l\'insuline s\'améliore considérablement pendant cette phase.</string>
+    <string name="fasting_state_details_immune_reset">Entre 48 et 72 heures, un processus appelé \'reconfiguration du système immunitaire dépendante de l\'autophagie\' commence. Des études montrent que le jeûne prolongé réduit les niveaux circulants d\'IGF-1 et l\'activité de la PKA, favorisant la régénération des cellules immunitaires basée sur les cellules souches. Cela ne réinitialise pas complètement votre immunité, mais améliore plutôt des aspects spécifiques de la fonction immunitaire grâce à la régénération cellulaire et à la réduction de l\'inflammation. Le microbiome intestinal subit des changements significatifs, et la muqueuse intestinale commence à se régénérer. L\'oxydation des graisses reste élevée tandis que la dégradation des protéines est minimisée grâce à des adaptations métaboliques.</string>
+    <string name="fasting_state_details_extended_fast">Au-delà de 72 heures, le jeûne déclenche une régénération significative des cellules souches et un rajeunissement du système immunitaire. Les recherches du Dr Valter Longo et d\'autres montrent que le jeûne prolongé peut \'réinitialiser\' le système immunitaire grâce à l\'activation des cellules souches. Le corps entre dans un état d\'autophagie profonde et de renouvellement cellulaire. Les voies de croissance comme l\'IGF-1 restent supprimées, ce qui a été lié à des avantages de longévité dans les études de recherche.</string>
+    
+    <!-- Fasting state benefits -->
+    <!-- Not fasting benefits -->
+    <string name="fasting_state_benefit_not_fasting_1">Digestion et absorption des nutriments</string>
+    <string name="fasting_state_benefit_not_fasting_2">Stockage d\'énergie pour une utilisation ultérieure</string>
+    <string name="fasting_state_benefit_not_fasting_3">Synthèse des protéines et réparation des tissus</string>
+    <string name="fasting_state_benefit_not_fasting_4">Reconstitution des réserves de glycogène</string>
+    
+    <!-- Early fasting benefits -->
+    <string name="fasting_state_benefit_early_fast_1">Les niveaux de glucose sanguin et d\'insuline commencent à baisser</string>
+    <string name="fasting_state_benefit_early_fast_2">Votre corps commence à passer de l\'utilisation du glucose au glycogène stocké</string>
+    <string name="fasting_state_benefit_early_fast_3">Une certaine combustion des graisses commence lorsque le glycogène s\'épuise</string>
+    <string name="fasting_state_benefit_early_fast_4">Le système digestif se repose, réduisant l\'inflammation</string>
+    
+    <!-- Glycogen depletion benefits -->
+    <string name="fasting_state_benefit_glycogen_depletion_1">Les réserves de glycogène hépatique deviennent considérablement épuisées</string>
+    <string name="fasting_state_benefit_glycogen_depletion_2">La dégradation des graisses (lipolyse) augmente substantiellement</string>
+    <string name="fasting_state_benefit_glycogen_depletion_3">Les cétones sanguines commencent à augmenter légèrement</string>
+    <string name="fasting_state_benefit_glycogen_depletion_4">L\'autophagie (nettoyage cellulaire) commence à augmenter</string>
+    <string name="fasting_state_benefit_glycogen_depletion_5">Clarté mentale améliorée pour beaucoup de personnes</string>
+    
+    <!-- Metabolic shift benefits -->
+    <string name="fasting_state_benefit_metabolic_shift_1">La cétose devient plus significative à mesure que le métabolisme des graisses s\'accélère</string>
+    <string name="fasting_state_benefit_metabolic_shift_2">Les niveaux de cétones sanguines augmentent davantage, fournissant une source d\'énergie alternative</string>
+    <string name="fasting_state_benefit_metabolic_shift_3">La production d\'hormone de croissance augmente pour préserver la masse musculaire</string>
+    <string name="fasting_state_benefit_metabolic_shift_4">L\'autophagie continue de s\'accélérer</string>
+    <string name="fasting_state_benefit_metabolic_shift_5">Réduction de l\'inflammation dans tout le corps</string>
+    
+    <!-- Deep ketosis benefits -->
+    <string name="fasting_state_benefit_deep_ketosis_1">Le corps dépend principalement des graisses et des cétones pour l\'énergie</string>
+    <string name="fasting_state_benefit_deep_ketosis_2">L\'autophagie atteint son maximum, éliminant les cellules et protéines endommagées</string>
+    <string name="fasting_state_benefit_deep_ketosis_3">L\'inflammation diminue significativement</string>
+    <string name="fasting_state_benefit_deep_ketosis_4">Les niveaux d\'insuline restent très bas, améliorant la sensibilité à l\'insuline</string>
+    <string name="fasting_state_benefit_deep_ketosis_5">L\'hormone de croissance humaine (HGH) augmente fortement, soutenant la préservation musculaire</string>
+    
+    <!-- Immune reset benefits -->
+    <string name="fasting_state_benefit_immune_reset_1">La production de cellules souches augmente (la régénération du système immunitaire commence)</string>
+    <string name="fasting_state_benefit_immune_reset_2">La sensibilité à l\'insuline s\'améliore considérablement</string>
+    <string name="fasting_state_benefit_immune_reset_3">La muqueuse intestinale commence à se régénérer</string>
+    <string name="fasting_state_benefit_immune_reset_4">Clarté mentale et concentration améliorées grâce aux niveaux élevés de cétones</string>
+    <string name="fasting_state_benefit_immune_reset_5">Effets anti-inflammatoires significatifs dans tout le corps</string>
+    
+    <!-- Extended fast benefits -->
+    <string name="fasting_state_benefit_extended_fast_1">La régénération des cellules souches augmente davantage</string>
+    <string name="fasting_state_benefit_extended_fast_2">Le système immunitaire subit un rajeunissement significatif</string>
+    <string name="fasting_state_benefit_extended_fast_3">Les voies de croissance comme l\'IGF-1 restent supprimées, potentiellement allongeant la longévité</string>
+    <string name="fasting_state_benefit_extended_fast_4">Bénéfices maximaux d\'autophagie dans tout le corps</string>
+    <string name="fasting_state_benefit_extended_fast_5">Réinitialisation métabolique profonde et réduction de l\'inflammation</string>
+    
+    <!-- Fasting state warnings -->
+    <!-- Not fasting warnings -->
+    <string name="fasting_state_warning_not_fasting_1">Des périodes prolongées sans jeûne peuvent conduire à des niveaux d\'insuline constamment élevés</string>
+    <string name="fasting_state_warning_not_fasting_2">Une alimentation continue sans intervalles de jeûne peut réduire la flexibilité métabolique</string>
+    <string name="fasting_state_warning_not_fasting_3">Une digestion constante sans pauses peut stresser le système digestif</string>
+    
+    <!-- Early fasting warnings -->
+    <string name="fasting_state_warning_early_fast_1">Vous pouvez ressentir des fringales pendant que votre corps s\'adapte</string>
+    <string name="fasting_state_warning_early_fast_2">Les fluctuations de la glycémie peuvent causer une légère irritabilité ou des difficultés de concentration chez certaines personnes</string>
+    <string name="fasting_state_warning_early_fast_3">Les personnes souffrant de conditions médicales affectant la glycémie devraient consulter des professionnels de santé</string>
+    
+    <!-- Glycogen depletion warnings -->
+    <string name="fasting_state_warning_glycogen_depletion_1">L\'adaptation initiale au métabolisme des graisses peut causer une fatigue temporaire</string>
+    <string name="fasting_state_warning_glycogen_depletion_2">Les personnes souffrant de certaines conditions médicales devraient consulter des professionnels de santé</string>
+    <string name="fasting_state_warning_glycogen_depletion_3">Une hydratation adéquate devient de plus en plus importante pendant cette phase</string>
+    
+    <!-- Metabolic shift warnings -->
+    <string name="fasting_state_warning_metabolic_shift_1">Certaines personnes peuvent ressentir des symptômes de \'grippe cétonique\' pendant que le corps s\'adapte</string>
+    <string name="fasting_state_warning_metabolic_shift_2">Les personnes souffrant de conditions médicales devraient consulter des professionnels de santé</string>
+    <string name="fasting_state_warning_metabolic_shift_3">L\'équilibre électrolytique devient de plus en plus important</string>
+    
+    <!-- Deep ketosis warnings -->
+    <string name="fasting_state_warning_deep_ketosis_1">Le jeûne prolongé doit être abordé avec des connaissances appropriées</string>
+    <string name="fasting_state_warning_deep_ketosis_2">Non recommandé pour les personnes en sous-poids ou souffrant de troubles alimentaires</string>
+    <string name="fasting_state_warning_deep_ketosis_3">Peut nécessiter une supplémentation en électrolytes pour prévenir les déséquilibres</string>
+    <string name="fasting_state_warning_deep_ketosis_4">Consultez un professionnel de santé avant de tenter des jeûnes de plus de 24 heures</string>
+    
+    <!-- Immune reset warnings -->
+    <string name="fasting_state_warning_immune_reset_1">Le jeûne prolongé à cette durée nécessite une préparation soigneuse</string>
+    <string name="fasting_state_warning_immune_reset_2">La supplémentation en électrolytes devient essentielle</string>
+    <string name="fasting_state_warning_immune_reset_3">Rompre correctement le jeûne est crucial pour éviter des troubles digestifs</string>
+    <string name="fasting_state_warning_immune_reset_4">Non recommandé pour les personnes souffrant de certaines conditions médicales</string>
+    <string name="fasting_state_warning_immune_reset_5">Devrait être fait sous supervision pour les personnes nouvelles au jeûne prolongé</string>
+    
+    <!-- Extended fast warnings -->
+    <string name="fasting_state_warning_extended_fast_1">Le risque de dégradation musculaire augmente légèrement, bien que les graisses restent le carburant principal</string>
+    <string name="fasting_state_warning_extended_fast_2">Le jeûne prolongé ne devrait être fait qu\'avec une supervision médicale appropriée</string>
+    <string name="fasting_state_warning_extended_fast_3">Non recommandé pour les personnes en sous-poids ou souffrant de troubles alimentaires</string>
+    <string name="fasting_state_warning_extended_fast_4">Nécessite un protocole de réalimentation soigneux lors de la rupture du jeûne</string>
+    <string name="fasting_state_warning_extended_fast_5">Potentiel de déséquilibres électrolytiques s\'ils ne sont pas correctement gérés</string>
+    <string name="fasting_state_warning_extended_fast_6">Consultez un professionnel de santé avant de tenter des jeûnes de plus de 72 heures</string>
+    
+    <!-- Plurals for fasting sessions -->
+    <plurals name="fasting_sessions_count">
+        <item quantity="one">%d session</item>
+        <item quantity="other">%d sessions</item>
+    </plurals>
+    
+    <!-- UI Elements -->
+    <string name="fasting_log_title">Journal de Jeûne</string>
+</resources> 

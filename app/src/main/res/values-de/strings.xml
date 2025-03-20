@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App general -->
+    <string name="app_name">FastTrack</string>
+    
+    <!-- Common actions -->
+    <string name="action_yes">Ja</string>
+    <string name="action_no">Nein</string>
+    <string name="action_cancel">Abbrechen</string>
+    <string name="action_close">Schließen</string>
+    <string name="action_save">Speichern</string>
+    <string name="action_edit">Bearbeiten</string>
+    <string name="action_adjust_time">Startzeit anpassen</string>
+    <string name="action_delete">Löschen</string>
+    <string name="action_clear">Leeren</string>
+    
+    <!-- Dialog titles -->
+    <string name="dialog_title_stop_timer">Timer stoppen</string>
+    <string name="dialog_message_stop_timer_confirmation">Möchten Sie wirklich den Fasten-Timer stoppen?</string>
+    <string name="dialog_title_delete_all_fasts">Alle Fastenprotokolle löschen</string>
+    <string name="dialog_message_delete_all_fasts">Möchten Sie wirklich alle Ihre Fastenprotokolle löschen? Diese Aktion kann nicht rückgängig gemacht werden.</string>
+    <string name="dialog_title_delete_fast">Fastenprotokoll löschen</string>
+    <string name="dialog_message_delete_fast">Möchten Sie wirklich dieses Fastenprotokoll löschen? Diese Aktion kann nicht rückgängig gemacht werden.</string>
+    <string name="dialog_title_edit_fast">Fasten bearbeiten</string>
+    <string name="dialog_message_edit_fast_confirmation">Möchten Sie dieses Fasten wirklich bearbeiten? Diese Aktion kann nicht rückgängig gemacht werden.</string>
+    <string name="dialog_title_sort_by">Sortieren nach</string>
+    <string name="dialog_title_filter_by">Nach Fastenzustand filtern</string>
+    <string name="dialog_title_confirm_edit">Bearbeitung bestätigen</string>
+    
+    <!-- Toast messages -->
+    <string name="toast_timer_not_running">Zeit kann nicht angepasst werden: Timer läuft nicht</string>
+    <string name="toast_invalid_time_adjustment">Startzeit konnte nicht angepasst werden. Bitte versuchen Sie eine andere Zeit.</string>
+    <string name="toast_time_adjusted">Startzeit erfolgreich angepasst</string>
+    <string name="toast_adjustment_error">Bei der Zeitanpassung ist ein Fehler aufgetreten</string>
+    <string name="toast_fast_saved">Fastensitzung im Protokoll gespeichert</string>
+    <string name="toast_fast_save_error">Fehler beim Speichern der Fastensitzung</string>
+    <string name="toast_invalid_adjustment">Zeit kann nicht angepasst werden: Ungültiger Anpassungswert</string>
+    
+    <!-- Fasting states names -->
+    <string name="fasting_state_not_fasting_name">Ernährter Zustand</string>
+    <string name="fasting_state_early_fast_name">Frühes Fasten</string>
+    <string name="fasting_state_glycogen_depletion_name">Glykogenabbau</string>
+    <string name="fasting_state_metabolic_shift_name">Stoffwechselumstellung</string>
+    <string name="fasting_state_deep_ketosis_name">Tiefe Ketose</string>
+    <string name="fasting_state_immune_reset_name">Immunsystem-Reset</string>
+    <string name="fasting_state_extended_fast_name">Verlängertes Fasten</string>
+    
+    <!-- Fasting states descriptions -->
+    <string name="fasting_state_not_fasting_description">Verdauung &amp; Absorption</string>
+    <string name="fasting_state_early_fast_description">Fettverbrennung beginnt</string>
+    <string name="fasting_state_glycogen_depletion_description">Fettstoffwechsel erhöht sich</string>
+    <string name="fasting_state_metabolic_shift_description">Ketose beginnt</string>
+    <string name="fasting_state_deep_ketosis_description">Autophagie auf Höchstniveau</string>
+    <string name="fasting_state_immune_reset_description">Stammzellenproduktion</string>
+    <string name="fasting_state_extended_fast_description">Zelluläre Verjüngung</string>
+    
+    <!-- Date Format Names -->
+    <string name="date_format_mdy_slash">MM/TT/JJJJ (US)</string>
+    <string name="date_format_dmy_slash">TT/MM/JJJJ (UK/EU)</string>
+    <string name="date_format_ymd_dash">JJJJ-MM-TT (ISO)</string>
+    <string name="date_format_mdy_text">Monat T, JJJJ</string>
+    
+    <!-- Time Format Names -->
+    <string name="time_format_24h">24-Stunden (13:30)</string>
+    <string name="time_format_12h">12-Stunden (1:30 PM)</string>
+    
+    <!-- Theme Names -->
+    <string name="theme_system">Systemstandard</string>
+    <string name="theme_light">Hell</string>
+    <string name="theme_dark">Dunkel</string>
+    
+    <!-- Update Frequency -->
+    <string name="update_frequency_very_frequent">Sehr häufig (höhere Batterienutzung)</string>
+    <string name="update_frequency_balanced">Ausgewogen (Empfohlen)</string>
+    <string name="update_frequency_battery_saving">Batteriesparmodus</string>
+    <string name="update_frequency_minimal">Minimal (maximale Batterieeinsparung)</string>
+    
+    <!-- Settings screen -->
+    <string name="settings_title">Einstellungen</string>
+    <string name="settings_category_theme">Design</string>
+    <string name="settings_category_date_format">Datumsformat</string>
+    <string name="settings_category_time_format">Zeitformat</string>
+    <string name="settings_category_notifications">Benachrichtigungen</string>
+    <string name="settings_category_language">Sprache</string>
+    <string name="settings_category_battery">Batterieoptimierung</string>
+    <string name="settings_category_widget_updates">Widget-Aktualisierungsfrequenz</string>
+    <string name="settings_category_about">Über</string>
+    <string name="settings_date_format_example">Beispiel: %s</string>
+    <string name="settings_time_format_example">Beispiel: %s</string>
+    <string name="settings_notifications_fasting_state">Benachrichtigungen zum Fastenzustand</string>
+    <string name="settings_notifications_fasting_state_description">Erhalten Sie Benachrichtigungen, wenn Sie einen neuen Fastenzustand erreichen</string>
+    <string name="settings_battery_opt_description">Steuern Sie, wie oft das Widget aktualisiert wird. Häufigere Aktualisierungen bieten genauere Informationen, verbrauchen aber mehr Batterie.</string>
+    <string name="settings_battery_opt_explanation">Wenn Sie die Batterieoptimierung deaktivieren, kann die App das Widget zuverlässiger aktualisieren und Ihre Fastenzeit genauer verfolgen, was jedoch den Batterieverbrauch leicht erhöhen kann.</string>
+    <string name="settings_battery_opt_disabled">Die Batterieoptimierung ist für diese App deaktiviert.</string>
+    <string name="settings_battery_opt_enabled">Die Batterieoptimierung ist für diese App aktiviert, was dazu führen kann, dass Widget-Aktualisierungen verzögert werden oder ausfallen.</string>
+    <string name="settings_battery_settings">Batterieeinstellungen</string>
+    <string name="settings_disable_battery_opt">Batterieoptimierung deaktivieren</string>
+    <string name="settings_about_app">FastTrack</string>
+    <string name="settings_about_version">Version 1.0</string>
+    <string name="settings_about_description">Eine einfache Fasten-Timer-App zur Verfolgung Ihrer Fastenperioden und Fortschritte.</string>
+    
+    <!-- Language settings -->
+    <string name="language_selection">Sprache</string>
+    <string name="language_system_default">Systemstandard</string>
+    <string name="language_english">Englisch</string>
+    <string name="language_spanish">Spanisch</string>
+    <string name="language_german">Deutsch</string>
+    <string name="language_french">Französisch</string>
+    <string name="language_italian">Italienisch</string>
+    
+    <!-- Language dialog -->
+    <string name="language_dialog_title">Sprache ändern</string>
+    <string name="language_dialog_message">Die App muss neu gestartet werden, um die Sprachänderung anzuwenden. Fortfahren?</string>
+    <string name="language_dialog_continue">Fortfahren</string>
+    <string name="language_dialog_cancel">Abbrechen</string>
+    <string name="language_select_dialog_title">Sprache auswählen</string>
+    <string name="language_changed_message">Sprache geändert zu %s</string>
+    
+    <!-- Help screen -->
+    <string name="help_title">Hilfe &amp; Informationen</string>
+    <string name="help_tab_basics">Grundlagen</string>
+    <string name="help_tab_fasting_types">Fastenarten</string>
+    <string name="help_tab_tips">Tipps</string>
+    <string name="help_intro">FastTrack hilft Ihnen dabei, Ihre Fastenzeit präzise zu verfolgen</string>
+    <string name="help_medical_disclaimer">Konsultieren Sie immer einen Arzt, bevor Sie mit einer Fastenkur beginnen</string>
+    <string name="help_unique_journey">Die Fastenreise jedes Menschen ist einzigartig</string>
+    <string name="help_unique_journey_content">Das Fasten wirkt sich auf jeden Menschen unterschiedlich aus, abhängig von Stoffwechsel, Körperzusammensetzung, Aktivitätslevel und Gesundheitsgeschichte. Was für eine Person funktioniert, muss nicht für eine andere funktionieren. Hören Sie auf Ihren Körper und passen Sie Ihren Fastenansatz entsprechend an. Beginnen Sie langsam und erhöhen Sie allmählich Ihre Fastendauer, während sich Ihr Körper anpasst. Denken Sie daran, dass Konsequenz wichtiger ist als Intensität, besonders wenn Sie mit Ihrer Fastenreise beginnen.</string>
+    
+    <string name="help_using_app">Verwendung der Hauptanwendung</string>
+    <string name="help_app_item_1">Tippen Sie auf START, um Ihren Fastentimer zu starten</string>
+    <string name="help_app_item_2">Die App verfolgt Ihre Fastendauer automatisch</string>
+    <string name="help_app_item_3">Ihr Fastenzustand ändert sich basierend auf der Dauer</string>
+    <string name="help_app_item_4">Tippen Sie auf ZURÜCKSETZEN, um Ihr Fasten zu beenden und es in Ihrem Protokoll zu speichern</string>
+    <string name="help_app_item_5">Sehen Sie Ihre Fastenhistorie im Fastenprotokoll an</string>
+    
+    <!-- Fasting state scientific details -->
+    <string name="fasting_state_details_not_fasting">Während des ernährten Zustands (0-4 Stunden nach dem Essen) nutzt Ihr Körper vorrangig Glukose aus der Nahrung als primäre Energiequelle. Der Insulinspiegel steigt, um die Glukoseaufnahme durch die Zellen zu erleichtern und die Energiespeicherung zu fördern. In dieser Zeit verdaut und absorbiert Ihr Körper aktiv die Nährstoffe aus Ihrer Mahlzeit.</string>
+    <string name="fasting_state_details_early_fast">Nach 4-12 Stunden ohne Nahrung beginnt Ihr Körper, das gespeicherte Leberglykogen (gespeicherte Glukose) zu nutzen. Mit sinkendem Insulinspiegel stellt sich Ihr Körper allmählich auf die Nutzung gespeicherter Fette als Energiequelle durch einen Prozess namens Lipolyse um. Dies ist der Beginn der metabolischen Umstellung von Glukose auf Fettnutzung.</string>
+    <string name="fasting_state_details_glycogen_depletion">Zwischen 12-18 Stunden Fasten werden Ihre Leberglykogenspeicher erschöpft, und Ihr Körper steigert die Fettoxidation. Die Leber beginnt, Fettsäuren in Ketonkörper (Acetoacetat, Beta-Hydroxybutyrat und Aceton) umzuwandeln, die als alternative Energiequelle für das Gehirn und andere Organe dienen. Dies markiert den Beginn der metabolischen Flexibilität. In dieser Phase beginnen erste Autophagieprozesse, bei denen Ihre Zellen beschädigte Komponenten entfernen. Dieser zelluläre Reinigungsprozess wird sich in späteren Fastenphasen intensivieren.</string>
+    <string name="fasting_state_details_metabolic_shift">Zwischen 18-24 Stunden tritt eine bedeutende Stoffwechselumstellung ein, da Ihr Körper verstärkt auf Ketone als Energiequelle angewiesen ist. Die Wachstumshormonausschüttung steigt, um die Muskelmasse zu erhalten und die Fettnutzung zu fördern. Die Autophagie (zelluläre Reinigung) beschleunigt sich und entfernt beschädigte Zellkomponenten und Proteine. Diese Phase stellt einen Übergang zu einer tieferen Ketose dar.</string>
+    <string name="fasting_state_details_deep_ketosis">Zwischen 24-48 Stunden tritt Ihr Körper in eine tiefe Ketose ein, wobei Ketone zur primären Energiequelle werden. Die Autophagie erreicht Höchstwerte und fördert die Zellerneuerung und -reparatur. Der Wachstumshormonspiegel steigt signifikant (bis zum 5-fachen des Ausgangswerts), was zum Erhalt der Muskelmasse beiträgt, während die Fettverbrennung beschleunigt wird. Die Insulinsensitivität verbessert sich in dieser Phase dramatisch.</string>
+    <string name="fasting_state_details_immune_reset">Zwischen 48-72 Stunden beginnt ein Prozess namens \"Autophagie-abhängige Neugestaltung des Immunsystems\". Studien zeigen, dass längeres Fasten die zirkulierenden IGF-1-Spiegel und die PKA-Aktivität reduziert, was die stammzellenbasierte Regeneration von Immunzellen fördert. Dies setzt Ihr Immunsystem nicht vollständig zurück, verbessert aber bestimmte Aspekte der Immunfunktion durch Zellregeneration und reduzierte Entzündungen. Das Darmmikrobiom unterliegt signifikanten Veränderungen, und die Darmschleimhaut beginnt sich zu regenerieren. Die Fettoxidation bleibt hoch, während der Proteinabbau durch metabolische Anpassungen minimiert wird.</string>
+    <string name="fasting_state_details_extended_fast">Jenseits von 72 Stunden löst das Fasten eine signifikante Stammzellenregeneration und Verjüngung des Immunsystems aus. Forschungen von Dr. Valter Longo und anderen zeigen, dass längeres Fasten das Immunsystem durch Stammzellenaktivierung \"zurücksetzen\" kann. Der Körper tritt in einen Zustand tiefgreifender Autophagie und zellulärer Erneuerung ein. Wachstumspfade wie IGF-1 bleiben unterdrückt, was in Forschungsstudien mit Langlebigkeitsvorteilen in Verbindung gebracht wurde.</string>
+    
+    <!-- Fasting state benefits -->
+    <!-- Not fasting benefits -->
+    <string name="fasting_state_benefit_not_fasting_1">Verdauung und Absorption von Nährstoffen</string>
+    <string name="fasting_state_benefit_not_fasting_2">Energiespeicherung für späteren Gebrauch</string>
+    <string name="fasting_state_benefit_not_fasting_3">Proteinsynthese und Gewebereparatur</string>
+    <string name="fasting_state_benefit_not_fasting_4">Auffüllung der Glykogenspeicher</string>
+    
+    <!-- Early fasting benefits -->
+    <string name="fasting_state_benefit_early_fast_1">Blutzucker- und Insulinspiegel beginnen zu sinken</string>
+    <string name="fasting_state_benefit_early_fast_2">Ihr Körper beginnt, von der Verwendung von Glukose zu gespeichertem Glykogen überzugehen</string>
+    <string name="fasting_state_benefit_early_fast_3">Gewisse Fettverbrennung beginnt, wenn Glykogen erschöpft wird</string>
+    <string name="fasting_state_benefit_early_fast_4">Das Verdauungssystem erhält eine Pause, was Entzündungen reduziert</string>
+    
+    <!-- Glycogen depletion benefits -->
+    <string name="fasting_state_benefit_glycogen_depletion_1">Leberglykogenspeicher werden deutlich erschöpft</string>
+    <string name="fasting_state_benefit_glycogen_depletion_2">Fettabbau (Lipolyse) nimmt erheblich zu</string>
+    <string name="fasting_state_benefit_glycogen_depletion_3">Blutketone beginnen leicht anzusteigen</string>
+    <string name="fasting_state_benefit_glycogen_depletion_4">Autophagie (zelluläre Reinigung) beginnt zuzunehmen</string>
+    <string name="fasting_state_benefit_glycogen_depletion_5">Verbesserte geistige Klarheit für viele Menschen</string>
+    
+    <!-- Metabolic shift benefits -->
+    <string name="fasting_state_benefit_metabolic_shift_1">Ketose wird bedeutsamer, während der Fettstoffwechsel hochfährt</string>
+    <string name="fasting_state_benefit_metabolic_shift_2">Blutketonspiegel steigen weiter und bieten eine alternative Energiequelle</string>
+    <string name="fasting_state_benefit_metabolic_shift_3">Wachstumshormonproduktion steigt, um Muskelmasse zu erhalten</string>
+    <string name="fasting_state_benefit_metabolic_shift_4">Autophagie beschleunigt sich weiter</string>
+    <string name="fasting_state_benefit_metabolic_shift_5">Reduzierte Entzündungen im gesamten Körper</string>
+    
+    <!-- Deep ketosis benefits -->
+    <string name="fasting_state_benefit_deep_ketosis_1">Der Körper ist hauptsächlich auf Fett und Ketone als Energiequelle angewiesen</string>
+    <string name="fasting_state_benefit_deep_ketosis_2">Autophagie erreicht ihren Höhepunkt und entfernt beschädigte Zellen und Proteine</string>
+    <string name="fasting_state_benefit_deep_ketosis_3">Entzündungen nehmen deutlich ab</string>
+    <string name="fasting_state_benefit_deep_ketosis_4">Insulinspiegel bleiben sehr niedrig, was die Insulinsensitivität verbessert</string>
+    <string name="fasting_state_benefit_deep_ketosis_5">Menschliches Wachstumshormon (HGH) steigt stark an und unterstützt den Muskelerhalt</string>
+    
+    <!-- Immune reset benefits -->
+    <string name="fasting_state_benefit_immune_reset_1">Stammzellenproduktion steigt (Regeneration des Immunsystems beginnt)</string>
+    <string name="fasting_state_benefit_immune_reset_2">Insulinsensitivität verbessert sich dramatisch</string>
+    <string name="fasting_state_benefit_immune_reset_3">Die Darmschleimhaut beginnt sich zu regenerieren</string>
+    <string name="fasting_state_benefit_immune_reset_4">Geistige Klarheit und Konzentration verbessert durch hohe Ketonspiegel</string>
+    <string name="fasting_state_benefit_immune_reset_5">Signifikante entzündungshemmende Wirkungen im gesamten Körper</string>
+    
+    <!-- Extended fast benefits -->
+    <string name="fasting_state_benefit_extended_fast_1">Stammzellenregeneration nimmt weiter zu</string>
+    <string name="fasting_state_benefit_extended_fast_2">Das Immunsystem erfährt eine signifikante Verjüngung</string>
+    <string name="fasting_state_benefit_extended_fast_3">Wachstumspfade wie IGF-1 bleiben unterdrückt, was potenziell die Langlebigkeit fördert</string>
+    <string name="fasting_state_benefit_extended_fast_4">Maximale Autophagievorteile im gesamten Körper</string>
+    <string name="fasting_state_benefit_extended_fast_5">Tiefgreifende metabolische Neueinstellung und Entzündungsreduktion</string>
+    
+    <!-- Fasting state warnings -->
+    <!-- Not fasting warnings -->
+    <string name="fasting_state_warning_not_fasting_1">Längere Perioden ohne Fasten können zu konstant erhöhten Insulinspiegeln führen</string>
+    <string name="fasting_state_warning_not_fasting_2">Kontinuierliche Nahrungsaufnahme ohne Fastenintervalle kann die metabolische Flexibilität reduzieren</string>
+    <string name="fasting_state_warning_not_fasting_3">Konstante Verdauung ohne Pausen kann das Verdauungssystem belasten</string>
+    
+    <!-- Early fasting warnings -->
+    <string name="fasting_state_warning_early_fast_1">Sie können Hungergefühle verspüren, während sich Ihr Körper anpasst</string>
+    <string name="fasting_state_warning_early_fast_2">Blutzuckerschwankungen können bei manchen Menschen leichte Reizbarkeit oder Konzentrationsschwierigkeiten verursachen</string>
+    <string name="fasting_state_warning_early_fast_3">Personen mit Erkrankungen, die den Blutzucker beeinflussen, sollten Gesundheitsexperten konsultieren</string>
+    
+    <!-- Glycogen depletion warnings -->
+    <string name="fasting_state_warning_glycogen_depletion_1">Die anfängliche Anpassung an den Fettstoffwechsel kann vorübergehende Müdigkeit verursachen</string>
+    <string name="fasting_state_warning_glycogen_depletion_2">Menschen mit bestimmten Erkrankungen sollten Gesundheitsexperten konsultieren</string>
+    <string name="fasting_state_warning_glycogen_depletion_3">Angemessene Hydratation wird in dieser Phase zunehmend wichtiger</string>
+    
+    <!-- Metabolic shift warnings -->
+    <string name="fasting_state_warning_metabolic_shift_1">Manche Menschen können \"Keto-Grippe\"-Symptome erleben, während sich der Körper anpasst</string>
+    <string name="fasting_state_warning_metabolic_shift_2">Personen mit Erkrankungen sollten Gesundheitsexperten konsultieren</string>
+    <string name="fasting_state_warning_metabolic_shift_3">Elektrolytgleichgewicht wird zunehmend wichtiger</string>
+    
+    <!-- Deep ketosis warnings -->
+    <string name="fasting_state_warning_deep_ketosis_1">Längeres Fasten sollte mit angemessenem Wissen angegangen werden</string>
+    <string name="fasting_state_warning_deep_ketosis_2">Nicht empfohlen für Untergewichtige oder Personen mit Essstörungen</string>
+    <string name="fasting_state_warning_deep_ketosis_3">Kann Elektrolytzusätze erfordern, um Ungleichgewichte zu verhindern</string>
+    <string name="fasting_state_warning_deep_ketosis_4">Konsultieren Sie einen Gesundheitsexperten, bevor Sie Fastenperioden von mehr als 24 Stunden versuchen</string>
+    
+    <!-- Immune reset warnings -->
+    <string name="fasting_state_warning_immune_reset_1">Längeres Fasten in dieser Dauer erfordert sorgfältige Vorbereitung</string>
+    <string name="fasting_state_warning_immune_reset_2">Elektrolytzusätze werden unverzichtbar</string>
+    <string name="fasting_state_warning_immune_reset_3">Korrektes Fastenbrechen ist entscheidend, um Verdauungsbeschwerden zu vermeiden</string>
+    <string name="fasting_state_warning_immune_reset_4">Nicht empfohlen für Personen mit bestimmten Erkrankungen</string>
+    <string name="fasting_state_warning_immune_reset_5">Sollte unter Aufsicht durchgeführt werden für Neulinge im längeren Fasten</string>
+    
+    <!-- Extended fast warnings -->
+    <string name="fasting_state_warning_extended_fast_1">Das Risiko des Muskelabbaus steigt leicht, obwohl Fett der Hauptbrennstoff bleibt</string>
+    <string name="fasting_state_warning_extended_fast_2">Längeres Fasten sollte nur unter angemessener medizinischer Aufsicht durchgeführt werden</string>
+    <string name="fasting_state_warning_extended_fast_3">Nicht empfohlen für Untergewichtige oder Personen mit Essstörungen</string>
+    <string name="fasting_state_warning_extended_fast_4">Erfordert ein sorgfältiges Wiedereingliederungsprotokoll beim Fastenbrechen</string>
+    <string name="fasting_state_warning_extended_fast_5">Potenzial für Elektrolytungleichgewichte, wenn nicht angemessen verwaltet</string>
+    <string name="fasting_state_warning_extended_fast_6">Konsultieren Sie einen Gesundheitsexperten, bevor Sie Fastenperioden von mehr als 72 Stunden versuchen</string>
+    
+    <!-- Content descriptions -->
+    <string name="back_button_description">Zurück</string>
+    <string name="language_icon_description">Sprachauswahl</string>
+    <string name="battery_icon_description">Batterieoptimierungseinstellungen</string>
+    
+    <!-- Format strings -->
+    <string name="language_name_format">%s</string>
+    <string name="radio_select_format">%s auswählen</string>
+    
+    <!-- Common dialog actions -->
+    <string name="action_continue">Fortfahren</string>
+    <string name="action_dismiss">Schließen</string>
+    
+    <!-- Error messages -->
+    <string name="error_generic">Ein Fehler ist aufgetreten</string>
+    <string name="error_save_failed">Daten konnten nicht gespeichert werden</string>
+    <string name="error_load_failed">Daten konnten nicht geladen werden</string>
+    <string name="error_fast_overlap">Dieses Fasten überschneidet sich mit einem vorhandenen Fasten (%1$s - %2$s)</string>
+    <string name="error_start_before_end">Startzeit muss vor Endzeit liegen</string>
+    <string name="error_future_end_time">Endzeit kann nicht in der Zukunft liegen</string>
+    <string name="error_invalid_fast">Ungültiger Fasteneintrag</string>
+    <string name="error_fast_not_found">Fasten für Aktualisierung nicht gefunden</string>
+    <string name="error_with_message">Fehler: %s</string>
+    
+    <!-- Widget text -->
+    <string name="widget_update_description">Widget wird aktualisiert</string>
+    <string name="widget_state_label">Aktueller Fastenzustand</string>
+    <string name="widget_start_timer">Start</string>
+    <string name="widget_stop_timer">Stop</string>
+    <string name="widget_hours_label">Stunden</string>
+    
+    <!-- Plurals for fasting sessions -->
+    <plurals name="fasting_sessions_count">
+        <item quantity="one">%d Sitzung</item>
+        <item quantity="other">%d Sitzungen</item>
+    </plurals>
+    
+    <!-- UI Elements -->
+    <string name="fasting_log_title">Fastenprotokoll</string>
+</resources> 

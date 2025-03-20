@@ -21,7 +21,10 @@ class LocaleHelper {
         enum class AppLanguage(val code: String, val displayName: String) {
             SYSTEM("", "System Default"),
             ENGLISH("en", "English"),
-            SPANISH("es", "Español");
+            SPANISH("es", "Español"),
+            GERMAN("de", "Deutsch"),
+            FRENCH("fr", "Français"),
+            ITALIAN("it", "Italiano");
             
             companion object {
                 fun fromCode(code: String): AppLanguage {
