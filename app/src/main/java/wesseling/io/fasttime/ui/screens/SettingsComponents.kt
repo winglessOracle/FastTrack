@@ -336,7 +336,7 @@ fun UpdateFrequencySelector(
 fun AboutSection() {
     Column {
         Text(
-            text = stringResource(R.string.settings_about_app),
+            text = stringResource(R.string.settings_about_app) + " by Wingless Oracle",
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface

@@ -184,16 +184,9 @@ fun SettingsScreen(
             
             HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
             
-            // Battery optimization section
-            SectionTitle(stringResource(R.string.settings_category_battery))
-            BatteryOptimizationSettings(
-                context = context
-            )
-            
-            HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
-            
-            // Widget update frequency section
+            // Widget update frequency section (combined with battery optimization)
             SectionTitle(stringResource(R.string.settings_category_widget_updates))
+            BatteryOptimizationSettings(context = context)
             UpdateFrequencySelector(
                 currentUpdateFrequency = preferences.updateFrequency,
                 onUpdateFrequencySelected = { frequency ->
