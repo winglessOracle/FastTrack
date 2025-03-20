@@ -137,15 +137,21 @@ fun FastingTimerButton(
             confirmButton = {
                 Button(
                     onClick = {
-                        // Use the widget's confirmation activity to handle the reset
                         try {
-                            Log.d("FastingTimerButton", "Launching timer reset confirmation")
-                            val confirmIntent = Intent(context, Class.forName("wesseling.io.fasttime.widget.WidgetConfirmationActivity"))
-                            confirmIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                            context.startActivity(confirmIntent)
+                            Log.d("FastingTimerButton", "Resetting timer directly")
+                            // Reset the timer directly instead of launching another confirmation dialog
+                            val fast = fastingTimer.resetTimer()
+                            
+                            // Show summary dialog only if a valid fast was completed (12+ hours)
+                            if (fast != null) {
+                                completedFast = fast
+                                showSummaryDialog = true
+                            }
+                            
                             showConfirmationDialog = false
                         } catch (e: Exception) {
-                            Log.e("FastingTimerButton", "Error launching confirmation", e)
+                            Log.e("FastingTimerButton", "Error resetting timer", e)
+                            showConfirmationDialog = false
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
@@ -188,6 +194,10 @@ fun FastingTimerButton(
                         context.getString(R.string.toast_fast_saved),
                         Toast.LENGTH_SHORT
                     ).show()
+                    
+                    // Close the dialog
+                    showSummaryDialog = false
+                    completedFast = null
                 } catch (e: Exception) {
                     Log.e("FastingTimerButton", "Error saving fast to repository", e)
                     
