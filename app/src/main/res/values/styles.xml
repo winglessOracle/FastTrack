@@ -3,7 +3,7 @@
     <!-- Green button style -->
     <style name="WidgetButtonGreen">
         <item name="colorStartGradient">#4CAF50</item>
-        <item name="colorEndGradient">#388E3C</item>
+        <item name="colorEndGradient">#2E7D32</item>
         <item name="colorStroke">#1B5E20</item>
         <item name="android:fontFamily">sans-serif-condensed-medium</item>
         <item name="android:textAllCaps">true</item>
@@ -12,7 +12,7 @@
     <!-- Red button style -->
     <style name="WidgetButtonRed">
         <item name="colorStartGradient">#F44336</item>
-        <item name="colorEndGradient">#D32F2F</item>
+        <item name="colorEndGradient">#C62828</item>
         <item name="colorStroke">#B71C1C</item>
         <item name="android:fontFamily">sans-serif-condensed-medium</item>
         <item name="android:textAllCaps">true</item>
