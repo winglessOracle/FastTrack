@@ -5,6 +5,8 @@
         <item name="colorStartGradient">#4CAF50</item>
         <item name="colorEndGradient">#388E3C</item>
         <item name="colorStroke">#1B5E20</item>
+        <item name="android:fontFamily">sans-serif-condensed-medium</item>
+        <item name="android:textAllCaps">true</item>
     </style>
     
     <!-- Red button style -->
@@ -12,5 +14,27 @@
         <item name="colorStartGradient">#F44336</item>
         <item name="colorEndGradient">#D32F2F</item>
         <item name="colorStroke">#B71C1C</item>
+        <item name="android:fontFamily">sans-serif-condensed-medium</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <!-- Widget text styles -->
+    <style name="WidgetTextStyle">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="WidgetButtonTextStyle" parent="WidgetTextStyle">
+        <item name="android:fontFamily">sans-serif-condensed-medium</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="WidgetHoursTextStyle" parent="WidgetTextStyle">
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="WidgetStateTextStyle" parent="WidgetTextStyle">
+        <item name="android:fontFamily">sans-serif-condensed</item>
     </style>
 </resources> 
