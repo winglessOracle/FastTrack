@@ -327,7 +327,15 @@ fun FastingTimerButton(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = buttonColor,
                     contentColor = Color.White
-                )
+                ),
+                border = if (fastingTimer.isRunning) {
+                    androidx.compose.foundation.BorderStroke(
+                        width = 4.dp,
+                        color = Color(0xFF4CAF50) // Same green color as widget border
+                    )
+                } else {
+                    null
+                }
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
