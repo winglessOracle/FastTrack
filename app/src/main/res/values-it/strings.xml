@@ -515,4 +515,113 @@
     <!-- Format strings for sharing -->
     <string name="share_fast_text">Ho completato un digiuno di %1$s ore usando FastTrack! Ho raggiunto lo stato %2$s.</string>
     <string name="share_fast_title">Condividi risultato del digiuno</string>
+    
+    <!-- Fasting legend time ranges -->
+    <string name="fasting_time_range_0_4">0-4 ore</string>
+    <string name="fasting_time_range_4_12">4-12 ore</string>
+    <string name="fasting_time_range_12_18">12-18 ore</string>
+    <string name="fasting_time_range_18_24">18-24 ore</string>
+    <string name="fasting_time_range_24_48">24-48 ore</string>
+    <string name="fasting_time_range_48_72">48-72 ore</string>
+    <string name="fasting_time_range_72_plus">72+ ore</string>
+    
+    <!-- Fasting documentation titles -->
+    <string name="fasting_state_title_not_fasting">Stato Alimentato (0-4 ore)</string>
+    <string name="fasting_state_title_early_fast">Stato di Digiuno Iniziale (4-12 ore)</string>
+    <string name="fasting_state_title_glycogen_depletion">Esaurimento del Glicogeno (12-18 ore)</string>
+    <string name="fasting_state_title_metabolic_shift">Cambiamento Metabolico (18-24 ore)</string>
+    <string name="fasting_state_title_deep_ketosis">Chetosi Profonda e Aumento dell\'Autofagia (24-48 ore)</string>
+    <string name="fasting_state_title_immune_reset">Reset del Sistema Immunitario e Picco di Combustione dei Grassi (48-72 ore)</string>
+    <string name="fasting_state_title_extended_fast">Benefici del Digiuno Prolungato (72+ ore)</string>
+    
+    <!-- Notifications -->
+    <string name="notification_channel_fasting_state">Notifiche di Stato di Digiuno</string>
+    <string name="notification_channel_fasting_state_description">Notifiche per cambiamenti di stato di digiuno</string>
+    
+    <!-- NOT_FASTING state titles -->
+    <string name="notification_title_not_fasting_1">Il Viaggio del Digiuno Inizia! 🚀</string>
+    <string name="notification_title_not_fasting_2">Pronti, Partenza, Digiuno! 🏁</string>
+    <string name="notification_title_not_fasting_3">La Tua Avventura di Digiuno Inizia! 🌟</string>
+    <string name="notification_title_not_fasting_4">Digestione in Corso! 🍽️</string>
+    
+    <!-- NOT_FASTING state short texts -->
+    <string name="notification_short_not_fasting_1">Sei nello Stato Alimentato - digestione in corso!</string>
+    <string name="notification_short_not_fasting_2">Rifornito e pronto per il tuo viaggio di digiuno!</string>
+    <string name="notification_short_not_fasting_3">Modalità digestione attivata alle %s!</string>
+    <string name="notification_short_not_fasting_4">Insulina al lavoro - immagazzinamento nutrienti in corso!</string>
+    
+    <!-- EARLY_FAST state titles -->
+    <string name="notification_title_early_fast_1">Modalità Brucia Grassi: Attivata! 🔥</string>
+    <string name="notification_title_early_fast_2">Livello Aumentato: Digiuno Iniziale Raggiunto! ⬆️</string>
+    <string name="notification_title_early_fast_3">Prima Tappa Raggiunta! 🎯</string>
+    <string name="notification_title_early_fast_4">Livelli di Insulina in Calo! 📉</string>
+    
+    <!-- EARLY_FAST state short texts -->
+    <string name="notification_short_early_fast_1">Il tuo corpo sta ora passando alla combustione dei grassi alle %s!</string>
+    <string name="notification_short_early_fast_2">4+ ore dentro - il tuo metabolismo sta cambiando!</string>
+    <string name="notification_short_early_fast_3">Hai sbloccato la modalità Digiuno Iniziale! Continua così!</string>
+    <string name="notification_short_early_fast_4">Insulina in calo, combustione grassi in aumento!</string>
+    
+    <!-- GLYCOGEN_DEPLETION state titles -->
+    <string name="notification_title_glycogen_depletion_1">Glicogeno Esaurito! 🔄</string>
+    <string name="notification_title_glycogen_depletion_2">Combustione Grassi Ottimizzata! 🔥</string>
+    <string name="notification_title_glycogen_depletion_3">12 Ore Raggiunte! 🏆</string>
+    <string name="notification_title_glycogen_depletion_4">Magia Metabolica in Corso! ✨</string>
+    
+    <!-- GLYCOGEN_DEPLETION state short texts -->
+    <string name="notification_short_glycogen_depletion_1">Riserve di glucosio esaurite, metabolismo dei grassi massimizzato!</string>
+    <string name="notification_short_glycogen_depletion_2">Il tuo corpo ora sta bruciando principalmente grassi come carburante!</string>
+    <string name="notification_short_glycogen_depletion_3">12+ ore di digiuno - insulina minimizzata, combustione grassi ottimizzata!</string>
+    <string name="notification_short_glycogen_depletion_4">Passaggio da glicogeno a grassi completato alle %s!</string>
+    
+    <!-- METABOLIC_SHIFT state titles -->
+    <string name="notification_title_metabolic_shift_1">Chetoni Rilevati! ⚡</string>
+    <string name="notification_title_metabolic_shift_2">Cambiamento Metabolico Raggiunto! 🔄</string>
+    <string name="notification_title_metabolic_shift_3">18 Ore Raggiunte! 🏆</string>
+    <string name="notification_title_metabolic_shift_4">La Chetosi È Iniziata! 🔑</string>
+    
+    <!-- METABOLIC_SHIFT state short texts -->
+    <string name="notification_short_metabolic_shift_1">Il tuo cervello sta ora passando ai chetoni come carburante!</string>
+    <string name="notification_short_metabolic_shift_2">Produzione di chetoni in aumento, pulizia cellulare iniziata!</string>
+    <string name="notification_short_metabolic_shift_3">Sei a digiuno da 18+ ore - la chetosi è iniziata!</string>
+    <string name="notification_short_metabolic_shift_4">Cambiamento metabolico rilevato alle %s, ottimizzazione corporea in corso!</string>
+    
+    <!-- DEEP_KETOSIS state titles -->
+    <string name="notification_title_deep_ketosis_1">Chetosi Profonda Sbloccata! 🔓</string>
+    <string name="notification_title_deep_ketosis_2">Autofagia Attivata! 🧬</string>
+    <string name="notification_title_deep_ketosis_3">24 Ore Superate! 🏆</string>
+    <string name="notification_title_deep_ketosis_4">Pulizia Cellulare Massima! 🧹</string>
+    
+    <!-- DEEP_KETOSIS state short texts -->
+    <string name="notification_short_deep_ketosis_1">Adattamento massimo ai grassi raggiunto dopo 24+ ore!</string>
+    <string name="notification_short_deep_ketosis_2">Modalità di auto-pulizia cellulare attivata - picco di autofagia!</string>
+    <string name="notification_short_deep_ketosis_3">Un giorno intero di digiuno completato - risultato incredibile!</string>
+    <string name="notification_short_deep_ketosis_4">Chetosi profonda raggiunta alle %s - benefici metabolici massimi!</string>
+    
+    <!-- IMMUNE_RESET state titles -->
+    <string name="notification_title_immune_reset_1">Reset del Sistema Immunitario! 🛡️</string>
+    <string name="notification_title_immune_reset_2">Produzione di Cellule Staminali in Aumento! 🌱</string>
+    <string name="notification_title_immune_reset_3">48 Ore Sbloccate! 🏆</string>
+    <string name="notification_title_immune_reset_4">Ormone della Crescita Massimizzato! 📈</string>
+    
+    <!-- IMMUNE_RESET state short texts -->
+    <string name="notification_short_immune_reset_1">Il tuo sistema immunitario si sta rigenerando dopo 48+ ore!</string>
+    <string name="notification_short_immune_reset_2">Ringiovanimento cellulare al massimo con aumentata produzione di cellule staminali!</string>
+    <string name="notification_short_immune_reset_3">Due giorni interi di digiuno - il tuo corpo si sta ricostruendo più forte!</string>
+    <string name="notification_short_immune_reset_4">Reset immunitario iniziato alle %s - significativi benefici per la salute attivati!</string>
+    
+    <!-- EXTENDED_FAST state titles -->
+    <string name="notification_title_extended_fast_1">Maestro del Digiuno Prolungato! 🌟</string>
+    <string name="notification_title_extended_fast_2">Massimo Risultato di Digiuno! 🏆</string>
+    <string name="notification_title_extended_fast_3">72 Ore Conquistate! 👑</string>
+    <string name="notification_title_extended_fast_4">Modalità di Ringiovanimento Massimo! 🔄</string>
+    
+    <!-- EXTENDED_FAST state short texts -->
+    <string name="notification_short_extended_fast_1">72+ ore di digiuno - risultato veramente eccezionale!</string>
+    <string name="notification_short_extended_fast_2">Massimi benefici di ringiovanimento cellulare e autofagia!</string>
+    <string name="notification_short_extended_fast_3">Hai raggiunto lo stato di maestro del digiuno - incredibile!</string>
+    <string name="notification_short_extended_fast_4">Traguardo di digiuno prolungato raggiunto alle %s - profonda guarigione in corso!</string>
+    
+    <!-- Placeholder formats for all states -->
+    <string name="notification_format_long_text">%1$s %2$s</string>
 </resources> 

@@ -574,4 +574,14 @@
     <string name="fasting_state_warning_extended_fast_4">Requiere un protocolo cuidadoso de realimentación al romper el ayuno</string>
     <string name="fasting_state_warning_extended_fast_5">Potencial para desequilibrios de electrolitos si no se manejan adecuadamente</string>
     <string name="fasting_state_warning_extended_fast_6">Consulta a un profesional de la salud antes de intentar ayunos de más de 72 horas</string>
+    <string name="no_fasting_logs_to_export">No hay registros de ayuno para exportar</string>
+    
+    <!-- Fasting legend time ranges -->
+    <string name="fasting_time_range_0_4">0-4 horas</string>
+    <string name="fasting_time_range_4_12">4-12 horas</string>
+    <string name="fasting_time_range_12_18">12-18 horas</string>
+    <string name="fasting_time_range_18_24">18-24 horas</string>
+    <string name="fasting_time_range_24_48">24-48 horas</string>
+    <string name="fasting_time_range_48_72">48-72 horas</string>
+    <string name="fasting_time_range_72_plus">72+ horas</string>
 </resources> 

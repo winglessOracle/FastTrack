@@ -515,4 +515,113 @@
     <!-- Format strings for sharing -->
     <string name="share_fast_text">J\'ai terminé un jeûne de %1$s heures avec FastTrack ! J\'ai atteint l\'état %2$s.</string>
     <string name="share_fast_title">Partager le résultat du jeûne</string>
+    
+    <!-- Fasting legend time ranges -->
+    <string name="fasting_time_range_0_4">0-4 heures</string>
+    <string name="fasting_time_range_4_12">4-12 heures</string>
+    <string name="fasting_time_range_12_18">12-18 heures</string>
+    <string name="fasting_time_range_18_24">18-24 heures</string>
+    <string name="fasting_time_range_24_48">24-48 heures</string>
+    <string name="fasting_time_range_48_72">48-72 heures</string>
+    <string name="fasting_time_range_72_plus">72+ heures</string>
+    
+    <!-- Fasting documentation titles -->
+    <string name="fasting_state_title_not_fasting">État Nourri (0-4 heures)</string>
+    <string name="fasting_state_title_early_fast">État de Jeûne Précoce (4-12 heures)</string>
+    <string name="fasting_state_title_glycogen_depletion">Épuisement du Glycogène (12-18 heures)</string>
+    <string name="fasting_state_title_metabolic_shift">Changement Métabolique (18-24 heures)</string>
+    <string name="fasting_state_title_deep_ketosis">Cétose Profonde &amp; Autophagie Accrue (24-48 heures)</string>
+    <string name="fasting_state_title_immune_reset">Réinitialisation du Système Immunitaire &amp; Combustion Maximale des Graisses (48-72 heures)</string>
+    <string name="fasting_state_title_extended_fast">Bénéfices du Jeûne Prolongé (72+ heures)</string>
+    
+    <!-- Notifications -->
+    <string name="notification_channel_fasting_state">Notifications d\'État de Jeûne</string>
+    <string name="notification_channel_fasting_state_description">Notifications pour les changements d\'état de jeûne</string>
+    
+    <!-- NOT_FASTING state titles -->
+    <string name="notification_title_not_fasting_1">Le Voyage de Jeûne Commence ! 🚀</string>
+    <string name="notification_title_not_fasting_2">À Vos Marques, Prêts, Jeûnez ! 🏁</string>
+    <string name="notification_title_not_fasting_3">Votre Aventure de Jeûne Commence ! 🌟</string>
+    <string name="notification_title_not_fasting_4">Digestion en Cours ! 🍽️</string>
+    
+    <!-- NOT_FASTING state short texts -->
+    <string name="notification_short_not_fasting_1">Vous êtes dans l\'État Nourri - digestion en cours !</string>
+    <string name="notification_short_not_fasting_2">Alimenté et prêt pour votre voyage de jeûne !</string>
+    <string name="notification_short_not_fasting_3">Mode digestion activé à %s !</string>
+    <string name="notification_short_not_fasting_4">Insuline au travail - stockage des nutriments en cours !</string>
+    
+    <!-- EARLY_FAST state titles -->
+    <string name="notification_title_early_fast_1">Mode Brûlage de Graisse : Activé ! 🔥</string>
+    <string name="notification_title_early_fast_2">Niveau Supérieur : Jeûne Précoce Atteint ! ⬆️</string>
+    <string name="notification_title_early_fast_3">Premier Jalon Atteint ! 🎯</string>
+    <string name="notification_title_early_fast_4">Niveaux d\'Insuline en Baisse ! 📉</string>
+    
+    <!-- EARLY_FAST state short texts -->
+    <string name="notification_short_early_fast_1">Votre corps passe maintenant à la combustion des graisses à %s !</string>
+    <string name="notification_short_early_fast_2">Plus de 4 heures - votre métabolisme change !</string>
+    <string name="notification_short_early_fast_3">Vous avez débloqué le mode Jeûne Précoce ! Continuez comme ça !</string>
+    <string name="notification_short_early_fast_4">Insuline en baisse, combustion des graisses en hausse !</string>
+    
+    <!-- GLYCOGEN_DEPLETION state titles -->
+    <string name="notification_title_glycogen_depletion_1">Glycogène Épuisé ! 🔄</string>
+    <string name="notification_title_glycogen_depletion_2">Combustion des Graisses Optimisée ! 🔥</string>
+    <string name="notification_title_glycogen_depletion_3">Jalon de 12 Heures Atteint ! 🏆</string>
+    <string name="notification_title_glycogen_depletion_4">Magie Métabolique en Cours ! ✨</string>
+    
+    <!-- GLYCOGEN_DEPLETION state short texts -->
+    <string name="notification_short_glycogen_depletion_1">Réserves de glucose épuisées, métabolisme des graisses maximisé !</string>
+    <string name="notification_short_glycogen_depletion_2">Votre corps brûle maintenant principalement des graisses comme carburant !</string>
+    <string name="notification_short_glycogen_depletion_3">Plus de 12 heures de jeûne - insuline minimisée, combustion des graisses optimisée !</string>
+    <string name="notification_short_glycogen_depletion_4">Passage du glycogène aux graisses complété à %s !</string>
+    
+    <!-- METABOLIC_SHIFT state titles -->
+    <string name="notification_title_metabolic_shift_1">Cétones Détectées ! ⚡</string>
+    <string name="notification_title_metabolic_shift_2">Changement Métabolique Atteint ! 🔄</string>
+    <string name="notification_title_metabolic_shift_3">Jalon de 18 Heures Atteint ! 🏆</string>
+    <string name="notification_title_metabolic_shift_4">La Cétose a Commencé ! 🔑</string>
+    
+    <!-- METABOLIC_SHIFT state short texts -->
+    <string name="notification_short_metabolic_shift_1">Votre cerveau passe maintenant aux cétones comme carburant !</string>
+    <string name="notification_short_metabolic_shift_2">Production de cétones en hausse, nettoyage cellulaire initié !</string>
+    <string name="notification_short_metabolic_shift_3">Vous jeûnez depuis plus de 18 heures - la cétose a commencé !</string>
+    <string name="notification_short_metabolic_shift_4">Changement métabolique détecté à %s, optimisation corporelle en cours !</string>
+    
+    <!-- DEEP_KETOSIS state titles -->
+    <string name="notification_title_deep_ketosis_1">Cétose Profonde Débloquée ! 🔓</string>
+    <string name="notification_title_deep_ketosis_2">Autophagie Activée ! 🧬</string>
+    <string name="notification_title_deep_ketosis_3">Jalon de 24 Heures Franchi ! 🏆</string>
+    <string name="notification_title_deep_ketosis_4">Nettoyage Cellulaire Maximal ! 🧹</string>
+    
+    <!-- DEEP_KETOSIS state short texts -->
+    <string name="notification_short_deep_ketosis_1">Adaptation maximale aux graisses atteinte après plus de 24 heures !</string>
+    <string name="notification_short_deep_ketosis_2">Mode d\'auto-nettoyage cellulaire activé - pic d\'autophagie !</string>
+    <string name="notification_short_deep_ketosis_3">Une journée entière de jeûne complétée - réalisation incroyable !</string>
+    <string name="notification_short_deep_ketosis_4">Cétose profonde atteinte à %s - bénéfices métaboliques maximaux !</string>
+    
+    <!-- IMMUNE_RESET state titles -->
+    <string name="notification_title_immune_reset_1">Réinitialisation du Système Immunitaire ! 🛡️</string>
+    <string name="notification_title_immune_reset_2">Production de Cellules Souches en Hausse ! 🌱</string>
+    <string name="notification_title_immune_reset_3">Accomplissement de 48 Heures Débloqué ! 🏆</string>
+    <string name="notification_title_immune_reset_4">Hormone de Croissance Maximisée ! 📈</string>
+    
+    <!-- IMMUNE_RESET state short texts -->
+    <string name="notification_short_immune_reset_1">Votre système immunitaire se régénère après plus de 48 heures !</string>
+    <string name="notification_short_immune_reset_2">Rajeunissement cellulaire à son apogée avec une production accrue de cellules souches !</string>
+    <string name="notification_short_immune_reset_3">Deux jours complets de jeûne - votre corps se reconstruit plus fort !</string>
+    <string name="notification_short_immune_reset_4">Réinitialisation immunitaire initiée à %s - bénéfices significatifs pour la santé activés !</string>
+    
+    <!-- EXTENDED_FAST state titles -->
+    <string name="notification_title_extended_fast_1">Maître du Jeûne Prolongé ! 🌟</string>
+    <string name="notification_title_extended_fast_2">Accomplissement Ultime de Jeûne ! 🏆</string>
+    <string name="notification_title_extended_fast_3">Jalon de 72 Heures Conquis ! 👑</string>
+    <string name="notification_title_extended_fast_4">Mode Rajeunissement Maximal ! 🔄</string>
+    
+    <!-- EXTENDED_FAST state short texts -->
+    <string name="notification_short_extended_fast_1">Plus de 72 heures de jeûne - réalisation vraiment exceptionnelle !</string>
+    <string name="notification_short_extended_fast_2">Bénéfices maximaux de rajeunissement cellulaire et d\'autophagie !</string>
+    <string name="notification_short_extended_fast_3">Vous avez atteint le statut de maître en jeûne - incroyable !</string>
+    <string name="notification_short_extended_fast_4">Jalon de jeûne prolongé atteint à %s - guérison profonde en cours !</string>
+    
+    <!-- Placeholder formats for all states -->
+    <string name="notification_format_long_text">%1$s %2$s</string>
 </resources> 

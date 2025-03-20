@@ -551,4 +551,113 @@
     <!-- Format strings for sharing -->
     <string name="share_fast_text">Ich habe ein %1$s-stündiges Fasten mit FastTrack abgeschlossen! Habe den Zustand %2$s erreicht.</string>
     <string name="share_fast_title">Fastenergebnis teilen</string>
+    
+    <!-- Fasting legend time ranges -->
+    <string name="fasting_time_range_0_4">0-4 Stunden</string>
+    <string name="fasting_time_range_4_12">4-12 Stunden</string>
+    <string name="fasting_time_range_12_18">12-18 Stunden</string>
+    <string name="fasting_time_range_18_24">18-24 Stunden</string>
+    <string name="fasting_time_range_24_48">24-48 Stunden</string>
+    <string name="fasting_time_range_48_72">48-72 Stunden</string>
+    <string name="fasting_time_range_72_plus">72+ Stunden</string>
+    
+    <!-- Fasting documentation titles -->
+    <string name="fasting_state_title_not_fasting">Ernährter Zustand (0-4 Stunden)</string>
+    <string name="fasting_state_title_early_fast">Frühes Fasten (4-12 Stunden)</string>
+    <string name="fasting_state_title_glycogen_depletion">Glykogenabbau (12-18 Stunden)</string>
+    <string name="fasting_state_title_metabolic_shift">Stoffwechselumstellung (18-24 Stunden)</string>
+    <string name="fasting_state_title_deep_ketosis">Tiefe Ketose &amp; gesteigerte Autophagie (24-48 Stunden)</string>
+    <string name="fasting_state_title_immune_reset">Immunsystemreset &amp; maximale Fettverbrennung (48-72 Stunden)</string>
+    <string name="fasting_state_title_extended_fast">Vorteile des verlängerten Fastens (72+ Stunden)</string>
+    
+    <!-- Notifications -->
+    <string name="notification_channel_fasting_state">Fastenzustand-Benachrichtigungen</string>
+    <string name="notification_channel_fasting_state_description">Benachrichtigungen für Änderungen des Fastenzustands</string>
+    
+    <!-- NOT_FASTING state titles -->
+    <string name="notification_title_not_fasting_1">Fastenreise beginnt! 🚀</string>
+    <string name="notification_title_not_fasting_2">Auf die Plätze, fertig, Fasten! 🏁</string>
+    <string name="notification_title_not_fasting_3">Ihr Fastenabenteuer beginnt! 🌟</string>
+    <string name="notification_title_not_fasting_4">Verdauung im Gange! 🍽️</string>
+    
+    <!-- NOT_FASTING state short texts -->
+    <string name="notification_short_not_fasting_1">Sie befinden sich im ernährten Zustand - Verdauung im Gange!</string>
+    <string name="notification_short_not_fasting_2">Aufgetankt und bereit für Ihre Fastenreise!</string>
+    <string name="notification_short_not_fasting_3">Verdauungsmodus aktiviert um %s!</string>
+    <string name="notification_short_not_fasting_4">Insulin arbeitet - Nährstoffe werden jetzt gespeichert!</string>
+    
+    <!-- EARLY_FAST state titles -->
+    <string name="notification_title_early_fast_1">Fettverbrennungsmodus: Aktiviert! 🔥</string>
+    <string name="notification_title_early_fast_2">Level Up: Frühes Fasten erreicht! ⬆️</string>
+    <string name="notification_title_early_fast_3">Erster Meilenstein erreicht! 🎯</string>
+    <string name="notification_title_early_fast_4">Insulinspiegel sinkt! 📉</string>
+    
+    <!-- EARLY_FAST state short texts -->
+    <string name="notification_short_early_fast_1">Ihr Körper stellt jetzt auf Fettverbrennung um um %s!</string>
+    <string name="notification_short_early_fast_2">Über 4 Stunden geschafft - Ihr Stoffwechsel verändert sich!</string>
+    <string name="notification_short_early_fast_3">Sie haben den frühen Fastenmodus freigeschaltet! Weiter so!</string>
+    <string name="notification_short_early_fast_4">Insulin sinkt, Fettverbrennung steigt!</string>
+    
+    <!-- GLYCOGEN_DEPLETION state titles -->
+    <string name="notification_title_glycogen_depletion_1">Glykogen erschöpft! 🔄</string>
+    <string name="notification_title_glycogen_depletion_2">Fettverbrennung optimiert! 🔥</string>
+    <string name="notification_title_glycogen_depletion_3">12-Stunden-Meilenstein erreicht! 🏆</string>
+    <string name="notification_title_glycogen_depletion_4">Stoffwechselmagie geschieht! ✨</string>
+    
+    <!-- GLYCOGEN_DEPLETION state short texts -->
+    <string name="notification_short_glycogen_depletion_1">Glukosereserven erschöpft, Fettstoffwechsel maximiert!</string>
+    <string name="notification_short_glycogen_depletion_2">Ihr Körper verbrennt jetzt hauptsächlich Fett als Brennstoff!</string>
+    <string name="notification_short_glycogen_depletion_3">Über 12 Stunden Fasten - Insulin minimiert, Fettverbrennung optimiert!</string>
+    <string name="notification_short_glycogen_depletion_4">Wechsel von Glykogen zu Fett abgeschlossen um %s!</string>
+    
+    <!-- METABOLIC_SHIFT state titles -->
+    <string name="notification_title_metabolic_shift_1">Ketone erkannt! ⚡</string>
+    <string name="notification_title_metabolic_shift_2">Stoffwechselumstellung erreicht! 🔄</string>
+    <string name="notification_title_metabolic_shift_3">18-Stunden-Meilenstein erreicht! 🏆</string>
+    <string name="notification_title_metabolic_shift_4">Ketose hat begonnen! 🔑</string>
+    
+    <!-- METABOLIC_SHIFT state short texts -->
+    <string name="notification_short_metabolic_shift_1">Ihr Gehirn stellt jetzt auf Ketone als Brennstoff um!</string>
+    <string name="notification_short_metabolic_shift_2">Ketonproduktion steigt, zelluläre Reinigung eingeleitet!</string>
+    <string name="notification_short_metabolic_shift_3">Sie fasten seit über 18 Stunden - die Ketose hat begonnen!</string>
+    <string name="notification_short_metabolic_shift_4">Stoffwechselumstellung erkannt um %s, Körperoptimierung im Gange!</string>
+    
+    <!-- DEEP_KETOSIS state titles -->
+    <string name="notification_title_deep_ketosis_1">Tiefe Ketose freigeschaltet! 🔓</string>
+    <string name="notification_title_deep_ketosis_2">Autophagie aktiviert! 🧬</string>
+    <string name="notification_title_deep_ketosis_3">24-Stunden-Meilenstein geknackt! 🏆</string>
+    <string name="notification_title_deep_ketosis_4">Maximale zelluläre Reinigung! 🧹</string>
+    
+    <!-- DEEP_KETOSIS state short texts -->
+    <string name="notification_short_deep_ketosis_1">Maximale Fettanpassung nach über 24 Stunden erreicht!</string>
+    <string name="notification_short_deep_ketosis_2">Zellulärer Selbstreinigungsmodus aktiviert - Autophagie auf Höchstniveau!</string>
+    <string name="notification_short_deep_ketosis_3">Ein voller Tag Fasten abgeschlossen - unglaubliche Leistung!</string>
+    <string name="notification_short_deep_ketosis_4">Tiefe Ketose erreicht um %s - maximale Stoffwechselvorteile!</string>
+    
+    <!-- IMMUNE_RESET state titles -->
+    <string name="notification_title_immune_reset_1">Immunsystem-Reset! 🛡️</string>
+    <string name="notification_title_immune_reset_2">Stammzellenproduktion erhöht! 🌱</string>
+    <string name="notification_title_immune_reset_3">48-Stunden-Leistung freigeschaltet! 🏆</string>
+    <string name="notification_title_immune_reset_4">Wachstumshormon maximiert! 📈</string>
+    
+    <!-- IMMUNE_RESET state short texts -->
+    <string name="notification_short_immune_reset_1">Ihr Immunsystem regeneriert sich nach über 48 Stunden!</string>
+    <string name="notification_short_immune_reset_2">Zelluläre Verjüngung auf Höchstniveau mit gesteigerter Stammzellenproduktion!</string>
+    <string name="notification_short_immune_reset_3">Zwei volle Tage Fasten - Ihr Körper baut sich stärker wieder auf!</string>
+    <string name="notification_short_immune_reset_4">Immunreset eingeleitet um %s - signifikante Gesundheitsvorteile aktiviert!</string>
+    
+    <!-- EXTENDED_FAST state titles -->
+    <string name="notification_title_extended_fast_1">Meister des verlängerten Fastens! 🌟</string>
+    <string name="notification_title_extended_fast_2">Ultimative Fastenleistung! 🏆</string>
+    <string name="notification_title_extended_fast_3">72-Stunden-Meilenstein erobert! 👑</string>
+    <string name="notification_title_extended_fast_4">Maximaler Verjüngungsmodus! 🔄</string>
+    
+    <!-- EXTENDED_FAST state short texts -->
+    <string name="notification_short_extended_fast_1">Über 72 Stunden Fasten - wirklich außergewöhnliche Leistung!</string>
+    <string name="notification_short_extended_fast_2">Maximale zelluläre Verjüngungs- und Autophagievorteile!</string>
+    <string name="notification_short_extended_fast_3">Sie haben den Meisterstatus im Fasten erreicht - unglaublich!</string>
+    <string name="notification_short_extended_fast_4">Meilenstein des verlängerten Fastens erreicht um %s - tiefgreifende Heilung im Gange!</string>
+    
+    <!-- Placeholder formats for all states -->
+    <string name="notification_format_long_text">%1$s %2$s</string>
 </resources> 
