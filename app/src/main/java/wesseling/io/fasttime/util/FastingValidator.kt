@@ -1,7 +1,7 @@
 package wesseling.io.fasttime.util
 
-import wesseling.io.fasttime.model.CompletedFast
 import android.util.Log
+import wesseling.io.fasttime.model.CompletedFast
 
 /**
  * Utility class for validating fasting entries

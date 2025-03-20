@@ -105,8 +105,7 @@ enum class SortOption(val displayName: String) {
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun FastingLogScreen(
-    onBackPressed: () -> Unit,
-    modifier: Modifier = Modifier
+    onBackPressed: () -> Unit
 ) {
     // Context and state management
     val context = LocalContext.current

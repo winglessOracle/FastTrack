@@ -5,7 +5,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="error">#FFB00020</color>
     
-    <!-- Theme colors -->
+    <!-- Theme colors for XML-based views -->
     <color name="primary_dark">#FF1E3A8A</color>
     <color name="primary">#FF2563EB</color>
     <color name="primary_light">#FF60A5FA</color>
@@ -18,18 +18,18 @@
     <color name="background_dark">#FF0F172A</color>
     <color name="surface">#FFFFFFFF</color>
 
-    <!-- Widget text colors -->
+    <!-- Widget text colors - used by AppWidgets -->
     <color name="widget_text_light">#FFFFFF</color>
     <color name="widget_text_dark">#212121</color>
 
-    <!-- Light theme colors -->
+    <!-- Light theme colors for XML-based views -->
     <color name="surface_light">#FFFFFF</color>
     <color name="on_surface_light">#1F2937</color>
     <color name="surface_variant_light">#F3F4F6</color>
     <color name="on_surface_variant_light">#4B5563</color>
     <color name="on_error_light">#FFFFFF</color>
     
-    <!-- Dark theme colors -->
+    <!-- Dark theme colors for XML-based views -->
     <color name="surface_dark">#1F2937</color>
     <color name="on_surface_dark">#F9FAFB</color>
     <color name="surface_variant_dark">#374151</color>
