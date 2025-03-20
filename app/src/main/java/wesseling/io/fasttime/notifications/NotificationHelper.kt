@@ -2,24 +2,16 @@ package wesseling.io.fasttime.notifications
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
-import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationCompat.WearableExtender
-import wesseling.io.fasttime.MainActivity
 import wesseling.io.fasttime.R
 import wesseling.io.fasttime.model.FastingState
 import wesseling.io.fasttime.settings.PreferencesManager
 import wesseling.io.fasttime.util.DateTimeFormatter
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import kotlin.random.Random
 
 /**
@@ -37,41 +29,25 @@ class NotificationHelper(private val context: Context) {
      * Create the notification channel for Android O and above
      */
     private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                CHANNEL_ID,
-                "Fasting State Notifications",
-                NotificationManager.IMPORTANCE_HIGH
-            ).apply {
-                description = "Notifications for fasting state changes"
-                enableLights(true)
-                enableVibration(true)
-                setShowBadge(true)
-            }
-            
-            notificationManager.createNotificationChannel(channel)
+        // Since minSdk is 27 (Android 8.1), this code will always run
+        val channel = NotificationChannel(
+            CHANNEL_ID,
+            "Fasting State Notifications",
+            NotificationManager.IMPORTANCE_HIGH
+        ).apply {
+            description = "Notifications for fasting state changes"
+            enableLights(true)
+            enableVibration(true)
+            setShowBadge(true)
         }
+        
+        notificationManager.createNotificationChannel(channel)
     }
     
     /**
      * Send a notification for a fasting state change
      */
     fun sendFastingStateNotification(fastingState: FastingState) {
-        // Create an intent to open the app when the notification is tapped
-        val intent = Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-            // Add SHOW_FASTING_DETAILS to the main intent so tapping the notification
-            // directly takes the user to the fasting log screen
-            putExtra(MainActivity.SHOW_FASTING_DETAILS, true)
-        }
-        
-        val pendingIntent = PendingIntent.getActivity(
-            context,
-            0,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-        
         // Generate a unique notification ID based on the fasting state
         // This ensures each state gets its own notification instead of replacing previous ones
         val notificationId = NOTIFICATION_ID_BASE + fastingState.ordinal
@@ -85,19 +61,6 @@ class NotificationHelper(private val context: Context) {
         // Get fun and motivating content based on the fasting state
         val notificationContent = getMotivatingContent(fastingState, formattedTime)
         
-        // Create a wearable extender for the notification
-        // Keep the "View Progress" action only for wearables where it's more useful
-        val wearableExtender = WearableExtender()
-            .setHintContentIntentLaunchesActivity(true)
-            .setContentAction(0) // Set the first action as the main action
-            .addAction(
-                NotificationCompat.Action.Builder(
-                    R.drawable.ic_play_arrow,
-                    "View Progress",
-                    pendingIntent
-                ).build()
-            )
-        
         // Build the notification
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_play_arrow)
@@ -106,16 +69,12 @@ class NotificationHelper(private val context: Context) {
             .setStyle(NotificationCompat.BigTextStyle()
                 .bigText(notificationContent.longText))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            // Remove content intent so tapping just expands the notification
-            // .setContentIntent(pendingIntent)
             .setAutoCancel(false)
             .setOngoing(true)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setCategory(NotificationCompat.CATEGORY_STATUS)
             .setWhen(currentTime) // Set the timestamp for the notification
             .setShowWhen(true) // Show the timestamp
-            // Add wearable features
-            .extend(wearableExtender)
             .build()
         
         // Show the notification
@@ -386,13 +345,8 @@ class NotificationHelper(private val context: Context) {
             context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         }
         
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
-        } else {
-            // For older versions, use VibrationEffect.createOneShot with compatibility method
-            @Suppress("DEPRECATION")
-            vibrator.vibrate(500)
-        }
+        // Since minSdk is 27 (Android 8.1), we can always use VibrationEffect (API 26)
+        vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
     }
     
     /**

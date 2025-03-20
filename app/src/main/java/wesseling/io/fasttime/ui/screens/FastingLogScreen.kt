@@ -238,7 +238,7 @@ fun FastingLogScreen(
                 FileWriter(file).use { it.write(fullContent) }
                 
                 // Share the file using FileProvider
-                val uri = androidx.core.content.FileProvider.getUriForFile(
+                val uri = FileProvider.getUriForFile(
                     context,
                     "${context.packageName}.provider",
                     file
