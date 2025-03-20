@@ -10,6 +10,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import wesseling.io.fasttime.timer.FastingTimer
 import wesseling.io.fasttime.widget.WidgetBackgroundHelper
+import wesseling.io.fasttime.util.BitmapPool
 
 /**
  * Custom Application class for FastTrack app
@@ -108,6 +109,9 @@ class FastTrackApplication : Application(), LifecycleEventObserver {
         try {
             // Clear widget background memory cache
             WidgetBackgroundHelper.clearMemoryCache()
+            
+            // Clear bitmap pool
+            BitmapPool.getInstance().clear()
             
             // Run garbage collection to reclaim memory
             System.gc()
