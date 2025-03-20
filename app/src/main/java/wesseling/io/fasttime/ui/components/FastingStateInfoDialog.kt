@@ -7,11 +7,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import wesseling.io.fasttime.R
 import wesseling.io.fasttime.model.FastingDocumentation
 import wesseling.io.fasttime.model.FastingState
 
@@ -49,7 +52,7 @@ fun FastingStateInfoDialog(
             ) {
                 // Title
                 Text(
-                    text = stateInfo.title,
+                    text = stringResource(stateInfo.titleResourceId),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
@@ -60,7 +63,7 @@ fun FastingStateInfoDialog(
                 
                 // Scientific Details
                 Text(
-                    text = "Scientific Details",
+                    text = stringResource(R.string.fasting_log_details_title),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -78,7 +81,7 @@ fun FastingStateInfoDialog(
                 
                 // Benefits
                 Text(
-                    text = "Benefits",
+                    text = stringResource(R.string.fasting_log_achievements),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -118,7 +121,7 @@ fun FastingStateInfoDialog(
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
-                            text = "Important Considerations",
+                            text = stringResource(R.string.help_medical_disclaimer),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.error
@@ -154,7 +157,7 @@ fun FastingStateInfoDialog(
                 
                 // Disclaimer
                 Text(
-                    text = "Disclaimer: This information is for educational purposes only and is not intended as medical advice. Consult with a healthcare professional before making significant changes to your diet or fasting routine.",
+                    text = stringResource(R.string.help_medical_disclaimer),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center
@@ -171,7 +174,7 @@ fun FastingStateInfoDialog(
                         contentColor = MaterialTheme.colorScheme.onPrimary
                     )
                 ) {
-                    Text("Close")
+                    Text(stringResource(R.string.action_close))
                 }
             }
         }

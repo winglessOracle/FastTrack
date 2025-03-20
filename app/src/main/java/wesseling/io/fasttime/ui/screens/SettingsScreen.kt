@@ -137,7 +137,7 @@ fun SettingsScreen(
                 }
             )
             
-            Divider(modifier = Modifier.padding(vertical = 16.dp))
+            HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
             
             // Language section
             SectionTitle(stringResource(R.string.settings_category_language))
@@ -149,7 +149,7 @@ fun SettingsScreen(
                 }
             )
             
-            Divider(modifier = Modifier.padding(vertical = 16.dp))
+            HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
             
             // Date format section
             SectionTitle(stringResource(R.string.settings_category_date_format))
@@ -160,7 +160,7 @@ fun SettingsScreen(
                 }
             )
             
-            Divider(modifier = Modifier.padding(vertical = 16.dp))
+            HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
             
             // Time format section
             SectionTitle(stringResource(R.string.settings_category_time_format))
@@ -171,7 +171,7 @@ fun SettingsScreen(
                 }
             )
             
-            Divider(modifier = Modifier.padding(vertical = 16.dp))
+            HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
             
             // Notifications section
             SectionTitle(stringResource(R.string.settings_category_notifications))
@@ -182,7 +182,7 @@ fun SettingsScreen(
                 }
             )
             
-            Divider(modifier = Modifier.padding(vertical = 16.dp))
+            HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
             
             // Battery optimization section
             SectionTitle(stringResource(R.string.settings_category_battery))
@@ -190,7 +190,7 @@ fun SettingsScreen(
                 context = context
             )
             
-            Divider(modifier = Modifier.padding(vertical = 16.dp))
+            HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
             
             // Widget update frequency section
             SectionTitle(stringResource(R.string.settings_category_widget_updates))
@@ -201,7 +201,7 @@ fun SettingsScreen(
                 }
             )
             
-            Divider(modifier = Modifier.padding(vertical = 16.dp))
+            HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
             
             // About section
             SectionTitle(stringResource(R.string.settings_category_about))
@@ -234,8 +234,20 @@ fun SettingsScreen(
                     // Hide dialog
                     showRestartDialog = false
                     
-                    // Refresh UI by navigating back (this will cause the activity to recreate)
-                    onBackPressed()
+                    // Force a complete app restart by restarting the main activity
+                    val packageManager = context.packageManager
+                    val intent = packageManager.getLaunchIntentForPackage(context.packageName)
+                    if (intent != null) {
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or 
+                                        Intent.FLAG_ACTIVITY_CLEAR_TASK or 
+                                        Intent.FLAG_ACTIVITY_NEW_TASK)
+                        context.startActivity(intent)
+                        
+                        // Use finishAffinity to close all activities in the task
+                        if (context is androidx.activity.ComponentActivity) {
+                            context.finishAffinity()
+                        }
+                    }
                 }) {
                     Text(stringResource(R.string.language_dialog_continue))
                 }

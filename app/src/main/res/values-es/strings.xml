@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App general -->
+    <string name="app_name">FastTrack</string>
+    
+    <!-- Common actions -->
+    <string name="action_yes">Sí</string>
+    <string name="action_no">No</string>
+    <string name="action_cancel">Cancelar</string>
+    <string name="action_close">Cerrar</string>
+    <string name="action_save">Guardar</string>
+    <string name="action_edit">Editar</string>
+    <string name="action_adjust_time">Ajustar Hora de Inicio</string>
+    <string name="action_delete">Eliminar</string>
+    <string name="action_clear">Limpiar</string>
+    
+    <!-- Dialog titles -->
+    <string name="dialog_title_stop_timer">Detener Temporizador</string>
+    <string name="dialog_message_stop_timer_confirmation">¿Estás seguro de que quieres detener el temporizador de ayuno?</string>
+    <string name="dialog_title_delete_all_fasts">Eliminar Todos los Registros de Ayuno</string>
+    <string name="dialog_message_delete_all_fasts">¿Estás seguro de que quieres eliminar todos tus registros de ayuno? Esta acción no se puede deshacer.</string>
+    <string name="dialog_title_delete_fast">Eliminar Registro de Ayuno</string>
+    <string name="dialog_message_delete_fast">¿Estás seguro de que quieres eliminar este registro de ayuno? Esta acción no se puede deshacer.</string>
+    <string name="dialog_title_edit_fast">Editar Ayuno</string>
+    <string name="dialog_message_edit_fast_confirmation">¿Estás seguro de que quieres editar este ayuno? Esta acción no se puede deshacer.</string>
+    <string name="dialog_title_sort_by">Ordenar Por</string>
+    <string name="dialog_title_filter_by">Filtrar Por Estado de Ayuno</string>
+    <string name="dialog_title_confirm_edit">Confirmar Edición</string>
+    
+    <!-- Toast messages -->
+    <string name="toast_timer_not_running">No se puede ajustar la hora: El temporizador no está en marcha</string>
+    <string name="toast_invalid_time_adjustment">No se pudo ajustar la hora de inicio. Por favor, intenta un tiempo diferente.</string>
+    <string name="toast_time_adjusted">Hora de inicio ajustada con éxito</string>
+    <string name="toast_adjustment_error">Ocurrió un error al ajustar la hora</string>
+    <string name="toast_fast_saved">Sesión de ayuno guardada en el registro</string>
+    <string name="toast_fast_save_error">Error al guardar la sesión de ayuno</string>
+    <string name="toast_invalid_adjustment">No se puede ajustar la hora: Valor de ajuste inválido</string>
+    
+    <!-- Fasting states names -->
+    <string name="fasting_state_not_fasting_name">Estado Alimentado</string>
+    <string name="fasting_state_early_fast_name">Ayuno Temprano</string>
+    <string name="fasting_state_glycogen_depletion_name">Agotamiento de Glucógeno</string>
+    <string name="fasting_state_metabolic_shift_name">Cambio Metabólico</string>
+    <string name="fasting_state_deep_ketosis_name">Cetosis Profunda</string>
+    <string name="fasting_state_immune_reset_name">Reinicio Inmunológico</string>
+    <string name="fasting_state_extended_fast_name">Ayuno Prolongado</string>
+    
+    <!-- Fasting states descriptions -->
+    <string name="fasting_state_not_fasting_description">Digestión y Absorción</string>
+    <string name="fasting_state_early_fast_description">Comienza la Quema de Grasa</string>
+    <string name="fasting_state_glycogen_depletion_description">Aumenta el Metabolismo de Grasas</string>
+    <string name="fasting_state_metabolic_shift_description">Comienza la Cetosis</string>
+    <string name="fasting_state_deep_ketosis_description">Pico de Autofagia</string>
+    <string name="fasting_state_immune_reset_description">Producción de Células Madre</string>
+    <string name="fasting_state_extended_fast_description">Rejuvenecimiento Celular</string>
+    
+    <!-- Date Format Names -->
+    <string name="date_format_mdy_slash">MM/DD/YYYY (EEUU)</string>
+    <string name="date_format_dmy_slash">DD/MM/YYYY (ES/UE)</string>
+    <string name="date_format_ymd_dash">YYYY-MM-DD (ISO)</string>
+    <string name="date_format_mdy_text">Mes D, YYYY</string>
+    
+    <!-- Time Format Names -->
+    <string name="time_format_24h">24 horas (13:30)</string>
+    <string name="time_format_12h">12 horas (1:30 PM)</string>
+    
+    <!-- Theme Names -->
+    <string name="theme_system">Predeterminado del sistema</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Oscuro</string>
+    
+    <!-- Update Frequency -->
+    <string name="update_frequency_very_frequent">Muy Frecuente (Mayor Uso de Batería)</string>
+    <string name="update_frequency_balanced">Equilibrado (Recomendado)</string>
+    <string name="update_frequency_battery_saving">Ahorro de Batería</string>
+    <string name="update_frequency_minimal">Mínimo (Máximo Ahorro de Batería)</string>
+    
+    <!-- Settings screen -->
+    <string name="settings_title">Configuración</string>
+    <string name="settings_category_theme">Tema</string>
+    <string name="settings_category_date_format">Formato de Fecha</string>
+    <string name="settings_category_time_format">Formato de Hora</string>
+    <string name="settings_category_notifications">Notificaciones</string>
+    <string name="settings_category_language">Idioma</string>
+    <string name="settings_category_battery">Optimización de Batería</string>
+    <string name="settings_category_widget_updates">Frecuencia de Actualización del Widget</string>
+    <string name="settings_category_about">Acerca de</string>
+    <string name="settings_date_format_example">Ejemplo: %s</string>
+    <string name="settings_time_format_example">Ejemplo: %s</string>
+    <string name="settings_notifications_fasting_state">Notificaciones de Estado de Ayuno</string>
+    <string name="settings_notifications_fasting_state_description">Recibe notificaciones cuando alcances un nuevo estado de ayuno</string>
+    <string name="settings_battery_opt_description">Controla con qué frecuencia se actualiza el widget. Actualizaciones más frecuentes proporcionan información más precisa pero usan más batería.</string>
+    <string name="settings_battery_opt_explanation">Desactivar la optimización de batería permite que la aplicación actualice el widget y rastree tu tiempo de ayuno de manera más confiable, pero puede aumentar ligeramente el uso de batería.</string>
+    <string name="settings_battery_opt_disabled">La optimización de batería está desactivada para esta aplicación.</string>
+    <string name="settings_battery_opt_enabled">La optimización de batería está activada para esta aplicación, lo que puede causar que las actualizaciones del widget se retrasen o se pierdan.</string>
+    <string name="settings_battery_settings">Ajustes de Batería</string>
+    <string name="settings_disable_battery_opt">Desactivar Optimización de Batería</string>
+    <string name="settings_about_app">FastTrack</string>
+    <string name="settings_about_version">Versión 1.0</string>
+    <string name="settings_about_description">Una sencilla aplicación de temporizador de ayuno para seguir tus períodos de ayuno y progreso.</string>
+    
+    <!-- Language settings -->
+    <string name="language_selection">Idioma</string>
+    <string name="language_system_default">Predeterminado del Sistema</string>
+    <string name="language_english">Inglés</string>
+    <string name="language_spanish">Español</string>
+    
+    <!-- Help screen -->
+    <string name="help_title">Ayuda e Información</string>
+    <string name="help_intro">FastTrack te ayuda a seguir tu tiempo de ayuno con precisión</string>
+    <string name="help_fasting_protocols">Protocolos Comunes de Ayuno</string>
+    <string name="help_fasting_tips">Consejos para un Ayuno Exitoso</string>
+    <string name="help_medical_disclaimer">Siempre consulta con un profesional de la salud antes de comenzar cualquier régimen de ayuno</string>
+    <string name="help_tab_basics">Conceptos Básicos</string>
+    <string name="help_tab_fasting_types">Tipos de Ayuno</string>
+    <string name="help_tab_tips">Consejos</string>
+    <string name="help_unique_journey">El Viaje de Ayuno de Cada Persona es Único</string>
+    <string name="help_unique_journey_content">El ayuno afecta a cada persona de manera diferente según su metabolismo, composición corporal, nivel de actividad e historial de salud. Lo que funciona para una persona puede no funcionar para otra. Escucha a tu cuerpo y ajusta tu enfoque de ayuno según corresponda. Comienza lentamente y aumenta gradualmente la duración de tu ayuno a medida que tu cuerpo se adapta. Recuerda que la consistencia es más importante que la intensidad, especialmente al comenzar tu viaje de ayuno.</string>
+    <string name="help_using_app">Uso de la Aplicación Principal</string>
+    <string name="help_app_item_1">Toca INICIAR para comenzar tu temporizador de ayuno</string>
+    <string name="help_app_item_2">La aplicación rastrea tu duración de ayuno automáticamente</string>
+    <string name="help_app_item_3">Tu estado de ayuno cambia según la duración</string>
+    <string name="help_app_item_4">Toca DETENER para finalizar tu ayuno y guardarlo en tu registro</string>
+    <string name="help_app_item_5">Ver tu historial de ayuno en el Registro de Ayuno</string>
+    
+    <!-- Help screen additional content -->
+    <string name="help_fasting_log_features">Características del Registro de Ayuno</string>
+    <string name="help_log_item_1">Ver un resumen de tus logros de ayuno</string>
+    <string name="help_log_item_2">Solo los ayunos de 12+ horas se guardan en el registro</string>
+    <string name="help_log_item_3">Ordenar entradas por fecha (más reciente/más antiguo primero)</string>
+    <string name="help_log_item_4">Ordenar entradas por duración (más largo/más corto primero)</string>
+    <string name="help_log_item_5">Filtrar entradas por estado de ayuno para encontrar logros específicos</string>
+    <string name="help_log_item_6">Toca en una entrada para ver información detallada</string>
+    <string name="help_log_item_7">Editar o eliminar entradas según sea necesario</string>
+    
+    <string name="help_hydration">Importancia de la Hidratación</string>
+    <string name="help_hydration_item_1">El ayuno se refiere a comida, no agua - ¡mantente hidratado!</string>
+    <string name="help_hydration_item_2">Bebe mucha agua durante tu ayuno</string>
+    <string name="help_hydration_item_3">La hidratación ayuda a gestionar el hambre y mantener la energía</string>
+    <string name="help_hydration_item_4">Considera electrolitos durante ayunos más largos</string>
+    <string name="help_hydration_item_5">Café negro y té sin azúcar también están permitidos</string>
+    
+    <string name="help_fasting_states">Entendiendo los Estados de Ayuno</string>
+    <string name="help_states_item_1">Estado Alimentado (Gris): 0-4 horas, digestión y absorción</string>
+    <string name="help_states_item_2">Ayuno Temprano (Amarillo): 4-12 horas, comienza la quema de grasa</string>
+    <string name="help_states_item_3">Agotamiento de Glucógeno (Naranja): 12-18 horas, aumenta el metabolismo de grasas (mínimo para logros)</string>
+    <string name="help_states_item_4">Cambio Metabólico (Azul): 18-24 horas, comienza la cetosis</string>
+    <string name="help_states_item_5">Cetosis Profunda (Verde): 24-48 horas, pico de autofagia</string>
+    <string name="help_states_item_6">Reinicio Inmunológico (Púrpura): 48-72 horas, producción de células madre</string>
+    <string name="help_states_item_7">Ayuno Prolongado (Magenta): 72+ horas, rejuvenecimiento celular</string>
+    
+    <string name="help_achievement">Seguimiento de Logros</string>
+    <string name="help_achievement_content">FastTrack solo cuenta ayunos que alcanzan al menos el estado de Agotamiento de Glucógeno (12+ horas) para tus logros y estadísticas. Los ayunos más cortos seguirán siendo rastreados durante el temporizador y seguirás recibiendo notificaciones para todos los cambios de estado de ayuno, pero los ayunos más cortos no se guardarán en tu registro de ayuno ni se incluirán en tus estadísticas. Esto fomenta experiencias de ayuno más significativas mientras proporciona retroalimentación sobre todo tu progreso de ayuno.</string>
+    
+    <string name="help_weekly">Logro de Ayuno Profundo Semanal</string>
+    <string name="help_weekly_content">FastTrack incluye un logro especial de medalla que rastrea tus ayunos profundos semanales (24+ horas o mejores). Esto fomenta el ayuno profundo regular semanalmente. La medalla de bronce se gana por 1-9 ayunos profundos, Plata por 10-24, Oro por 25-49, y el estado Leyenda por 50+ ayunos profundos semanales. Apunta a al menos un ayuno profundo por semana para maximizar los beneficios de tu ayuno y el progreso de tus logros.</string>
+    
+    <string name="help_widget">Características del Widget</string>
+    <string name="help_widget_item_1">Añade el widget de FastTrack a tu pantalla de inicio</string>
+    <string name="help_widget_item_2">Toca INICIAR para comenzar un ayuno directamente desde tu pantalla de inicio</string>
+    <string name="help_widget_item_3">Toca DETENER para finalizar tu ayuno</string>
+    <string name="help_widget_item_4">Toca las horas para ajustar la hora de inicio (durante un ayuno) o abrir la aplicación (cuando no estás ayunando)</string>
+    <string name="help_widget_item_5">Toca la píldora de estado (texto coloreado que muestra tu estado actual de ayuno) para ver información detallada sobre ese estado de ayuno</string>
+    <string name="help_widget_item_6">El widget se actualiza automáticamente para mostrar tu estado actual de ayuno</string>
+    <string name="help_widget_item_7">Diseño eficiente en energía que minimiza el consumo de batería</string>
+    
+    <!-- Fasting Types tab -->
+    <string name="help_ideal_protocol">Encontrando Tu Protocolo de Ayuno Ideal</string>
+    <string name="help_ideal_protocol_content">El ayuno no es igual para todos. Diferentes protocolos ofrecen diversos beneficios y niveles de dificultad. Considera tu estilo de vida, objetivos y nivel de experiencia al elegir un método de ayuno. Es posible que debas experimentar con varios enfoques antes de encontrar lo que mejor funciona para ti. Los protocolos a continuación van desde principiante hasta avanzado. Comienza con un protocolo más fácil y progresa gradualmente a medida que tu cuerpo se adapta al ayuno.</string>
+    
+    <string name="help_16_8">Método 16:8 (Leangains)</string>
+    <string name="help_16_8_item_1">Ayuna por 16 horas, come durante una ventana de 8 horas</string>
+    <string name="help_16_8_item_2">Ventana popular: 12pm a 8pm</string>
+    <string name="help_16_8_item_3">Adecuado para principiantes</string>
+    <string name="help_16_8_item_4">Se puede hacer diariamente</string>
+    <string name="help_16_8_item_5">Bueno para manejo de peso y salud metabólica</string>
+    
+    <string name="help_18_6">Método 18:6</string>
+    <string name="help_18_6_item_1">Ayuna por 18 horas, come durante una ventana de 6 horas</string>
+    <string name="help_18_6_item_2">Ventana popular: 2pm a 8pm</string>
+    <string name="help_18_6_item_3">Nivel intermedio</string>
+    <string name="help_18_6_item_4">Mayor quema de grasa y cetosis</string>
+    <string name="help_18_6_item_5">Puede mejorar la sensibilidad a la insulina</string>
+    
+    <string name="help_20_4">Método 20:4 (Dieta Guerrero)</string>
+    <string name="help_20_4_item_1">Ayuna por 20 horas, come durante una ventana de 4 horas</string>
+    <string name="help_20_4_item_2">Ventana popular: 4pm a 8pm</string>
+    <string name="help_20_4_item_3">Nivel avanzado</string>
+    <string name="help_20_4_item_4">Beneficios significativos de autofagia</string>
+    <string name="help_20_4_item_5">Puede mejorar la producción de hormona de crecimiento</string>
+    
+    <string name="help_omad">OMAD (Una Comida Al Día)</string>
+    <string name="help_omad_item_1">Proporción 23:1 - come solo una comida al día</string>
+    <string name="help_omad_item_2">Nivel avanzado</string>
+    <string name="help_omad_item_3">Máximos beneficios de autofagia</string>
+    <string name="help_omad_item_4">Beneficios metabólicos significativos</string>
+    <string name="help_omad_item_5">Requiere planificación nutricional cuidadosa</string>
+    
+    <string name="help_5_2">Dieta 5:2</string>
+    <string name="help_5_2_item_1">Come normalmente 5 días a la semana</string>
+    <string name="help_5_2_item_2">Restringe calorías (500-600) en 2 días no consecutivos</string>
+    <string name="help_5_2_item_3">Bueno para quienes encuentran difícil el ayuno diario</string>
+    <string name="help_5_2_item_4">Programación flexible</string>
+    <string name="help_5_2_item_5">Demostrado que mejora marcadores metabólicos</string>
+    
+    <string name="help_alternate">Ayuno en Días Alternos</string>
+    <string name="help_alternate_item_1">Ayuna un día sí y un día no</string>
+    <string name="help_alternate_item_2">Nivel avanzado</string>
+    <string name="help_alternate_item_3">Potencial significativo de pérdida de peso</string>
+    <string name="help_alternate_item_4">Puede mejorar la salud cardiovascular</string>
+    <string name="help_alternate_item_5">Requiere planificación y adaptación cuidadosas</string>
+    
+    <string name="help_extended">Ayuno Prolongado</string>
+    <string name="help_extended_item_1">Ayunos que duran 24-72+ horas</string>
+    <string name="help_extended_item_2">Nivel experto - no para principiantes</string>
+    <string name="help_extended_item_3">Máxima autofagia y rejuvenecimiento celular</string>
+    <string name="help_extended_item_4">Reinicio significativo del sistema inmunológico</string>
+    <string name="help_extended_item_5">Debe hacerse bajo supervisión médica</string>
+    <string name="help_extended_item_6">No recomendado para práctica regular</string>
+    
+    <!-- Tips tab -->
+    <string name="help_battery">Optimización de Batería y Eficiencia Energética</string>
+    <string name="help_battery_item_1">FastTrack está diseñado para ser eficiente en energía y minimizar el consumo de batería</string>
+    <string name="help_battery_item_2">La aplicación y el widget utilizan procesos en segundo plano optimizados</string>
+    <string name="help_battery_item_3">Para un mejor rendimiento, asegúrate de que FastTrack esté exento de la configuración de optimización de batería en tu dispositivo</string>
+    <string name="help_battery_item_4">Ve a la configuración de Batería de tu dispositivo y añade FastTrack a las aplicaciones exentas de optimización</string>
+    <string name="help_battery_item_5">Esto asegura que los temporizadores y notificaciones funcionen correctamente sin un drenaje excesivo de batería</string>
+    
+    <string name="help_getting_started">Cómo Empezar</string>
+    <string name="help_getting_started_item_1">Comienza con ventanas de ayuno más cortas (12-14 horas)</string>
+    <string name="help_getting_started_item_2">Aumenta gradualmente la duración de tu ayuno</string>
+    <string name="help_getting_started_item_3">Sé constante con tu horario de ayuno</string>
+    <string name="help_getting_started_item_4">Rastrea tu progreso con FastTrack</string>
+    <string name="help_getting_started_item_5">Escucha a tu cuerpo y ajusta según sea necesario</string>
+    
+    <string name="help_using_log">Usando el Registro de Ayuno Efectivamente</string>
+    <string name="help_using_log_item_1">Ordena por fecha para rastrear tu progreso reciente</string>
+    <string name="help_using_log_item_2">Ordena por duración para identificar tus ayunos más largos</string>
+    <string name="help_using_log_item_3">Filtra por estado de ayuno para ver con qué frecuencia alcanzas hitos específicos</string>
+    <string name="help_using_log_item_4">Usa las estadísticas de resumen para entender tu progreso general</string>
+    <string name="help_using_log_item_5">Revisa tu registro regularmente para identificar patrones y mejoras</string>
+    
+    <string name="help_electrolytes">Gestión de Electrolitos</string>
+    <string name="help_electrolytes_item_1">Sodio: Añade una pizca de sal marina al agua (1/4 cucharadita en 1L de agua)</string>
+    <string name="help_electrolytes_item_2">Potasio: Considera sustitutos de sal con potasio para ayunos &gt;24 horas</string>
+    <string name="help_electrolytes_item_3">Magnesio: Suplementos de magnesio glicinato o citrato pueden ayudar con calambres musculares</string>
+    <string name="help_electrolytes_item_4">Mezcla equilibrada de electrolitos: 1/2 cucharadita de sal, 1/4 cucharadita de sal de potasio en 1L de agua</string>
+    <string name="help_electrolytes_item_5">Signos de desequilibrio de electrolitos: dolores de cabeza, mareos, calambres musculares</string>
+    <string name="help_electrolytes_item_6">Para ayunos prolongados (&gt;48h), considera suplementos comerciales de electrolitos</string>
+    
+    <string name="help_stay_hydrated">Mantente Hidratado</string>
+    <string name="help_stay_hydrated_item_1">Bebe mucha agua durante tu ayuno</string>
+    <string name="help_stay_hydrated_item_2">Añade electrolitos para ayunos más largos (24+ horas)</string>
+    <string name="help_stay_hydrated_item_3">Café negro y té sin azúcar están permitidos</string>
+    <string name="help_stay_hydrated_item_4">Evita edulcorantes artificiales durante el ayuno</string>
+    <string name="help_stay_hydrated_item_5">El agua carbonatada puede ayudar con la sensación de hambre</string>
+    
+    <string name="help_hunger">Controlando el Hambre</string>
+    <string name="help_hunger_item_1">El hambre viene en oleadas y típicamente pasa</string>
+    <string name="help_hunger_item_2">Mantente ocupado durante los momentos de máximo hambre</string>
+    <string name="help_hunger_item_3">Bebe agua cuando sientas hambre</string>
+    <string name="help_hunger_item_4">El ejercicio ligero puede reducir el hambre</string>
+    <string name="help_hunger_item_5">Recuerda: el hambre no es una emergencia</string>
+    
+    <string name="help_breaking_fast">Rompiendo Tu Ayuno Adecuadamente</string>
+    <string name="help_breaking_item_1">Para ayunos &lt;24h: Comienza con alimentos fácilmente digeribles como caldo de hueso, aguacate o huevos</string>
+    <string name="help_breaking_item_2">Para ayunos &gt;24h: Comienza con caldo de hueso, luego espera 30-60 minutos antes de comer alimentos sólidos</string>
+    <string name="help_breaking_item_3">Para ayunos &gt;48h: Comienza con caldo claro, espera 1 hora, luego una pequeña comida de proteína/grasa, espera 2-3 horas antes de comer normalmente</string>
+    <string name="help_breaking_item_4">Evita romper el ayuno con: carbohidratos procesados, comidas grandes, lácteos, nueces o vegetales crudos</string>
+    <string name="help_breaking_item_5">Buenos primeros alimentos: caldo de hueso, huevos pasados por agua, aguacate, verduras de hoja cocidas, alimentos fermentados</string>
+    <string name="help_breaking_item_6">Come lentamente y con atención, masticando bien</string>
+    <string name="help_breaking_item_7">Escucha a tu cuerpo y deja de comer si sientes malestar</string>
+    
+    <string name="help_nutrition">Nutrición Durante las Ventanas de Alimentación</string>
+    <string name="help_nutrition_item_1">Enfócate en alimentos integrales ricos en nutrientes</string>
+    <string name="help_nutrition_item_2">Incluye proteína adecuada (0.8-1g por libra de masa corporal magra)</string>
+    <string name="help_nutrition_item_3">No descuides las grasas saludables</string>
+    <string name="help_nutrition_item_4">Incluye abundantes vegetales y fibra</string>
+    <string name="help_nutrition_item_5">Considera tus necesidades calóricas totales</string>
+    
+    <string name="help_when_stop">Cuándo Detener el Ayuno</string>
+    <string name="help_when_stop_item_1">Si te sientes mal más allá del hambre normal</string>
+    <string name="help_when_stop_item_2">Si experimentas mareos o debilidad</string>
+    <string name="help_when_stop_item_3">Si tienes una condición médica que requiere alimentos</string>
+    <string name="help_when_stop_item_4">Durante enfermedad o períodos de alto estrés</string>
+    <string name="help_when_stop_item_5">Durante embarazo o lactancia</string>
+    
+    <string name="help_disclaimer">Siempre consulta con un profesional de la salud antes de comenzar cualquier régimen de ayuno</string>
+    
+    <!-- Fasting log screen -->
+    <string name="fasting_log_title">Registro de Ayuno</string>
+    <string name="fasting_log_empty">Aún no se han registrado sesiones de ayuno</string>
+    <string name="fasting_log_empty_description">Completa un ayuno para verlo en tu registro</string>
+    <string name="fasting_log_no_matches">No hay sesiones de ayuno coincidentes</string>
+    <string name="fasting_log_no_matches_description">Intenta cambiar tus ajustes de filtro</string>
+    <string name="fasting_log_clear_filter">Limpiar Filtro</string>
+    <string name="fasting_log_filtered_by">Filtrado por: %s</string>
+    <string name="fasting_log_history_title">Historial de Ayuno</string>
+    <string name="fasting_log_sessions_count">%d sesiones</string>
+    <string name="fasting_log_delete_all">Eliminar Todo</string>
+    <string name="fasting_log_details_title">Detalles de Ayuno</string>
+    <string name="fasting_log_notes_label">Notas</string>
+    <string name="fasting_log_summary_title">Resumen de Ayuno</string>
+    <string name="fasting_log_summary_note">Solo se cuentan los ayunos de 12+ horas</string>
+    <string name="fasting_log_achievements">Logros</string>
+    <string name="fasting_log_started">Comenzado</string>
+    <string name="fasting_log_ended">Finalizado</string>
+    <string name="fasting_log_time_separator"> → </string>
+    <string name="fasting_log_duration">Duración</string>
+    <string name="fasting_log_notes">Notas (opcional)</string>
+    <string name="fasting_log_discard">Descartar</string>
+    <string name="fasting_log_save">Guardar en Registro</string>
+    <string name="fasting_log_achievement_reached">¡Has alcanzado %s!</string>
+    
+    <!-- Notifications -->
+    <string name="notification_channel_fasting_state">Notificaciones de Estado de Ayuno</string>
+    <string name="notification_channel_fasting_state_description">Notificaciones para cambios de estado de ayuno</string>
+    <string name="notification_channel_widget_updates">Actualizaciones del Widget de Ayuno</string>
+    <string name="notification_channel_widget_updates_description">Usado para mantener actualizado el widget de ayuno</string>
+    <string name="notification_widget_content_title">Widget de FastTrack</string>
+    <string name="notification_widget_content_text">Manteniendo tu widget actualizado</string>
+    
+    <!-- Fasting state notification templates - multiple per state -->
+    <!-- NOT_FASTING state titles -->
+    <string name="notification_title_not_fasting_1">¡Comienza la Aventura de Ayuno! 🚀</string>
+    <string name="notification_title_not_fasting_2">¡Preparados, Listos, Ayunar! 🏁</string>
+    <string name="notification_title_not_fasting_3">¡Comienza Tu Aventura de Ayuno! 🌟</string>
+    <string name="notification_title_not_fasting_4">¡Digestión en Progreso! 🍽️</string>
+    
+    <!-- NOT_FASTING state short texts -->
+    <string name="notification_short_not_fasting_1">Estás en el Estado Alimentado - ¡digestión en progreso!</string>
+    <string name="notification_short_not_fasting_2">¡Alimentado y listo para tu travesía de ayuno!</string>
+    <string name="notification_short_not_fasting_3">¡Modo de digestión activado a las %s!</string>
+    <string name="notification_short_not_fasting_4">Insulina trabajando - ¡almacenando nutrientes ahora!</string>
+    
+    <!-- EARLY_FAST state titles -->
+    <string name="notification_title_early_fast_1">¡Modo de Quema de Grasa: Activado! 🔥</string>
+    <string name="notification_title_early_fast_2">¡Subida de Nivel: Ayuno Temprano Logrado! ⬆️</string>
+    <string name="notification_title_early_fast_3">¡Primera Meta Alcanzada! 🎯</string>
+    <string name="notification_title_early_fast_4">¡Niveles de Insulina Bajando! 📉</string>
+    
+    <!-- EARLY_FAST state short texts -->
+    <string name="notification_short_early_fast_1">¡Tu cuerpo ahora está cambiando a quemar grasa a las %s!</string>
+    <string name="notification_short_early_fast_2">4+ horas dentro - ¡tu metabolismo está cambiando!</string>
+    <string name="notification_short_early_fast_3">¡Has desbloqueado el modo de Ayuno Temprano! ¡Sigue así!</string>
+    <string name="notification_short_early_fast_4">¡Insulina bajando, quema de grasa subiendo!</string>
+    
+    <!-- GLYCOGEN_DEPLETION state titles -->
+    <string name="notification_title_glycogen_depletion_1">¡Glucógeno Agotado! 🔄</string>
+    <string name="notification_title_glycogen_depletion_2">¡Quema de Grasa Optimizada! 🔥</string>
+    <string name="notification_title_glycogen_depletion_3">¡Hito de 12 Horas Alcanzado! 🏆</string>
+    <string name="notification_title_glycogen_depletion_4">¡Magia Metabólica Ocurriendo! ✨</string>
+    
+    <!-- GLYCOGEN_DEPLETION state short texts -->
+    <string name="notification_short_glycogen_depletion_1">¡Reservas de glucosa agotadas, metabolismo de grasa maximizado!</string>
+    <string name="notification_short_glycogen_depletion_2">¡Tu cuerpo ahora está quemando principalmente grasa como combustible!</string>
+    <string name="notification_short_glycogen_depletion_3">¡12+ horas de ayuno - insulina minimizada, quema de grasa optimizada!</string>
+    <string name="notification_short_glycogen_depletion_4">¡Cambio de glucógeno a grasa completado a las %s!</string>
+    
+    <!-- METABOLIC_SHIFT state titles -->
+    <string name="notification_title_metabolic_shift_1">¡Cetonas Detectadas! ⚡</string>
+    <string name="notification_title_metabolic_shift_2">¡Cambio Metabólico Logrado! 🔄</string>
+    <string name="notification_title_metabolic_shift_3">¡Hito de 18 Horas Alcanzado! 🏆</string>
+    <string name="notification_title_metabolic_shift_4">¡Cetosis Ha Comenzado! 🔑</string>
+    
+    <!-- METABOLIC_SHIFT state short texts -->
+    <string name="notification_short_metabolic_shift_1">¡Tu cerebro ahora está cambiando a cetonas como combustible!</string>
+    <string name="notification_short_metabolic_shift_2">¡Producción de cetonas en aumento, limpieza celular iniciada!</string>
+    <string name="notification_short_metabolic_shift_3">¡Has estado ayunando por 18+ horas - la cetosis ha comenzado!</string>
+    <string name="notification_short_metabolic_shift_4">¡Cambio metabólico detectado a las %s, optimización corporal en progreso!</string>
+    
+    <!-- DEEP_KETOSIS state titles -->
+    <string name="notification_title_deep_ketosis_1">¡Cetosis Profunda Desbloqueada! 🔓</string>
+    <string name="notification_title_deep_ketosis_2">¡Autofagia Activada! 🧬</string>
+    <string name="notification_title_deep_ketosis_3">¡Hito de 24 Horas Superado! 🏆</string>
+    <string name="notification_title_deep_ketosis_4">¡Limpieza Celular Máxima! 🧹</string>
+    
+    <!-- DEEP_KETOSIS state short texts -->
+    <string name="notification_short_deep_ketosis_1">¡Adaptación máxima a la grasa lograda después de 24+ horas!</string>
+    <string name="notification_short_deep_ketosis_2">¡Modo de autolimpieza celular activado - pico de autofagia!</string>
+    <string name="notification_short_deep_ketosis_3">¡Un día completo de ayuno - logro increíble!</string>
+    <string name="notification_short_deep_ketosis_4">¡Cetosis profunda alcanzada a las %s - beneficios metabólicos máximos!</string>
+    
+    <!-- IMMUNE_RESET state titles -->
+    <string name="notification_title_immune_reset_1">¡Restablecimiento del Sistema Inmune! 🛡️</string>
+    <string name="notification_title_immune_reset_2">¡Aumento en Producción de Células Madre! 🌱</string>
+    <string name="notification_title_immune_reset_3">¡Logro de 48 Horas Desbloqueado! 🏆</string>
+    <string name="notification_title_immune_reset_4">¡Hormona de Crecimiento Maximizada! 📈</string>
+    
+    <!-- IMMUNE_RESET state short texts -->
+    <string name="notification_short_immune_reset_1">¡Tu sistema inmunológico se está regenerando después de 48+ horas!</string>
+    <string name="notification_short_immune_reset_2">¡Rejuvenecimiento celular al máximo con mayor producción de células madre!</string>
+    <string name="notification_short_immune_reset_3">¡Dos días completos de ayuno - tu cuerpo se está reconstruyendo más fuerte!</string>
+    <string name="notification_short_immune_reset_4">¡Reinicio inmunológico iniciado a las %s - beneficios significativos para la salud activados!</string>
+    
+    <!-- EXTENDED_FAST state titles -->
+    <string name="notification_title_extended_fast_1">¡Maestro del Ayuno Prolongado! 🌟</string>
+    <string name="notification_title_extended_fast_2">¡Logro Máximo de Ayuno! 🏆</string>
+    <string name="notification_title_extended_fast_3">¡Hito de 72 Horas Conquistado! 👑</string>
+    <string name="notification_title_extended_fast_4">¡Modo de Rejuvenecimiento Máximo! 🔄</string>
+    
+    <!-- EXTENDED_FAST state short texts -->
+    <string name="notification_short_extended_fast_1">¡72+ horas de ayuno - logro verdaderamente excepcional!</string>
+    <string name="notification_short_extended_fast_2">¡Beneficios máximos de rejuvenecimiento celular y autofagia!</string>
+    <string name="notification_short_extended_fast_3">¡Has alcanzado el estado de maestro en ayuno - increíble!</string>
+    <string name="notification_short_extended_fast_4">¡Hito de ayuno prolongado alcanzado a las %s - profunda sanación en progreso!</string>
+    
+    <!-- Placeholder formats for all states -->
+    <string name="notification_format_long_text">%1$s %2$s</string>
+    
+    <!-- Format strings for sharing -->
+    <string name="share_fast_text">¡Completé un ayuno de %1$s horas usando FastTrack! Alcancé el estado %2$s.</string>
+    <string name="share_fast_title">Compartir Resultado de Ayuno</string>
+    
+    <!-- Plural strings -->
+    <plurals name="hours_count">
+        <item quantity="one">%d hora</item>
+        <item quantity="other">%d horas</item>
+    </plurals>
+    
+    <plurals name="minutes_count">
+        <item quantity="one">%d minuto</item>
+        <item quantity="other">%d minutos</item>
+    </plurals>
+    
+    <plurals name="fasting_sessions_count">
+        <item quantity="one">%d sesión</item>
+        <item quantity="other">%d sesiones</item>
+    </plurals>
+    
+    <!-- Language dialog -->
+    <string name="language_dialog_title">Cambiar Idioma</string>
+    <string name="language_dialog_message">La aplicación necesita reiniciarse para aplicar el cambio de idioma. ¿Continuar?</string>
+    <string name="language_dialog_continue">Continuar</string>
+    <string name="language_dialog_cancel">Cancelar</string>
+    <string name="language_select_dialog_title">Seleccionar Idioma</string>
+    <string name="language_changed_message">Idioma cambiado a %s</string>
+    
+    <!-- Content descriptions -->
+    <string name="back_button_description">Atrás</string>
+    <string name="language_icon_description">Selección de idioma</string>
+    <string name="battery_icon_description">Configuración de optimización de batería</string>
+    
+    <!-- Format strings -->
+    <string name="language_name_format">%s</string>
+    <string name="radio_select_format">Seleccionar %s</string>
+    
+    <!-- Common dialog actions -->
+    <string name="action_continue">Continuar</string>
+    <string name="action_dismiss">Descartar</string>
+    
+    <!-- Error messages -->
+    <string name="error_generic">Ha ocurrido un error</string>
+    <string name="error_save_failed">No se pudieron guardar los datos</string>
+    <string name="error_load_failed">No se pudieron cargar los datos</string>
+    
+    <!-- Widget text -->
+    <string name="widget_update_description">Actualizando widget</string>
+    <!-- IMPORTANTE: Para todas las traducciones, mantener el texto de los botones Iniciar/Parar como palabras únicas para un diseño de UI adecuado -->
+    <string name="widget_start_timer">Iniciar</string>
+    <string name="widget_stop_timer">Parar</string>
+    <string name="widget_hours_label">Horas</string>
+    
+    <!-- Fasting legend time ranges -->
+    <string name="fasting_time_range_0_4">0-4 horas</string>
+    <string name="fasting_time_range_4_12">4-12 horas</string>
+    <string name="fasting_time_range_12_18">12-18 horas</string>
+    <string name="fasting_time_range_18_24">18-24 horas</string>
+    <string name="fasting_time_range_24_48">24-48 horas</string>
+    <string name="fasting_time_range_48_72">48-72 horas</string>
+    <string name="fasting_time_range_72_plus">72+ horas</string>
+    
+    <!-- Fasting documentation titles -->
+    <string name="fasting_state_title_not_fasting">Estado Alimentado (0-4 horas)</string>
+    <string name="fasting_state_title_early_fast">Estado de Ayuno Temprano (4-12 horas)</string>
+    <string name="fasting_state_title_glycogen_depletion">Agotamiento de Glucógeno (12-18 horas)</string>
+    <string name="fasting_state_title_metabolic_shift">Cambio Metabólico (18-24 horas)</string>
+    <string name="fasting_state_title_deep_ketosis">Cetosis Profunda y Aumento de Autofagia (24-48 horas)</string>
+    <string name="fasting_state_title_immune_reset">Reinicio del Sistema Inmune y Máxima Quema de Grasa (48-72 horas)</string>
+    <string name="fasting_state_title_extended_fast">Beneficios del Ayuno Prolongado (72+ horas)</string>
+    
+    <!-- Time formatting -->
+    <string name="format_hours_minutes">%1$d h %2$02d min</string>
+    <string name="format_minutes_only">%d min</string>
+    <string name="format_hours_minutes_detailed">%1$d horas %2$d minutos</string>
+    <string name="format_minutes_only_detailed">%d minutos</string>
+    <string name="format_seconds_only_detailed">%d segundos</string>
+    
+    <!-- Input validation -->
+    <string name="validation_time_invalid">Formato de hora inválido</string>
+    <string name="validation_date_invalid">Formato de fecha inválido</string>
+    
+    <!-- Sorting options -->
+    <string name="sort_date_newest">Fecha (Más Reciente Primero)</string>
+    <string name="sort_date_oldest">Fecha (Más Antiguo Primero)</string>
+    <string name="sort_duration_longest">Duración (Más Largo Primero)</string>
+    <string name="sort_duration_shortest">Duración (Más Corto Primero)</string>
+    
+    <!-- Fast entry notes -->
+    <string name="fast_entry_manual_note">Entrada de ayuno creada manualmente</string>
+    
+    <!-- Adjust Start Time Dialog -->
+    <string name="adjust_time_instructions">Si olvidaste iniciar el temporizador cuando comenzaste a ayunar, puedes ajustar la hora de inicio aquí.</string>
+    <string name="adjust_time_current_elapsed">Tiempo Transcurrido Actual</string>
+    <string name="adjust_time_started_on">Comenzó a ayunar el:</string>
+    <string name="adjust_time_set_new">Establecer Nueva Hora de Inicio</string>
+    <string name="adjust_time_day">Día</string>
+    <string name="adjust_time_time">Hora</string>
+    <string name="adjust_time_new_elapsed">Nuevo Tiempo Transcurrido</string>
+    <string name="adjust_time_apply">Aplicar Ajuste</string>
+    <string name="adjust_time_error_future">La hora de inicio no puede estar en el futuro. Por favor, selecciona una hora anterior.</string>
+    <string name="adjust_time_error_negative">Esto resultaría en un tiempo de ayuno negativo. Por favor, selecciona una hora más tardía.</string>
+    <string name="adjust_time_error_too_large">El ajuste es demasiado grande (máximo 30 días). Por favor, selecciona una fecha más reciente.</string>
+    <string name="adjust_time_no_change">Sin cambios en la hora actual. Ajusta para aplicar cambios.</string>
+    <string name="adjust_time_error_icon">Error</string>
+    <string name="adjust_time_clock_icon">Icono de Reloj</string>
+    <string name="adjust_time_new_start_time">Nueva hora de inicio: %s</string>
+    
+    <!-- No logs to export message -->
+    <string name="no_fasting_logs_to_export">No hay registros de ayuno para exportar</string>
+</resources> 

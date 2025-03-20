@@ -1,5 +1,6 @@
 package wesseling.io.fasttime.widget
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -10,6 +11,7 @@ import wesseling.io.fasttime.R
 import wesseling.io.fasttime.timer.FastingTimer
 import wesseling.io.fasttime.ui.components.AdjustStartTimeDialog
 import wesseling.io.fasttime.ui.theme.FastTrackTheme
+import wesseling.io.fasttime.util.LocaleHelper
 
 /**
  * Activity for adjusting the start time of a fast from the widget
@@ -20,8 +22,19 @@ class WidgetAdjustTimeActivity : ComponentActivity() {
         private const val TAG = "WidgetAdjustTimeActivity"
     }
     
+    override fun attachBaseContext(base: Context) {
+        // Apply the saved language settings to the base context
+        val languageCode = LocaleHelper.getLanguageCode(base)
+        val updatedContext = LocaleHelper.updateLocale(base, languageCode)
+        super.attachBaseContext(updatedContext)
+    }
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        // Apply saved language settings to ensure proper localization
+        val languageCode = LocaleHelper.getLanguageCode(this)
+        LocaleHelper.updateLocale(this, languageCode)
         
         Log.d(TAG, "Opening adjust start time dialog from widget")
         

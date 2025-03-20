@@ -1,5 +1,6 @@
 package wesseling.io.fasttime.ui.components
 
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -39,6 +41,7 @@ import java.util.concurrent.TimeUnit
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import wesseling.io.fasttime.R
 import wesseling.io.fasttime.settings.PreferencesManager
 import wesseling.io.fasttime.util.DateTimeFormatter
 // Import the picker components
@@ -93,7 +96,7 @@ private fun ErrorMessage(message: String) {
     ) {
         Icon(
             imageVector = Icons.Filled.Error,
-            contentDescription = "Error",
+            contentDescription = stringResource(R.string.adjust_time_error_icon),
             tint = MaterialTheme.colorScheme.error,
             modifier = Modifier.padding(end = 8.dp)
         )
@@ -191,8 +194,8 @@ fun AdjustStartTimeDialog(
     val newElapsedTimeMillis = currentElapsedTimeMillis + adjustmentMillis
     
     // Format times for display
-    val currentFormattedTime = DateTimeFormatter.formatElapsedTime(currentElapsedTimeMillis)
-    val newFormattedTime = DateTimeFormatter.formatElapsedTime(newElapsedTimeMillis)
+    val currentFormattedTime = DateTimeFormatter.formatElapsedTime(context, currentElapsedTimeMillis)
+    val newFormattedTime = DateTimeFormatter.formatElapsedTime(context, newElapsedTimeMillis)
     
     // Format start times as actual dates
     val currentStartTimeFormatted = DateTimeFormatter.formatDateTime(currentStartTimeMillis, preferences)
@@ -200,6 +203,7 @@ fun AdjustStartTimeDialog(
     
     // Validate the adjustment
     val validation = validateAdjustment(
+        context = context,
         newStartTimeMillis = newStartTimeMillis,
         newElapsedTimeMillis = newElapsedTimeMillis,
         adjustmentMillis = adjustmentMillis,
@@ -214,14 +218,14 @@ fun AdjustStartTimeDialog(
             ) {
                 Icon(
                     imageVector = Icons.Filled.AccessTime,
-                    contentDescription = "Clock Icon",
+                    contentDescription = stringResource(R.string.adjust_time_clock_icon),
                     tint = MaterialTheme.colorScheme.primary
                 )
                 
                 Spacer(modifier = Modifier.width(8.dp))
                 
                 Text(
-                    text = "Adjust Start Time",
+                    text = stringResource(R.string.action_adjust_time),
                     style = MaterialTheme.typography.headlineSmall
                 )
             }
@@ -232,7 +236,7 @@ fun AdjustStartTimeDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "If you forgot to start the timer when you began fasting, you can adjust the start time here.",
+                    text = stringResource(R.string.adjust_time_instructions),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -251,7 +255,7 @@ fun AdjustStartTimeDialog(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Current Elapsed Time",
+                            text = stringResource(R.string.adjust_time_current_elapsed),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center,
@@ -272,7 +276,7 @@ fun AdjustStartTimeDialog(
                         Spacer(modifier = Modifier.height(8.dp))
                         
                         Text(
-                            text = "Started fasting on:",
+                            text = stringResource(R.string.adjust_time_started_on),
                             style = MaterialTheme.typography.titleSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center,
@@ -297,7 +301,7 @@ fun AdjustStartTimeDialog(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Set New Start Time",
+                        text = stringResource(R.string.adjust_time_set_new),
                         style = MaterialTheme.typography.titleMedium,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth(),
@@ -317,7 +321,7 @@ fun AdjustStartTimeDialog(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "Day",
+                                text = stringResource(R.string.adjust_time_day),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -341,7 +345,7 @@ fun AdjustStartTimeDialog(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "Time",
+                                text = stringResource(R.string.adjust_time_time),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -417,7 +421,7 @@ fun AdjustStartTimeDialog(
                     
                     // Show the selected date and time
                     Text(
-                        text = "New start time: $newStartTimeFormatted",
+                        text = stringResource(R.string.adjust_time_new_start_time, newStartTimeFormatted),
                         style = MaterialTheme.typography.bodyMedium,
                         color = if (validation.isValid) 
                             MaterialTheme.colorScheme.onSurfaceVariant 
@@ -451,7 +455,7 @@ fun AdjustStartTimeDialog(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "New Elapsed Time",
+                            text = stringResource(R.string.adjust_time_new_elapsed),
                             style = MaterialTheme.typography.titleMedium,
                             color = if (validation.isValid && adjustmentMillis != 0L)
                                 MaterialTheme.colorScheme.onPrimaryContainer
@@ -492,7 +496,7 @@ fun AdjustStartTimeDialog(
                     disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             ) {
-                Text("Apply Adjustment")
+                Text(stringResource(R.string.adjust_time_apply))
             }
         },
         dismissButton = {
@@ -502,7 +506,7 @@ fun AdjustStartTimeDialog(
                     contentColor = MaterialTheme.colorScheme.primary
                 )
             ) {
-                Text("Cancel")
+                Text(stringResource(R.string.action_cancel))
             }
         },
         containerColor = MaterialTheme.colorScheme.surface,
@@ -515,6 +519,7 @@ fun AdjustStartTimeDialog(
  * Validates the adjustment parameters and returns a validation result
  */
 private fun validateAdjustment(
+    context: Context,
     newStartTimeMillis: Long,
     newElapsedTimeMillis: Long,
     adjustmentMillis: Long,
@@ -525,19 +530,19 @@ private fun validateAdjustment(
     return when {
         newStartTimeMillis > currentTime -> ValidationResult(
             isValid = false,
-            errorMessage = "Start time cannot be in the future. Please select an earlier time."
+            errorMessage = context.getString(R.string.adjust_time_error_future)
         )
         newElapsedTimeMillis <= 0 -> ValidationResult(
             isValid = false,
-            errorMessage = "This would result in negative fasting time. Please select a later time."
+            errorMessage = context.getString(R.string.adjust_time_error_negative)
         )
         adjustmentMillis >= maxAdjustmentMillis -> ValidationResult(
             isValid = false,
-            errorMessage = "Adjustment is too large (maximum 30 days). Please select a more recent date."
+            errorMessage = context.getString(R.string.adjust_time_error_too_large)
         )
         adjustmentMillis == 0L -> ValidationResult(
             isValid = true,
-            errorMessage = "No change to current time. Adjust to apply changes."
+            errorMessage = context.getString(R.string.adjust_time_no_change)
         )
         else -> ValidationResult(isValid = true)
     }

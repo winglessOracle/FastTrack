@@ -1,6 +1,7 @@
 package wesseling.io.fasttime.widget
 
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -28,6 +29,7 @@ import wesseling.io.fasttime.repository.FastingRepository
 import wesseling.io.fasttime.timer.FastingTimer
 import wesseling.io.fasttime.ui.components.FastingSummaryDialog
 import wesseling.io.fasttime.ui.theme.FastTrackTheme
+import wesseling.io.fasttime.util.LocaleHelper
 
 /**
  * Activity that shows a confirmation dialog when stopping the timer from the widget
@@ -36,6 +38,10 @@ class WidgetConfirmationActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        // Apply saved language settings to ensure proper localization
+        val languageCode = LocaleHelper.getLanguageCode(this)
+        LocaleHelper.updateLocale(this, languageCode)
         
         setContent {
             FastTrackTheme {
@@ -90,6 +96,13 @@ class WidgetConfirmationActivity : ComponentActivity() {
                 }
             }
         }
+    }
+    
+    override fun attachBaseContext(base: Context) {
+        // Apply the saved language settings to the base context
+        val languageCode = LocaleHelper.getLanguageCode(base)
+        val updatedContext = LocaleHelper.updateLocale(base, languageCode)
+        super.attachBaseContext(updatedContext)
     }
 }
 

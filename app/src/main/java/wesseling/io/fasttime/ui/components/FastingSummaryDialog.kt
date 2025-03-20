@@ -1,5 +1,6 @@
 package wesseling.io.fasttime.ui.components
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -39,11 +40,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import wesseling.io.fasttime.R
 import wesseling.io.fasttime.model.CompletedFast
 import wesseling.io.fasttime.model.FastingState
 import wesseling.io.fasttime.ui.theme.getColorForFastingState
@@ -60,29 +64,59 @@ fun FastingSummaryDialog(
     var note by remember { mutableStateOf(completedFast.note) }
     val context = LocalContext.current
     
-    Dialog(onDismissRequest = onDismiss) {
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true
+        )
+    ) {
         Card(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(0.9f)
                 .padding(16.dp),
             shape = RoundedCornerShape(16.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface
             )
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // Title
                 Text(
-                    text = "Fasting Complete!",
-                    style = MaterialTheme.typography.headlineSmall,
+                    text = stringResource(R.string.fasting_log_summary_title),
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
+                    textAlign = TextAlign.Center
+                )
+                
+                Spacer(modifier = Modifier.height(24.dp))
+                
+                // Fasting state with color
+                val stateColor = getColorForFastingState(completedFast.maxFastingState)
+                Text(
+                    text = completedFast.maxFastingState.getDisplayName(context),
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = stateColor,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(50))
+                        .background(stateColor.copy(alpha = 0.1f))
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                )
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                // Duration in large text
+                Text(
+                    text = formatDuration(context, completedFast.durationMillis),
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -110,7 +144,7 @@ fun FastingSummaryDialog(
                     Spacer(modifier = Modifier.height(8.dp))
                     
                     Text(
-                        text = "You reached ${completedFast.maxFastingState.description}!",
+                        text = stringResource(R.string.fasting_log_achievement_reached, completedFast.maxFastingState.description),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Medium,
                         color = achievementColor,
@@ -123,19 +157,19 @@ fun FastingSummaryDialog(
                 // Fast details
                 FastDetailRow(
                     icon = Icons.Filled.AccessTime,
-                    label = "Duration",
+                    label = stringResource(R.string.fasting_log_duration),
                     value = completedFast.getFormattedDuration()
                 )
                 
                 FastDetailRow(
                     icon = Icons.Filled.CalendarToday,
-                    label = "Started",
+                    label = stringResource(R.string.fasting_log_started),
                     value = completedFast.getFormattedStartTime(context)
                 )
                 
                 FastDetailRow(
                     icon = Icons.Filled.CheckCircle,
-                    label = "Ended",
+                    label = stringResource(R.string.fasting_log_ended),
                     value = completedFast.getFormattedEndTime(context)
                 )
                 
@@ -145,7 +179,7 @@ fun FastingSummaryDialog(
                 OutlinedTextField(
                     value = note,
                     onValueChange = { note = it },
-                    label = { Text("Notes (optional)") },
+                    label = { Text(stringResource(R.string.fasting_log_notes)) },
                     modifier = Modifier.fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = MaterialTheme.colorScheme.primary,
@@ -167,7 +201,7 @@ fun FastingSummaryDialog(
                             contentColor = MaterialTheme.colorScheme.primary
                         )
                     ) {
-                        Text("Discard")
+                        Text(stringResource(R.string.fasting_log_discard))
                     }
                     
                     Button(
@@ -191,7 +225,7 @@ fun FastingSummaryDialog(
                             contentColor = MaterialTheme.colorScheme.onPrimary
                         )
                     ) {
-                        Text("Save to Log")
+                        Text(stringResource(R.string.fasting_log_save))
                     }
                 }
             }
@@ -238,15 +272,15 @@ private fun FastDetailRow(
 }
 
 // Helper functions for formatting time
-private fun formatDuration(durationMillis: Long): String {
+private fun formatDuration(context: Context, durationMillis: Long): String {
     val seconds = durationMillis / 1000
     val minutes = seconds / 60
     val hours = minutes / 60
     
     return when {
-        hours > 0 -> "$hours hours ${minutes % 60} minutes"
-        minutes > 0 -> "$minutes minutes"
-        else -> "$seconds seconds"
+        hours > 0 -> context.getString(R.string.format_hours_minutes_detailed, hours, minutes % 60)
+        minutes > 0 -> context.getString(R.string.format_minutes_only_detailed, minutes)
+        else -> context.getString(R.string.format_seconds_only_detailed, seconds)
     }
 }
 

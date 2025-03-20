@@ -1,5 +1,8 @@
 package wesseling.io.fasttime.model
 
+import android.content.Context
+import wesseling.io.fasttime.R
+
 /**
  * Documentation about fasting states and their scientific benefits
  */
@@ -11,7 +14,7 @@ object FastingDocumentation {
     fun getDocumentationForState(state: FastingState): FastingStateInfo {
         return when (state) {
             FastingState.NOT_FASTING -> FastingStateInfo(
-                title = "Fed State (0-4 hours)",
+                titleResourceId = R.string.fasting_state_title_not_fasting,
                 benefits = listOf(
                     "Digestion and absorption of nutrients",
                     "Energy storage for later use",
@@ -27,7 +30,7 @@ object FastingDocumentation {
             )
             
             FastingState.EARLY_FAST -> FastingStateInfo(
-                title = "Early Fasting State (4-12 hours)",
+                titleResourceId = R.string.fasting_state_title_early_fast,
                 benefits = listOf(
                     "Blood glucose and insulin levels begin to drop",
                     "Your body starts to transition from using glucose to stored glycogen",
@@ -43,7 +46,7 @@ object FastingDocumentation {
             )
             
             FastingState.GLYCOGEN_DEPLETION -> FastingStateInfo(
-                title = "Glycogen Depletion (12-18 hours)",
+                titleResourceId = R.string.fasting_state_title_glycogen_depletion,
                 benefits = listOf(
                     "Liver glycogen stores become significantly depleted",
                     "Fat breakdown (lipolysis) increases substantially",
@@ -60,7 +63,7 @@ object FastingDocumentation {
             )
             
             FastingState.METABOLIC_SHIFT -> FastingStateInfo(
-                title = "Metabolic Shift (18-24 hours)",
+                titleResourceId = R.string.fasting_state_title_metabolic_shift,
                 benefits = listOf(
                     "Ketosis becomes more significant as fat metabolism ramps up",
                     "Blood ketone levels rise further, providing an alternative energy source",
@@ -77,7 +80,7 @@ object FastingDocumentation {
             )
             
             FastingState.DEEP_KETOSIS -> FastingStateInfo(
-                title = "Deep Ketosis & Increased Autophagy (24-48 hours)",
+                titleResourceId = R.string.fasting_state_title_deep_ketosis,
                 benefits = listOf(
                     "The body relies primarily on fat and ketones for energy",
                     "Autophagy peaks, removing damaged cells and proteins",
@@ -95,7 +98,7 @@ object FastingDocumentation {
             )
             
             FastingState.IMMUNE_RESET -> FastingStateInfo(
-                title = "Immune System Reset & Peak Fat Burning (48-72 hours)",
+                titleResourceId = R.string.fasting_state_title_immune_reset,
                 benefits = listOf(
                     "Stem cell production increases (immune system regeneration begins)",
                     "Insulin sensitivity improves dramatically",
@@ -114,7 +117,7 @@ object FastingDocumentation {
             )
             
             FastingState.EXTENDED_FAST -> FastingStateInfo(
-                title = "Prolonged Fasting Benefits (72+ hours)",
+                titleResourceId = R.string.fasting_state_title_extended_fast,
                 benefits = listOf(
                     "Stem cell regeneration increases further",
                     "The immune system undergoes significant rejuvenation",
@@ -139,9 +142,15 @@ object FastingDocumentation {
      * Data class to hold information about a fasting state
      */
     data class FastingStateInfo(
-        val title: String,
+        val titleResourceId: Int,  // Resource ID for localized title
         val benefits: List<String>,
         val scientificDetails: String,
         val warnings: List<String>
-    )
+    ) {
+        // For backward compatibility - using an empty string as this field should no longer be used
+        val title: String = ""
+        
+        // For backward compatibility
+        val titleKey: String = ""
+    }
 }

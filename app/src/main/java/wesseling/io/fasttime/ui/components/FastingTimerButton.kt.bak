@@ -1,9 +1,6 @@
 package wesseling.io.fasttime.ui.components
 
 import android.content.Context
-import android.content.Intent
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
@@ -68,8 +65,6 @@ import wesseling.io.fasttime.ui.theme.MetabolicShiftBlue
 import wesseling.io.fasttime.ui.theme.NotFastingGray
 import wesseling.io.fasttime.ui.theme.getColorForFastingState
 import wesseling.io.fasttime.ui.theme.BorderUtils
-import androidx.compose.runtime.rememberCoroutineScope
-import kotlinx.coroutines.launch
 
 /**
  * A widget button that displays and controls a fasting timer
@@ -81,7 +76,6 @@ fun FastingTimerButton(
     val context = LocalContext.current
     val fastingTimer = remember { FastingTimer.getInstance(context) }
     val repository = remember { FastingRepository.getInstance(context) }
-    val coroutineScope = rememberCoroutineScope()
     
     // Observe lifecycle events for cleanup
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -137,15 +131,15 @@ fun FastingTimerButton(
             confirmButton = {
                 Button(
                     onClick = {
-                        // Use the widget's confirmation activity to handle the reset
-                        try {
-                            Log.d("FastingTimerButton", "Launching timer reset confirmation")
-                            val confirmIntent = Intent(context, Class.forName("wesseling.io.fasttime.widget.WidgetConfirmationActivity"))
-                            confirmIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                            context.startActivity(confirmIntent)
-                            showConfirmationDialog = false
-                        } catch (e: Exception) {
-                            Log.e("FastingTimerButton", "Error launching confirmation", e)
+                        // Reset the timer and get the completed fast
+                        val fast = fastingTimer.resetTimer()
+                        showConfirmationDialog = false
+                        
+                        // Show summary dialog only if a valid fast was completed (12+ hours)
+                        // The resetTimer method now returns null for fasts under 12 hours
+                        if (fast != null) {
+                            completedFast = fast
+                            showSummaryDialog = true
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
@@ -211,30 +205,14 @@ fun FastingTimerButton(
         AdjustStartTimeDialog(
             currentElapsedTimeMillis = fastingTimer.elapsedTimeMillis,
             onAdjustTime = { adjustmentMillis ->
-                coroutineScope.launch {
-                    try {
-                        // Use Handler to move timer operations off the UI thread
-                        val handler = Handler(Looper.getMainLooper())
-                        handler.post {
-                            try {
-                                val success = fastingTimer.adjustStartTime(adjustmentMillis)
-                                handler.post {
-                                    if (!success) {
-                                        // Show a toast message if adjustment failed
-                                        Toast.makeText(
-                                            context,
-                                            context.getString(R.string.toast_invalid_adjustment),
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
-                                }
-                            } catch (e: Exception) {
-                                Log.e("FastingTimerButton", "Error adjusting time", e)
-                            }
-                        }
-                    } catch (e: Exception) {
-                        Log.e("FastingTimerButton", "Error in adjust time coroutine", e)
-                    }
+                val success = fastingTimer.adjustStartTime(adjustmentMillis)
+                if (!success) {
+                    // Show a toast message if adjustment failed
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.toast_invalid_adjustment),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             },
             onDismiss = {
@@ -275,7 +253,7 @@ fun FastingTimerButton(
         ) {
             // Timer display with subtle animation
             Text(
-                text = fastingTimer.getFormattedElapsedTime(),
+                text = fastingTimer.getFormattedTime(),
                 fontSize = 40.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
@@ -336,15 +314,7 @@ fun FastingTimerButton(
                     if (fastingTimer.isRunning) {
                         showConfirmationDialog = true
                     } else {
-                        // Use broadcast approach exactly like the widget does
-                        try {
-                            Log.d("FastingTimerButton", "Starting timer via broadcast")
-                            val startIntent = Intent("wesseling.io.fasttime.widget.ACTION_START_TIMER")
-                            startIntent.setPackage(context.packageName)
-                            context.sendBroadcast(startIntent)
-                        } catch (e: Exception) {
-                            Log.e("FastingTimerButton", "Error starting timer via broadcast", e)
-                        }
+                        fastingTimer.startTimer()
                     }
                 },
                 modifier = Modifier
@@ -383,9 +353,7 @@ fun FastingTimerButton(
                         text = if (fastingTimer.isRunning) stringResource(R.string.widget_stop_timer) else stringResource(R.string.widget_start_timer),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
+                        color = Color.White
                     )
                 }
             }

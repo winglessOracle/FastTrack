@@ -363,7 +363,6 @@ fun LanguageSelector(
     currentLanguage: LocaleHelper.Companion.AppLanguage,
     onLanguageSelected: (LocaleHelper.Companion.AppLanguage) -> Unit
 ) {
-    val context = LocalContext.current
     var showLanguageDialog by remember { mutableStateOf(false) }
     
     Row(

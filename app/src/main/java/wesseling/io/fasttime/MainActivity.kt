@@ -3,6 +3,7 @@ package wesseling.io.fasttime
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -51,6 +52,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -121,6 +123,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate")
+        
+        // Ensure locale is applied before setting content
+        val languageCode = LocaleHelper.getLanguageCode(this)
+        LocaleHelper.updateLocale(this, languageCode)
         
         // Enable edge-to-edge display
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -244,6 +250,21 @@ class MainActivity : ComponentActivity() {
     }
     
     /**
+     * Handle configuration changes manually since we set android:configChanges="locale" in the manifest
+     */
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        Log.d(TAG, "onConfigurationChanged")
+        
+        // Apply language settings when configuration changes
+        val languageCode = LocaleHelper.getLanguageCode(this)
+        LocaleHelper.updateLocale(this, languageCode)
+        
+        // Recreate the UI with the new locale
+        recreate()
+    }
+    
+    /**
      * Check if notification permission is granted and request it if not
      */
     private fun checkAndRequestNotificationPermission() {
@@ -328,7 +349,7 @@ fun MainScreen(
             TopAppBar(
                 title = { 
                     Text(
-                        text = "FastTrack",
+                        text = stringResource(R.string.app_name),
                         fontWeight = FontWeight.Bold
                     )
                 },
@@ -336,7 +357,7 @@ fun MainScreen(
                     IconButton(onClick = onNavigateToSettings) {
                         Icon(
                             imageVector = Icons.Filled.Settings,
-                            contentDescription = "Settings"
+                            contentDescription = stringResource(R.string.settings_title)
                         )
                     }
                 },
@@ -366,14 +387,14 @@ fun MainScreen(
             ) {
                 // App description
                 Text(
-                    text = "Track your fasting journey, celebrate achievements, and transform your health with fun!",
+                    text = stringResource(R.string.settings_about_description),
                     style = MaterialTheme.typography.headlineSmall,
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
                 
-                // Fasting log button with icon (moved to top for easier access)
+                // Fasting log button with icon
                 Button(
                     onClick = onNavigateToLog,
                     modifier = Modifier
@@ -401,7 +422,7 @@ fun MainScreen(
                             modifier = Modifier.size(28.dp)
                         )
                         Text(
-                            text = "View Fasting Log",
+                            text = stringResource(R.string.fasting_log_title),
                             style = MaterialTheme.typography.titleMedium.copy(
                                 fontWeight = FontWeight.Bold
                             ),
@@ -444,7 +465,7 @@ fun MainScreen(
                             modifier = Modifier.size(28.dp)
                         )
                         Text(
-                            text = "How to Use FastTrack",
+                            text = stringResource(R.string.help_title),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onTertiary
                         )

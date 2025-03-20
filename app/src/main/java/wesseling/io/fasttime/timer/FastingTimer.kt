@@ -251,7 +251,6 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
             var lastSaveTime = System.currentTimeMillis()
             
             timerJob = coroutineScope.launch {
-                var lastUpdateTime = System.currentTimeMillis()
                 var inBackground = false
                 var updateInterval: Long
                 var consecutiveBackgroundUpdates = 0
@@ -262,7 +261,7 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
                         val expectedElapsed = currentTime - startTimeMillis
                         
                         // Check for time inconsistencies
-                        if (currentTime < lastUpdateTime || expectedElapsed < 0) {
+                        if (expectedElapsed < 0) {
                             Log.e(TAG, "Time inconsistency detected")
                             resetToSafeState()
                             break
@@ -271,11 +270,10 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
                         elapsedTimeMillis = expectedElapsed
                         
                         // Check if app is in foreground using a more efficient method
-                        val wasInBackground = inBackground
                         inBackground = isAppInBackground()
                         
                         // If transitioning from foreground to background, save state
-                        if (!wasInBackground && inBackground) {
+                        if (inBackground) {
                             saveState()
                             lastSavedElapsedTime = elapsedTimeMillis
                             lastSavedState = currentFastingState
@@ -313,7 +311,7 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
                             consecutiveBackgroundUpdates = 0
                         }
                         
-                        lastUpdateTime = currentTime
+                        lastSaveTime = currentTime
                         delay(updateInterval)
                     } catch (e: Exception) {
                         Log.e(TAG, "Error in timer loop", e)
@@ -701,10 +699,10 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
     }
     
     /**
-     * Format elapsed time as HH:MM:SS
+     * Get formatted elapsed time string
      */
-    fun getFormattedTime(): String {
-        return DateTimeFormatter.formatElapsedTime(elapsedTimeMillis)
+    fun getFormattedElapsedTime(): String {
+        return DateTimeFormatter.formatElapsedTime(appContext, elapsedTimeMillis)
     }
     
     /**
@@ -770,108 +768,45 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
     }
     
     /**
-     * Start the widget update service to keep widgets up to date
+     * Start the widget update service
      */
     private fun startWidgetUpdateService() {
+        // First try using direct reflection-free approach
         try {
-            // Try to use the service's own recovery mechanism first
-            try {
-                val serviceClass = Class.forName("wesseling.io.fasttime.widget.FastingWidgetUpdateService")
-                val ensureRunningMethod = serviceClass.getMethod("ensureServiceRunning", Context::class.java)
-                ensureRunningMethod.invoke(null, appContext)
-                Log.d(TAG, "Started widget update service using recovery mechanism")
-                return
-            } catch (e: Exception) {
-                Log.w(TAG, "Could not use service recovery mechanism, using direct start", e)
-            }
+            Log.d(TAG, "Starting widget update service, timer running=$isRunning")
             
-            // Fallback to direct service start
-            val intent = Intent(appContext, FastingWidgetUpdateService::class.java)
-            intent.putExtra("source", "FastingTimer")
+            // Determine the service class name
+            val serviceName = "wesseling.io.fasttime.widget.FastingWidgetUpdateService"
+            val intent = Intent()
+            intent.setClassName(appContext.packageName, serviceName)
+            intent.putExtra("source", "FastingTimer.safeStart")
             
+            // Use the appropriate method based on Android version
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 appContext.startForegroundService(intent)
             } else {
                 appContext.startService(intent)
             }
             
-            // Verify service started after a delay
-            Handler(Looper.getMainLooper()).postDelayed({
-                verifyServiceRunning()
-            }, 5000) // 5 seconds
-            
-            Log.d(TAG, "Started widget update service")
+            Log.d(TAG, "Started widget update service using direct approach")
+            return
         } catch (e: Exception) {
-            Log.e(TAG, "Error starting widget update service", e)
-            
-            // Try alternative approach as last resort
-            retryServiceStartWithAlarm()
+            // Log but continue with alternative approaches
+            Log.e(TAG, "Error in primary service start approach", e)
         }
-    }
-    
-    /**
-     * Verify that the service is actually running and retry if needed
-     */
-    private fun verifyServiceRunning() {
+        
+        // Fallback to broadcast-based approach as last resort
         try {
-            // Try to check if service is running using reflection
-            val serviceClass = Class.forName("wesseling.io.fasttime.widget.FastingWidgetUpdateService")
-            val isRunningMethod = serviceClass.getMethod("isServiceRunning", Context::class.java)
-            val isRunning = isRunningMethod.invoke(null, appContext) as Boolean
+            val updateIntent = Intent("wesseling.io.fasttime.widget.ACTION_UPDATE_WIDGETS")
+            updateIntent.setPackage(appContext.packageName)
+            updateIntent.putExtra("REQUEST_SERVICE_START", true)
+            updateIntent.putExtra("TIMESTAMP", System.currentTimeMillis())
+            appContext.sendBroadcast(updateIntent)
             
-            if (!isRunning) {
-                Log.w(TAG, "Widget service not running after start attempt, retrying")
-                retryServiceStartWithAlarm()
-            }
+            Log.d(TAG, "Requested service start via broadcast")
         } catch (e: Exception) {
-            Log.e(TAG, "Could not verify service state, assuming it may have failed", e)
-            retryServiceStartWithAlarm()
-        }
-    }
-    
-    /**
-     * Last resort approach to start service using AlarmManager
-     * This can help recover when normal service start fails
-     */
-    private fun retryServiceStartWithAlarm() {
-        try {
-            Log.d(TAG, "Attempting to start service using alarm fallback")
-            
-            // Create alarm that will trigger soon to start service
-            val alarmManager = appContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            val intent = Intent("wesseling.io.fasttime.widget.ACTION_BACKUP_ALARM")
-            intent.setClassName(
-                "wesseling.io.fasttime.widget",
-                "wesseling.io.fasttime.widget.FastingWidgetUpdateService"
-            )
-            
-            val pendingIntent = PendingIntent.getBroadcast(
-                appContext,
-                1002, // Must match BACKUP_ALARM_REQUEST_CODE from service
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-            
-            // Schedule alarm in 10 seconds
-            val triggerTime = SystemClock.elapsedRealtime() + 10 * 1000
-            
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                alarmManager.setExactAndAllowWhileIdle(
-                    AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                    triggerTime,
-                    pendingIntent
-                )
-            } else {
-                alarmManager.setExact(
-                    AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                    triggerTime,
-                    pendingIntent
-                )
-            }
-            
-            Log.d(TAG, "Service start alarm set for 10 seconds from now")
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to set service start alarm", e)
+            // Just log errors, don't crash the app
+            Log.e(TAG, "All service start approaches failed", e)
         }
     }
     
@@ -887,6 +822,175 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
         } catch (e: Exception) {
             Log.e(TAG, "Error stopping widget update service", e)
         }
+    }
+    
+    /**
+     * Safe version of startTimer without try/catch for use in Compose onClick handlers
+     */
+    @Synchronized
+    fun safeStartTimer() {
+        if (isRunning) return
+        
+        // Calculate new start time based on any existing elapsed time
+        startTimeMillis = System.currentTimeMillis() - elapsedTimeMillis
+        isRunning = true
+        
+        // Start the timer loop
+        safeStartTimerFromSavedState()
+        
+        // Save state to preferences
+        saveState()
+        
+        // Update widgets
+        updateWidgets()
+        
+        // IMPORTANT: Completely detach service starting from the UI thread to avoid crashes
+        Thread {
+            try {
+                Thread.sleep(500) // Small delay to ensure UI operations are complete
+                Handler(Looper.getMainLooper()).post {
+                    try {
+                        startWidgetUpdateService()
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error starting widget service in handler", e)
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error in service start thread", e)
+            }
+        }.start()
+    }
+    
+    /**
+     * Safe version of startTimerFromSavedState without try/catch for use in Compose
+     */
+    private fun safeStartTimerFromSavedState() {
+        // Cancel any existing job first
+        timerJob?.cancel()
+        
+        // Track state changes to minimize SharedPreferences writes
+        var lastSavedElapsedTime = elapsedTimeMillis
+        var lastSavedState = currentFastingState
+        var lastSaveTime = System.currentTimeMillis()
+        
+        timerJob = coroutineScope.launch {
+            var inBackground = false
+            var updateInterval: Long
+            var consecutiveBackgroundUpdates = 0
+            
+            while (isRunning) {
+                val currentTime = System.currentTimeMillis()
+                val expectedElapsed = currentTime - startTimeMillis
+                
+                elapsedTimeMillis = expectedElapsed
+                
+                // Check if app is in foreground using a more efficient method
+                inBackground = isAppInBackground()
+                
+                // Update interval based on app state and battery status
+                updateInterval = calculateAdaptiveUpdateInterval(inBackground, consecutiveBackgroundUpdates)
+                
+                // Update fasting state
+                val newState = FastingState.getStateForHours((elapsedTimeMillis / HOUR_IN_MILLIS).toInt())
+                if (newState != currentFastingState) {
+                    currentFastingState = newState
+                    
+                    // Update max state if needed
+                    if (newState.hourThreshold > _maxFastingState.hourThreshold) {
+                        _maxFastingState = newState
+                    }
+                    
+                    // Save updated state
+                    saveState()
+                    
+                    // Update widgets when state changes
+                    updateWidgets()
+                }
+                
+                // Check if we should save state
+                val timeSinceLastSave = currentTime - lastSaveTime
+                val elapsedTimeDifference = elapsedTimeMillis - lastSavedElapsedTime
+                val stateChanged = lastSavedState != currentFastingState
+                
+                // Save state if:
+                // 1. Fasting state has changed, or
+                // 2. It's been more than 5 minutes since last save, or
+                // 3. Elapsed time has changed by more than 5 minutes
+                if (stateChanged || 
+                    timeSinceLastSave > TimeUnit.MINUTES.toMillis(5) || 
+                    elapsedTimeDifference > TimeUnit.MINUTES.toMillis(5)) {
+                    saveState()
+                    lastSavedElapsedTime = elapsedTimeMillis
+                    lastSavedState = currentFastingState
+                    lastSaveTime = currentTime
+                }
+                
+                // If in background, increment counter for progressive throttling
+                if (inBackground) {
+                    consecutiveBackgroundUpdates++
+                } else {
+                    consecutiveBackgroundUpdates = 0
+                }
+                
+                // Sleep for calculated interval
+                delay(updateInterval)
+            }
+        }
+    }
+    
+    /**
+     * Safe version of resetTimer without try/catch for use in Compose onClick handlers
+     * 
+     * @return CompletedFast object if the timer was running or had elapsed time and reached at least 12 hours, null otherwise
+     */
+    @Synchronized
+    fun safeResetTimer(): CompletedFast? {
+        // Create a completed fast object if the timer was running and reached at least 12 hours (Glycogen Depletion)
+        val completedFast = if ((isRunning || elapsedTimeMillis > 0) && elapsedTimeMillis >= 12 * HOUR_IN_MILLIS) {
+            CompletedFast(
+                startTimeMillis = startTimeMillis,
+                endTimeMillis = System.currentTimeMillis(),
+                durationMillis = elapsedTimeMillis,
+                maxFastingState = _maxFastingState
+            )
+        } else {
+            null
+        }
+        
+        // Reset state
+        isRunning = false
+        timerJob?.cancel()
+        timerJob = null
+        elapsedTimeMillis = 0
+        startTimeMillis = 0
+        currentFastingState = FastingState.NOT_FASTING
+        _maxFastingState = FastingState.NOT_FASTING
+        
+        // Clear saved state
+        val editor = prefs.edit()
+        editor.clear()
+        editor.commit()
+        
+        // Update widgets
+        updateWidgets()
+        
+        // IMPORTANT: Completely detach service stopping from the UI thread to avoid crashes
+        Thread {
+            try {
+                Thread.sleep(500) // Small delay to ensure UI operations are complete
+                Handler(Looper.getMainLooper()).post {
+                    try {
+                        stopWidgetUpdateService()
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error stopping widget service in handler", e)
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error in service stop thread", e)
+            }
+        }.start()
+        
+        return completedFast
     }
     
     companion object {

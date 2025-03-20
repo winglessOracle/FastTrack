@@ -9,6 +9,7 @@
     <string name="action_close">Close</string>
     <string name="action_save">Save</string>
     <string name="action_edit">Edit</string>
+    <string name="action_adjust_time">Adjust Start Time</string>
     <string name="action_delete">Delete</string>
     <string name="action_clear">Clear</string>
     
@@ -101,6 +102,7 @@
     <string name="language_selection">Language</string>
     <string name="language_system_default">System Default</string>
     <string name="language_english">English</string>
+    <string name="language_spanish">Spanish</string>
     
     <!-- Help screen -->
     <string name="help_title">Help &amp; Information</string>
@@ -108,6 +110,181 @@
     <string name="help_fasting_protocols">Common Fasting Protocols</string>
     <string name="help_fasting_tips">Tips for Successful Fasting</string>
     <string name="help_medical_disclaimer">Always consult with a healthcare professional before starting any fasting regimen</string>
+    <string name="help_tab_basics">Basics</string>
+    <string name="help_tab_fasting_types">Fasting Types</string>
+    <string name="help_tab_tips">Tips</string>
+    <string name="help_unique_journey">Everyone\'s Fasting Journey is Unique</string>
+    <string name="help_unique_journey_content">Fasting affects each person differently based on metabolism, body composition, activity level, and health history. What works for one person may not work for another. Listen to your body and adjust your fasting approach accordingly. Start slowly and gradually increase your fasting duration as your body adapts. Remember that consistency is more important than intensity, especially when beginning your fasting journey.</string>
+    <string name="help_using_app">Using the Main App</string>
+    <string name="help_app_item_1">Tap START to begin your fasting timer</string>
+    <string name="help_app_item_2">The app tracks your fasting duration automatically</string>
+    <string name="help_app_item_3">Your fasting state changes based on duration</string>
+    <string name="help_app_item_4">Tap RESET to end your fast and save it to your log</string>
+    <string name="help_app_item_5">View your fasting history in the Fasting Log</string>
+    
+    <!-- Help screen additional content -->
+    <string name="help_fasting_log_features">Fasting Log Features</string>
+    <string name="help_log_item_1">View a summary of your fasting achievements</string>
+    <string name="help_log_item_2">Only fasts of 12+ hours are saved to the log</string>
+    <string name="help_log_item_3">Sort entries by date (newest/oldest first)</string>
+    <string name="help_log_item_4">Sort entries by duration (longest/shortest first)</string>
+    <string name="help_log_item_5">Filter entries by fasting state to find specific achievements</string>
+    <string name="help_log_item_6">Tap on an entry to view detailed information</string>
+    <string name="help_log_item_7">Edit or delete entries as needed</string>
+    
+    <string name="help_hydration">Importance of Hydration</string>
+    <string name="help_hydration_item_1">Fasting concerns food, not water - stay hydrated!</string>
+    <string name="help_hydration_item_2">Drink plenty of water throughout your fast</string>
+    <string name="help_hydration_item_3">Hydration helps manage hunger and maintain energy</string>
+    <string name="help_hydration_item_4">Consider electrolytes during longer fasts</string>
+    <string name="help_hydration_item_5">Black coffee and unsweetened tea are also permitted</string>
+    
+    <string name="help_fasting_states">Understanding Fasting States</string>
+    <string name="help_states_item_1">Fed State (Gray): 0-4 hours, digestion &amp; absorption</string>
+    <string name="help_states_item_2">Early Fasting (Yellow): 4-12 hours, fat burning begins</string>
+    <string name="help_states_item_3">Glycogen Depletion (Orange): 12-18 hours, fat metabolism increases (minimum for achievements)</string>
+    <string name="help_states_item_4">Metabolic Shift (Blue): 18-24 hours, ketosis begins</string>
+    <string name="help_states_item_5">Deep Ketosis (Green): 24-48 hours, autophagy peaks</string>
+    <string name="help_states_item_6">Immune Reset (Purple): 48-72 hours, stem cell production</string>
+    <string name="help_states_item_7">Extended Fast (Magenta): 72+ hours, cellular rejuvenation</string>
+    
+    <string name="help_achievement">Achievement Tracking</string>
+    <string name="help_achievement_content">FastTrack only counts fasts that reach at least the Glycogen Depletion state (12+ hours) toward your achievements and statistics. Shorter fasts will still be tracked during the timer and you\'ll still receive notifications for all fasting state changes, but shorter fasts won\'t be saved to your fasting log or included in your statistics. This encourages more meaningful fasting experiences while still providing feedback on all your fasting progress.</string>
+    
+    <string name="help_weekly">Weekly Deep Fast Achievement</string>
+    <string name="help_weekly_content">FastTrack includes a special medal achievement that tracks your weekly deep fasts (24+ hours or better). This encourages regular deep fasting on a weekly basis. Bronze medal is earned for 1-9 deep fasts, Silver for 10-24, Gold for 25-49, and Legend status for 50+ weekly deep fasts. Aim for at least one deep fast per week to maximize your fasting benefits and achievement progress.</string>
+    
+    <string name="help_widget">Widget Features</string>
+    <string name="help_widget_item_1">Add the FastTrack widget to your home screen</string>
+    <string name="help_widget_item_2">Tap START to begin a fast directly from your home screen</string>
+    <string name="help_widget_item_3">Tap RESET to end your fast</string>
+    <string name="help_widget_item_4">Tap the hours to adjust the start time (when fasting) or open the app (when not fasting)</string>
+    <string name="help_widget_item_5">Tap the state pill (colored text showing your current fasting state) to view detailed information about that fasting state</string>
+    <string name="help_widget_item_6">The widget updates automatically to show your current fasting state</string>
+    <string name="help_widget_item_7">Energy-efficient design minimizes battery consumption</string>
+    
+    <!-- Fasting Types tab -->
+    <string name="help_ideal_protocol">Finding Your Ideal Fasting Protocol</string>
+    <string name="help_ideal_protocol_content">Fasting is not one-size-fits-all. Different protocols offer varying benefits and levels of difficulty. Consider your lifestyle, goals, and experience level when choosing a fasting method. You may need to experiment with several approaches before finding what works best for you. The protocols below range from beginner-friendly to advanced. Start with an easier protocol and gradually progress as your body adapts to fasting.</string>
+    
+    <string name="help_16_8">16:8 Method (Leangains)</string>
+    <string name="help_16_8_item_1">Fast for 16 hours, eat during an 8-hour window</string>
+    <string name="help_16_8_item_2">Popular window: 12pm to 8pm</string>
+    <string name="help_16_8_item_3">Suitable for beginners</string>
+    <string name="help_16_8_item_4">Can be done daily</string>
+    <string name="help_16_8_item_5">Good for weight management and metabolic health</string>
+    
+    <string name="help_18_6">18:6 Method</string>
+    <string name="help_18_6_item_1">Fast for 18 hours, eat during a 6-hour window</string>
+    <string name="help_18_6_item_2">Popular window: 2pm to 8pm</string>
+    <string name="help_18_6_item_3">Intermediate level</string>
+    <string name="help_18_6_item_4">Enhanced fat burning and ketosis</string>
+    <string name="help_18_6_item_5">May improve insulin sensitivity</string>
+    
+    <string name="help_20_4">20:4 Method (Warrior Diet)</string>
+    <string name="help_20_4_item_1">Fast for 20 hours, eat during a 4-hour window</string>
+    <string name="help_20_4_item_2">Popular window: 4pm to 8pm</string>
+    <string name="help_20_4_item_3">Advanced level</string>
+    <string name="help_20_4_item_4">Significant autophagy benefits</string>
+    <string name="help_20_4_item_5">May enhance growth hormone production</string>
+    
+    <string name="help_omad">OMAD (One Meal A Day)</string>
+    <string name="help_omad_item_1">23:1 ratio - eat just one meal per day</string>
+    <string name="help_omad_item_2">Advanced level</string>
+    <string name="help_omad_item_3">Maximum autophagy benefits</string>
+    <string name="help_omad_item_4">Significant metabolic benefits</string>
+    <string name="help_omad_item_5">Requires careful nutritional planning</string>
+    
+    <string name="help_5_2">5:2 Diet</string>
+    <string name="help_5_2_item_1">Eat normally 5 days a week</string>
+    <string name="help_5_2_item_2">Restrict calories (500-600) on 2 non-consecutive days</string>
+    <string name="help_5_2_item_3">Good for those who find daily fasting difficult</string>
+    <string name="help_5_2_item_4">Flexible scheduling</string>
+    <string name="help_5_2_item_5">Shown to improve metabolic markers</string>
+    
+    <string name="help_alternate">Alternate Day Fasting</string>
+    <string name="help_alternate_item_1">Fast every other day</string>
+    <string name="help_alternate_item_2">Advanced level</string>
+    <string name="help_alternate_item_3">Significant weight loss potential</string>
+    <string name="help_alternate_item_4">May improve cardiovascular health</string>
+    <string name="help_alternate_item_5">Requires careful planning and adaptation</string>
+    
+    <string name="help_extended">Extended Fasting</string>
+    <string name="help_extended_item_1">Fasts lasting 24-72+ hours</string>
+    <string name="help_extended_item_2">Expert level - not for beginners</string>
+    <string name="help_extended_item_3">Maximum autophagy and cellular rejuvenation</string>
+    <string name="help_extended_item_4">Significant immune system reset</string>
+    <string name="help_extended_item_5">Should be done under medical supervision</string>
+    <string name="help_extended_item_6">Not recommended for regular practice</string>
+    
+    <!-- Tips tab -->
+    <string name="help_battery">Battery Optimization &amp; Energy Efficiency</string>
+    <string name="help_battery_item_1">FastTrack is designed to be energy-efficient and minimize battery consumption</string>
+    <string name="help_battery_item_2">The app and widget use optimized background processes</string>
+    <string name="help_battery_item_3">For best performance, ensure FastTrack is exempt from battery optimization settings on your device</string>
+    <string name="help_battery_item_4">Go to your device\'s Battery settings and add FastTrack to apps exempt from optimization</string>
+    <string name="help_battery_item_5">This ensures timers and notifications work correctly without excessive battery drain</string>
+    
+    <string name="help_getting_started">Getting Started</string>
+    <string name="help_getting_started_item_1">Start with shorter fasting windows (12-14 hours)</string>
+    <string name="help_getting_started_item_2">Gradually increase your fasting duration</string>
+    <string name="help_getting_started_item_3">Be consistent with your fasting schedule</string>
+    <string name="help_getting_started_item_4">Track your progress with FastTrack</string>
+    <string name="help_getting_started_item_5">Listen to your body and adjust as needed</string>
+    
+    <string name="help_using_log">Using the Fasting Log Effectively</string>
+    <string name="help_using_log_item_1">Sort by date to track your recent progress</string>
+    <string name="help_using_log_item_2">Sort by duration to identify your longest fasts</string>
+    <string name="help_using_log_item_3">Filter by fasting state to see how often you reach specific milestones</string>
+    <string name="help_using_log_item_4">Use the summary statistics to understand your overall progress</string>
+    <string name="help_using_log_item_5">Review your log regularly to identify patterns and improvements</string>
+    
+    <string name="help_electrolytes">Electrolyte Management</string>
+    <string name="help_electrolytes_item_1">Sodium: Add a pinch of sea salt to water (1/4 tsp in 1L water)</string>
+    <string name="help_electrolytes_item_2">Potassium: Consider potassium salt substitutes for fasts &gt;24 hours</string>
+    <string name="help_electrolytes_item_3">Magnesium: Magnesium glycinate or citrate supplements can help with muscle cramps</string>
+    <string name="help_electrolytes_item_4">Balanced electrolyte mix: 1/2 tsp salt, 1/4 tsp potassium salt in 1L water</string>
+    <string name="help_electrolytes_item_5">Signs of electrolyte imbalance: headaches, dizziness, muscle cramps</string>
+    <string name="help_electrolytes_item_6">For extended fasts (&gt;48h), consider commercial electrolyte supplements</string>
+    
+    <string name="help_stay_hydrated">Stay Hydrated</string>
+    <string name="help_stay_hydrated_item_1">Drink plenty of water throughout your fast</string>
+    <string name="help_stay_hydrated_item_2">Add electrolytes for longer fasts (24+ hours)</string>
+    <string name="help_stay_hydrated_item_3">Black coffee and unsweetened tea are permitted</string>
+    <string name="help_stay_hydrated_item_4">Avoid artificial sweeteners during fasting</string>
+    <string name="help_stay_hydrated_item_5">Carbonated water can help with hunger pangs</string>
+    
+    <string name="help_hunger">Managing Hunger</string>
+    <string name="help_hunger_item_1">Hunger comes in waves and typically passes</string>
+    <string name="help_hunger_item_2">Stay busy during peak hunger times</string>
+    <string name="help_hunger_item_3">Drink water when hunger strikes</string>
+    <string name="help_hunger_item_4">Light exercise can reduce hunger</string>
+    <string name="help_hunger_item_5">Remember: hunger is not an emergency</string>
+    
+    <string name="help_breaking_fast">Breaking Your Fast Properly</string>
+    <string name="help_breaking_item_1">For fasts &lt;24h: Start with easily digestible foods like bone broth, avocado, or eggs</string>
+    <string name="help_breaking_item_2">For fasts &gt;24h: Begin with bone broth, then wait 30-60 minutes before eating solid food</string>
+    <string name="help_breaking_item_3">For fasts &gt;48h: Start with clear broth, wait 1 hour, then small protein/fat meal, wait 2-3 hours before normal eating</string>
+    <string name="help_breaking_item_4">Avoid breaking fast with: processed carbs, large meals, dairy, nuts, or raw vegetables</string>
+    <string name="help_breaking_item_5">Good first foods: bone broth, soft-boiled eggs, avocado, cooked leafy greens, fermented foods</string>
+    <string name="help_breaking_item_6">Eat slowly and mindfully, chewing thoroughly</string>
+    <string name="help_breaking_item_7">Listen to your body and stop eating if you feel discomfort</string>
+    
+    <string name="help_nutrition">Nutrition During Eating Windows</string>
+    <string name="help_nutrition_item_1">Focus on nutrient-dense whole foods</string>
+    <string name="help_nutrition_item_2">Include adequate protein (0.8-1g per lb of lean body mass)</string>
+    <string name="help_nutrition_item_3">Don\'t neglect healthy fats</string>
+    <string name="help_nutrition_item_4">Include plenty of vegetables and fiber</string>
+    <string name="help_nutrition_item_5">Consider your total caloric needs</string>
+    
+    <string name="help_when_stop">When to Stop Fasting</string>
+    <string name="help_when_stop_item_1">If you feel unwell beyond normal hunger</string>
+    <string name="help_when_stop_item_2">If you experience dizziness or weakness</string>
+    <string name="help_when_stop_item_3">If you have a medical condition that requires food</string>
+    <string name="help_when_stop_item_4">During illness or high stress periods</string>
+    <string name="help_when_stop_item_5">During pregnancy or breastfeeding</string>
+    
+    <string name="help_disclaimer">Always consult with a healthcare professional before starting any fasting regimen</string>
     
     <!-- Fasting log screen -->
     <string name="fasting_log_title">Fasting Log</string>
@@ -128,6 +305,11 @@
     <string name="fasting_log_started">Started</string>
     <string name="fasting_log_ended">Ended</string>
     <string name="fasting_log_time_separator"> → </string>
+    <string name="fasting_log_duration">Duration</string>
+    <string name="fasting_log_notes">Notes (optional)</string>
+    <string name="fasting_log_discard">Discard</string>
+    <string name="fasting_log_save">Save to Log</string>
+    <string name="fasting_log_achievement_reached">You reached %s!</string>
     
     <!-- Notifications -->
     <string name="notification_channel_fasting_state">Fasting State Notifications</string>
@@ -161,6 +343,66 @@
     <string name="notification_short_early_fast_2">4+ hours in - your metabolism is changing!</string>
     <string name="notification_short_early_fast_3">You\'ve unlocked Early Fasting mode! Keep it up!</string>
     <string name="notification_short_early_fast_4">Insulin dropping, fat burning rising!</string>
+    
+    <!-- GLYCOGEN_DEPLETION state titles -->
+    <string name="notification_title_glycogen_depletion_1">Glycogen Depleted! 🔄</string>
+    <string name="notification_title_glycogen_depletion_2">Fat Burning Optimized! 🔥</string>
+    <string name="notification_title_glycogen_depletion_3">12-Hour Milestone Reached! 🏆</string>
+    <string name="notification_title_glycogen_depletion_4">Metabolic Magic Happening! ✨</string>
+    
+    <!-- GLYCOGEN_DEPLETION state short texts -->
+    <string name="notification_short_glycogen_depletion_1">Glucose reserves depleted, fat metabolism maximized!</string>
+    <string name="notification_short_glycogen_depletion_2">Your body is now primarily burning fat for fuel!</string>
+    <string name="notification_short_glycogen_depletion_3">12+ hours of fasting - insulin minimized, fat burning optimized!</string>
+    <string name="notification_short_glycogen_depletion_4">Glycogen to fat switch complete at %s!</string>
+    
+    <!-- METABOLIC_SHIFT state titles -->
+    <string name="notification_title_metabolic_shift_1">Ketones Detected! ⚡</string>
+    <string name="notification_title_metabolic_shift_2">Metabolic Shift Achieved! 🔄</string>
+    <string name="notification_title_metabolic_shift_3">18-Hour Milestone Reached! 🏆</string>
+    <string name="notification_title_metabolic_shift_4">Ketosis Has Begun! 🔑</string>
+    
+    <!-- METABOLIC_SHIFT state short texts -->
+    <string name="notification_short_metabolic_shift_1">Your brain is now switching to ketones for fuel!</string>
+    <string name="notification_short_metabolic_shift_2">Ketone production rising, cellular cleanup initiated!</string>
+    <string name="notification_short_metabolic_shift_3">You\'ve been fasting for 18+ hours - ketosis has begun!</string>
+    <string name="notification_short_metabolic_shift_4">Metabolic shift detected at %s, body optimization in progress!</string>
+    
+    <!-- DEEP_KETOSIS state titles -->
+    <string name="notification_title_deep_ketosis_1">Deep Ketosis Unlocked! 🔓</string>
+    <string name="notification_title_deep_ketosis_2">Autophagy Activated! 🧬</string>
+    <string name="notification_title_deep_ketosis_3">24-Hour Milestone Crushed! 🏆</string>
+    <string name="notification_title_deep_ketosis_4">Cellular Cleanup Maximal! 🧹</string>
+    
+    <!-- DEEP_KETOSIS state short texts -->
+    <string name="notification_short_deep_ketosis_1">Peak fat adaptation achieved after 24+ hours!</string>
+    <string name="notification_short_deep_ketosis_2">Cellular self-cleaning mode activated - autophagy peaks!</string>
+    <string name="notification_short_deep_ketosis_3">One full day of fasting completed - incredible achievement!</string>
+    <string name="notification_short_deep_ketosis_4">Deep ketosis reached at %s - maximum metabolic benefits!</string>
+    
+    <!-- IMMUNE_RESET state titles -->
+    <string name="notification_title_immune_reset_1">Immune System Reset! 🛡️</string>
+    <string name="notification_title_immune_reset_2">Stem Cell Production Up! 🌱</string>
+    <string name="notification_title_immune_reset_3">48-Hour Achievement Unlocked! 🏆</string>
+    <string name="notification_title_immune_reset_4">Growth Hormone Maximized! 📈</string>
+    
+    <!-- IMMUNE_RESET state short texts -->
+    <string name="notification_short_immune_reset_1">Your immune system is regenerating after 48+ hours!</string>
+    <string name="notification_short_immune_reset_2">Cellular rejuvenation peaks with increased stem cell production!</string>
+    <string name="notification_short_immune_reset_3">Two full days of fasting - your body is rebuilding stronger!</string>
+    <string name="notification_short_immune_reset_4">Immune reset initiated at %s - significant health benefits activated!</string>
+    
+    <!-- EXTENDED_FAST state titles -->
+    <string name="notification_title_extended_fast_1">Extended Fasting Master! 🌟</string>
+    <string name="notification_title_extended_fast_2">Ultimate Fasting Achievement! 🏆</string>
+    <string name="notification_title_extended_fast_3">72-Hour Milestone Conquered! 👑</string>
+    <string name="notification_title_extended_fast_4">Maximum Rejuvenation Mode! 🔄</string>
+    
+    <!-- EXTENDED_FAST state short texts -->
+    <string name="notification_short_extended_fast_1">72+ hours of fasting - truly exceptional achievement!</string>
+    <string name="notification_short_extended_fast_2">Maximum cellular rejuvenation and autophagy benefits!</string>
+    <string name="notification_short_extended_fast_3">You\'ve reached master level fasting status - incredible!</string>
+    <string name="notification_short_extended_fast_4">Extended fast milestone reached at %s - profound healing in progress!</string>
     
     <!-- Placeholder formats for all states -->
     <string name="notification_format_long_text">%1$s %2$s</string>
@@ -213,11 +455,66 @@
     
     <!-- Widget text -->
     <string name="widget_update_description">Updating widget</string>
-    <string name="widget_start_timer">Start Timer</string>
-    <string name="widget_stop_timer">Stop Timer</string>
+    <!-- IMPORTANT: For all translations, keep the Start/Stop button text as single words for proper UI layout -->
+    <string name="widget_start_timer">Start</string>
+    <string name="widget_stop_timer">Stop</string>
     <string name="widget_hours_label">Hours</string>
+    
+    <!-- Fasting legend time ranges -->
+    <string name="fasting_time_range_0_4">0-4 hours</string>
+    <string name="fasting_time_range_4_12">4-12 hours</string>
+    <string name="fasting_time_range_12_18">12-18 hours</string>
+    <string name="fasting_time_range_18_24">18-24 hours</string>
+    <string name="fasting_time_range_24_48">24-48 hours</string>
+    <string name="fasting_time_range_48_72">48-72 hours</string>
+    <string name="fasting_time_range_72_plus">72+ hours</string>
+    
+    <!-- Fasting documentation titles -->
+    <string name="fasting_state_title_not_fasting">Fed State (0-4 hours)</string>
+    <string name="fasting_state_title_early_fast">Early Fasting State (4-12 hours)</string>
+    <string name="fasting_state_title_glycogen_depletion">Glycogen Depletion (12-18 hours)</string>
+    <string name="fasting_state_title_metabolic_shift">Metabolic Shift (18-24 hours)</string>
+    <string name="fasting_state_title_deep_ketosis">Deep Ketosis &amp; Increased Autophagy (24-48 hours)</string>
+    <string name="fasting_state_title_immune_reset">Immune System Reset &amp; Peak Fat Burning (48-72 hours)</string>
+    <string name="fasting_state_title_extended_fast">Prolonged Fasting Benefits (72+ hours)</string>
+    
+    <!-- Time formatting -->
+    <string name="format_hours_minutes">%1$d h %2$02d min</string>
+    <string name="format_minutes_only">%d min</string>
+    <string name="format_hours_minutes_detailed">%1$d hours %2$d minutes</string>
+    <string name="format_minutes_only_detailed">%d minutes</string>
+    <string name="format_seconds_only_detailed">%d seconds</string>
     
     <!-- Input validation -->
     <string name="validation_time_invalid">Invalid time format</string>
     <string name="validation_date_invalid">Invalid date format</string>
+    
+    <!-- Sorting options -->
+    <string name="sort_date_newest">Date (Newest First)</string>
+    <string name="sort_date_oldest">Date (Oldest First)</string>
+    <string name="sort_duration_longest">Duration (Longest First)</string>
+    <string name="sort_duration_shortest">Duration (Shortest First)</string>
+    
+    <!-- Fast entry notes -->
+    <string name="fast_entry_manual_note">Fast entry created manually</string>
+    
+    <!-- Adjust Start Time Dialog -->
+    <string name="adjust_time_instructions">If you forgot to start the timer when you began fasting, you can adjust the start time here.</string>
+    <string name="adjust_time_current_elapsed">Current Elapsed Time</string>
+    <string name="adjust_time_started_on">Started fasting on:</string>
+    <string name="adjust_time_set_new">Set New Start Time</string>
+    <string name="adjust_time_day">Day</string>
+    <string name="adjust_time_time">Time</string>
+    <string name="adjust_time_new_elapsed">New Elapsed Time</string>
+    <string name="adjust_time_apply">Apply Adjustment</string>
+    <string name="adjust_time_error_future">Start time cannot be in the future. Please select an earlier time.</string>
+    <string name="adjust_time_error_negative">This would result in negative fasting time. Please select a later time.</string>
+    <string name="adjust_time_error_too_large">Adjustment is too large (maximum 30 days). Please select a more recent date.</string>
+    <string name="adjust_time_no_change">No change to current time. Adjust to apply changes.</string>
+    <string name="adjust_time_error_icon">Error</string>
+    <string name="adjust_time_clock_icon">Clock Icon</string>
+    <string name="adjust_time_new_start_time">New start time: %s</string>
+    
+    <!-- No logs to export message -->
+    <string name="no_fasting_logs_to_export">No fasting logs to export</string>
 </resources>

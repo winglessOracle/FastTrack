@@ -74,11 +74,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import kotlinx.coroutines.launch
+import wesseling.io.fasttime.R
 import wesseling.io.fasttime.model.CompletedFast
 import wesseling.io.fasttime.model.DateTimePreferences
 import wesseling.io.fasttime.model.FastingState
@@ -95,11 +97,15 @@ import java.util.Locale
 import java.util.Calendar
 
 // Add these enum classes for sorting and filtering
-enum class SortOption(val displayName: String) {
-    DATE_DESC("Date (Newest First)"),
-    DATE_ASC("Date (Oldest First)"),
-    DURATION_DESC("Duration (Longest First)"),
-    DURATION_ASC("Duration (Shortest First)")
+enum class SortOption(val displayName: Int) {
+    DATE_DESC(R.string.sort_date_newest),
+    DATE_ASC(R.string.sort_date_oldest),
+    DURATION_DESC(R.string.sort_duration_longest),
+    DURATION_ASC(R.string.sort_duration_shortest);
+    
+    fun getDisplayName(context: Context): String {
+        return context.getString(displayName)
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
@@ -149,7 +155,7 @@ fun FastingLogScreen(
                 allFasts = fasts
             } catch (e: Exception) {
                 Log.e("FastingLogScreen", "Error loading fasts", e)
-                snackbarHostState.showSnackbar("Failed to load fasting data")
+                snackbarHostState.showSnackbar(context.getString(R.string.error_load_failed))
             } finally {
                 isLoading = false
             }
@@ -207,7 +213,7 @@ fun FastingLogScreen(
                 val fasts = repository.getAllFasts()
                 if (fasts.isEmpty()) {
                     coroutineScope.launch {
-                        snackbarHostState.showSnackbar("No fasting logs to export")
+                        snackbarHostState.showSnackbar(context.getString(R.string.no_fasting_logs_to_export))
                     }
                     return@launch
                 }
@@ -219,8 +225,8 @@ fun FastingLogScreen(
                 fasts.forEach { fast ->
                     csvContent.append("${DateTimeFormatter.formatDateTime(fast.startTimeMillis, preferences)},")
                     csvContent.append("${DateTimeFormatter.formatDateTime(fast.endTimeMillis, preferences)},")
-                    csvContent.append("${DateTimeFormatter.formatDuration(fast.durationMillis)},")
-                    csvContent.append("${fast.maxFastingState.displayName},")
+                    csvContent.append("${DateTimeFormatter.formatDuration(context, fast.durationMillis)},")
+                    csvContent.append("${fast.maxFastingState.getDisplayName(context)},")
                     // Properly escape notes for CSV format
                     val escapedNotes = if (fast.note.isNotBlank()) {
                         "\"${fast.note.replace("\"", "\"\"")}\""
@@ -247,13 +253,13 @@ fun FastingLogScreen(
                 val shareIntent = Intent().apply {
                     action = Intent.ACTION_SEND
                     putExtra(Intent.EXTRA_STREAM, uri)
-                    putExtra(Intent.EXTRA_SUBJECT, "FastTrack Fasting Log")
-                    putExtra(Intent.EXTRA_TEXT, "Here's my fasting log from FastTrack!")
+                    putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.fasting_log_title))
+                    putExtra(Intent.EXTRA_TEXT, context.getString(R.string.share_fast_text, "", ""))  // We're not sharing a specific fast here
                     type = "text/csv"
                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 }
                 
-                context.startActivity(Intent.createChooser(shareIntent, "Share Fasting Log"))
+                context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.share_fast_title)))
                 
                 coroutineScope.launch {
                     snackbarHostState.showSnackbar("Fasting log exported successfully")
@@ -261,7 +267,7 @@ fun FastingLogScreen(
             } catch (e: Exception) {
                 Log.e("FastingLogScreen", "Error exporting all fasts", e)
                 coroutineScope.launch {
-                    snackbarHostState.showSnackbar("Failed to export fasting logs")
+                    snackbarHostState.showSnackbar(context.getString(R.string.error_save_failed))
                 }
             }
         }
@@ -273,49 +279,13 @@ fun FastingLogScreen(
             try {
                 repository.updateFast(fast)
                 refreshData()
-                snackbarHostState.showSnackbar("Fast updated successfully")
+                snackbarHostState.showSnackbar(context.getString(R.string.toast_time_adjusted))
             } catch (e: IllegalArgumentException) {
                 Log.e("FastingLogScreen", "Validation error: ${e.message}", e)
                 snackbarHostState.showSnackbar("Error: ${e.message}")
             } catch (e: Exception) {
                 Log.e("FastingLogScreen", "Error updating fast", e)
-                snackbarHostState.showSnackbar("Failed to update fast")
-            }
-        }
-    }
-    
-    // Function to add a new fast entry
-    fun addNewFastEntry() {
-        coroutineScope.launch {
-            try {
-                Log.d("FastingLogScreen", "Adding new fast entry to repository")
-                
-                // Create a new fast entry with current time
-                val currentTime = System.currentTimeMillis()
-                val startTime = currentTime - (4 * 60 * 60 * 1000) // 4 hours ago
-                
-                val newFast = CompletedFast(
-                    startTimeMillis = startTime,
-                    endTimeMillis = currentTime,
-                    durationMillis = currentTime - startTime,
-                    maxFastingState = FastingState.GLYCOGEN_DEPLETION, // Still use GLYCOGEN_DEPLETION to ensure it shows in log
-                    note = "Fast entry created manually"
-                )
-                
-                // Save the new fast entry
-                repository.saveFast(newFast)
-                
-                // Refresh the data
-                refreshData()
-                
-                // Show a snackbar
-                snackbarHostState.showSnackbar("New fast entry created")
-            } catch (e: IllegalArgumentException) {
-                Log.e("FastingLogScreen", "Validation error: ${e.message}", e)
-                snackbarHostState.showSnackbar("Error: ${e.message}")
-            } catch (e: Exception) {
-                Log.e("FastingLogScreen", "Error adding new fast entry", e)
-                snackbarHostState.showSnackbar("Failed to add fast entry")
+                snackbarHostState.showSnackbar(context.getString(R.string.error_save_failed))
             }
         }
     }
@@ -326,7 +296,7 @@ fun FastingLogScreen(
             TopAppBar(
                 title = { 
                     Text(
-                        text = "Fasting Log",
+                        text = stringResource(R.string.fasting_log_title),
                         fontWeight = FontWeight.Bold
                     )
                 },
@@ -334,7 +304,7 @@ fun FastingLogScreen(
                     IconButton(onClick = onBackPressed) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(R.string.back_button_description)
                         )
                     }
                 },
@@ -343,7 +313,7 @@ fun FastingLogScreen(
                     IconButton(onClick = { showSortDialog = true }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Sort,
-                            contentDescription = "Sort"
+                            contentDescription = stringResource(R.string.dialog_title_sort_by)
                         )
                     }
                     
@@ -351,17 +321,50 @@ fun FastingLogScreen(
                     IconButton(onClick = { showFilterDialog = true }) {
                         Icon(
                             imageVector = Icons.Default.FilterList,
-                            contentDescription = "Filter"
+                            contentDescription = stringResource(R.string.dialog_title_filter_by)
                         )
                     }
                     
                     // Add new fast entry button
                     IconButton(
-                        onClick = { addNewFastEntry() }
+                        onClick = { 
+                            coroutineScope.launch {
+                                try {
+                                    Log.d("FastingLogScreen", "Adding new fast entry to repository")
+                                    
+                                    // Create a new fast entry with current time
+                                    val currentTime = System.currentTimeMillis()
+                                    val startTime = currentTime - (4 * 60 * 60 * 1000) // 4 hours ago
+                                    
+                                    val newFast = CompletedFast(
+                                        startTimeMillis = startTime,
+                                        endTimeMillis = currentTime,
+                                        durationMillis = currentTime - startTime,
+                                        maxFastingState = FastingState.GLYCOGEN_DEPLETION, // Still use GLYCOGEN_DEPLETION to ensure it shows in log
+                                        note = context.getString(R.string.fast_entry_manual_note)
+                                    )
+                                    
+                                    // Save the new fast entry
+                                    repository.saveFast(newFast)
+                                    
+                                    // Refresh the data
+                                    refreshData()
+                                    
+                                    // Show a snackbar
+                                    snackbarHostState.showSnackbar(context.getString(R.string.toast_fast_saved))
+                                } catch (e: IllegalArgumentException) {
+                                    Log.e("FastingLogScreen", "Validation error: ${e.message}", e)
+                                    snackbarHostState.showSnackbar("Error: ${e.message}")
+                                } catch (e: Exception) {
+                                    Log.e("FastingLogScreen", "Error adding new fast entry", e)
+                                    snackbarHostState.showSnackbar(context.getString(R.string.toast_fast_save_error))
+                                }
+                            }
+                        }
                     ) {
                         Icon(
                             imageVector = Icons.Default.Add,
-                            contentDescription = "Add New Fast Entry"
+                            contentDescription = stringResource(R.string.action_edit)
                         )
                     }
                     // Export button
@@ -370,7 +373,7 @@ fun FastingLogScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.FileDownload,
-                            contentDescription = "Export Fasting Log"
+                            contentDescription = stringResource(R.string.share_fast_title)
                         )
                     }
                     // Delete all button
@@ -379,7 +382,7 @@ fun FastingLogScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.DeleteSweep,
-                            contentDescription = "Delete All Fasts"
+                            contentDescription = stringResource(R.string.fasting_log_delete_all)
                         )
                     }
                 },
@@ -405,31 +408,31 @@ fun FastingLogScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.Info,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Info,
                         contentDescription = null,
-                                modifier = Modifier.size(64.dp),
+                        modifier = Modifier.size(64.dp),
                         tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-                            )
-                            
-                            Spacer(modifier = Modifier.height(16.dp))
-                            
-                            Text(
-                                text = "No fasting sessions recorded yet",
+                    )
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    Text(
+                        text = stringResource(R.string.fasting_log_empty),
                         style = MaterialTheme.typography.titleLarge,
-                                textAlign = TextAlign.Center,
+                        textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                            )
-                            
-                            Spacer(modifier = Modifier.height(8.dp))
-                            
-                            Text(
-                                text = "Complete a fast to see it in your log",
+                    )
+                    
+                    Spacer(modifier = Modifier.height(8.dp))
+                    
+                    Text(
+                        text = stringResource(R.string.fasting_log_empty_description),
                         style = MaterialTheme.typography.bodyLarge,
-                                textAlign = TextAlign.Center,
+                        textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                     )
                 }
@@ -452,7 +455,7 @@ fun FastingLogScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                     
                     Text(
-                        text = "No matching fasting sessions",
+                        text = stringResource(R.string.fasting_log_no_matches),
                         style = MaterialTheme.typography.titleLarge,
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
@@ -461,7 +464,7 @@ fun FastingLogScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                     
                     Text(
-                        text = "Try changing your filter settings",
+                        text = stringResource(R.string.fasting_log_no_matches_description),
                         style = MaterialTheme.typography.bodyLarge,
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
@@ -475,17 +478,17 @@ fun FastingLogScreen(
                             containerColor = MaterialTheme.colorScheme.primary
                         )
                     ) {
-                        Text("Clear Filter")
+                        Text(stringResource(R.string.fasting_log_clear_filter))
                     }
                 }
             } else {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
                         .padding(horizontal = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        item {
+                ) {
+                    item {
                         Spacer(modifier = Modifier.height(8.dp))
                     }
                     
@@ -507,7 +510,7 @@ fun FastingLogScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "Filtered by: ${selectedFastingState?.displayName}",
+                                    text = stringResource(R.string.fasting_log_filtered_by, selectedFastingState?.getDisplayName(context) ?: ""),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.weight(1f)
@@ -516,7 +519,7 @@ fun FastingLogScreen(
                                 TextButton(
                                     onClick = { selectedFastingState = null }
                                 ) {
-                                    Text("Clear")
+                                    Text(stringResource(R.string.fasting_log_clear_filter))
                                 }
                             }
                         }
@@ -531,14 +534,14 @@ fun FastingLogScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Fasting History",
+                                text = stringResource(R.string.fasting_log_history_title),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier.weight(1f)
                             )
                             
                             Text(
-                                text = "${sortedAndFilteredFasts.size} sessions",
+                                text = stringResource(R.string.fasting_log_sessions_count, sortedAndFilteredFasts.size),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                             )
@@ -561,93 +564,93 @@ fun FastingLogScreen(
                     }
                     
                     item {
-                            Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
-                        }
-                    }
-                    
-            // Pull to refresh indicator
-                    PullRefreshIndicator(
-                refreshing = isLoading,
-                        state = pullRefreshState,
-                modifier = Modifier.align(Alignment.TopCenter),
-                contentColor = MaterialTheme.colorScheme.primary
-                    )
                 }
             }
             
-            // Delete all confirmation dialog
-            if (showDeleteAllDialog) {
-                AlertDialog(
-                    onDismissRequest = { showDeleteAllDialog = false },
-            title = { Text("Delete All Fasting Logs") },
-            text = { Text("Are you sure you want to delete all your fasting logs? This action cannot be undone.") },
-                    confirmButton = {
+            // Pull to refresh indicator
+            PullRefreshIndicator(
+                refreshing = isLoading,
+                state = pullRefreshState,
+                modifier = Modifier.align(Alignment.TopCenter),
+                contentColor = MaterialTheme.colorScheme.primary
+            )
+        }
+    }
+    
+    // Delete all fasting logs confirmation dialog
+    if (showDeleteAllDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteAllDialog = false },
+            title = { Text(stringResource(R.string.dialog_title_delete_all_fasts)) },
+            text = { Text(stringResource(R.string.dialog_message_delete_all_fasts)) },
+            confirmButton = {
                 TextButton(
-                            onClick = {
+                    onClick = {
                         coroutineScope.launch {
-                                try {
-                                    repository.deleteAllFasts()
-                                    allFasts = emptyList()
-                                snackbarHostState.showSnackbar("All fasting logs deleted")
-                                } catch (e: Exception) {
-                                    Log.e("FastingLogScreen", "Error deleting all fasts", e)
-                                snackbarHostState.showSnackbar("Failed to delete fasting logs")
-                                    }
-                                }
+                            try {
+                                repository.deleteAllFasts()
+                                allFasts = emptyList()
+                                snackbarHostState.showSnackbar(context.getString(R.string.toast_fast_saved))
+                            } catch (e: Exception) {
+                                Log.e("FastingLogScreen", "Error deleting all fasts", e)
+                                snackbarHostState.showSnackbar(context.getString(R.string.error_save_failed))
+                            }
+                        }
                         showDeleteAllDialog = false
-                            },
+                    },
                     colors = ButtonDefaults.textButtonColors(
                         contentColor = MaterialTheme.colorScheme.error
-                            )
-                        ) {
-                            Text("Delete All")
-                        }
-                    },
-                    dismissButton = {
+                    )
+                ) {
+                    Text(stringResource(R.string.action_delete))
+                }
+            },
+            dismissButton = {
                 TextButton(
                     onClick = { showDeleteAllDialog = false }
                 ) {
-                            Text("Cancel")
-                        }
+                    Text(stringResource(R.string.action_cancel))
+                }
             }
-                )
-            }
-            
-            // Delete single fast confirmation dialog
+        )
+    }
+    
+    // Delete single fast confirmation dialog
     fastToDelete?.let { fast ->
-                AlertDialog(
+        AlertDialog(
             onDismissRequest = { fastToDelete = null },
-            title = { Text("Delete Fasting Log") },
-            text = { Text("Are you sure you want to delete this fasting log? This action cannot be undone.") },
-                    confirmButton = {
+            title = { Text(stringResource(R.string.dialog_title_delete_fast)) },
+            text = { Text(stringResource(R.string.dialog_message_delete_fast)) },
+            confirmButton = {
                 TextButton(
-                            onClick = {
+                    onClick = {
                         coroutineScope.launch {
-                                try {
+                            try {
                                 repository.deleteFast(fast.id)
-                                        allFasts = repository.getAllFasts()
-                                snackbarHostState.showSnackbar("Fasting log deleted")
-                                } catch (e: Exception) {
-                                    Log.e("FastingLogScreen", "Error deleting fast", e)
-                                snackbarHostState.showSnackbar("Failed to delete fast")
-                                    }
-                                }
+                                allFasts = repository.getAllFasts()
+                                snackbarHostState.showSnackbar(context.getString(R.string.toast_fast_saved))
+                            } catch (e: Exception) {
+                                Log.e("FastingLogScreen", "Error deleting fast", e)
+                                snackbarHostState.showSnackbar(context.getString(R.string.error_save_failed))
+                            }
+                        }
                         fastToDelete = null
-                            },
+                    },
                     colors = ButtonDefaults.textButtonColors(
                         contentColor = MaterialTheme.colorScheme.error
-                            )
-                        ) {
-                            Text("Delete")
-                        }
-                    },
-                    dismissButton = {
+                    )
+                ) {
+                    Text(stringResource(R.string.action_delete))
+                }
+            },
+            dismissButton = {
                 TextButton(
                     onClick = { fastToDelete = null }
                 ) {
-                            Text("Cancel")
-                        }
+                    Text(stringResource(R.string.action_cancel))
+                }
             }
         )
     }
@@ -668,26 +671,26 @@ fun FastingLogScreen(
                 showEditConfirmation = false
                 fastToEdit = null
             },
-                    title = { 
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
+            title = { 
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
                         imageVector = Icons.Filled.Edit,
-                                contentDescription = null,
+                        contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary
-                            )
-                            
-                            Spacer(modifier = Modifier.width(8.dp))
-                            
+                    )
+                    
+                    Spacer(modifier = Modifier.width(8.dp))
+                    
                     Text(
-                        text = "Confirm Edit",
+                        text = stringResource(R.string.dialog_title_confirm_edit),
                         style = MaterialTheme.typography.titleLarge
                     )
-                        }
-                    },
-                    text = { 
-                Text("Are you sure you want to edit this fast? This action cannot be undone.")
+                }
+            },
+            text = { 
+                Text(stringResource(R.string.dialog_message_edit_fast_confirmation))
             },
             confirmButton = {
                 Button(
@@ -696,7 +699,7 @@ fun FastingLogScreen(
                         // fastToEdit is already set, no need to change it
                     }
                 ) {
-                    Text("Edit")
+                    Text(stringResource(R.string.action_edit))
                 }
             },
             dismissButton = {
@@ -706,7 +709,7 @@ fun FastingLogScreen(
                         fastToEdit = null
                     }
                 ) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.action_cancel))
                 }
             }
         )
@@ -729,7 +732,7 @@ fun FastingLogScreen(
     if (showSortDialog) {
         AlertDialog(
             onDismissRequest = { showSortDialog = false },
-            title = { Text("Sort By") },
+            title = { Text(stringResource(R.string.dialog_title_sort_by)) },
             text = {
                 Column {
                     SortOption.values().forEach { option ->
@@ -757,7 +760,7 @@ fun FastingLogScreen(
                             Spacer(modifier = Modifier.width(16.dp))
                             
                             Text(
-                                text = option.displayName,
+                                text = option.getDisplayName(context),
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = if (currentSortOption == option) 
                                     MaterialTheme.colorScheme.primary 
@@ -770,7 +773,7 @@ fun FastingLogScreen(
             },
             confirmButton = {
                 TextButton(onClick = { showSortDialog = false }) {
-                    Text("Close")
+                    Text(stringResource(R.string.action_close))
                 }
             }
         )
@@ -780,7 +783,7 @@ fun FastingLogScreen(
     if (showFilterDialog) {
         AlertDialog(
             onDismissRequest = { showFilterDialog = false },
-            title = { Text("Filter By Fasting State") },
+            title = { Text(stringResource(R.string.dialog_title_filter_by)) },
             text = {
                 Column {
                     // Add "All" option
@@ -808,7 +811,7 @@ fun FastingLogScreen(
                         Spacer(modifier = Modifier.width(16.dp))
                         
                         Text(
-                            text = "All States",
+                            text = stringResource(R.string.fasting_log_clear_filter),
                             style = MaterialTheme.typography.bodyLarge,
                             color = if (selectedFastingState == null) 
                                 MaterialTheme.colorScheme.primary 
@@ -851,7 +854,7 @@ fun FastingLogScreen(
                             Spacer(modifier = Modifier.width(16.dp))
                             
                             Text(
-                                text = state.displayName,
+                                text = state.getDisplayName(context),
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = if (selectedFastingState == state) 
                                     getColorForFastingState(state)
@@ -864,7 +867,7 @@ fun FastingLogScreen(
             },
             confirmButton = {
                 TextButton(onClick = { showFilterDialog = false }) {
-                    Text("Close")
+                    Text(stringResource(R.string.action_close))
                 }
             }
         )
@@ -881,6 +884,7 @@ fun FastingLogItem(
     onEditClick: () -> Unit
 ) {
     val fastingStateColor = getColorForFastingState(fast.maxFastingState)
+    val context = LocalContext.current
     
     Card(
         modifier = Modifier
@@ -897,7 +901,7 @@ fun FastingLogItem(
         ) {
             // Duration at the top with smaller font
             Text(
-                text = DateTimeFormatter.formatDuration(fast.durationMillis),
+                text = DateTimeFormatter.formatDuration(context, fast.durationMillis),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = fastingStateColor
@@ -919,7 +923,7 @@ fun FastingLogItem(
                 )
                 
                 Text(
-                    text = " → ",
+                    text = stringResource(R.string.fasting_log_time_separator),
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.Bold,
@@ -989,7 +993,7 @@ fun FastingLogItem(
                         Spacer(modifier = Modifier.width(6.dp))
                         
                         Text(
-                            text = fast.maxFastingState.displayName,
+                            text = fast.maxFastingState.getDisplayName(LocalContext.current),
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.SemiBold,
                             color = fastingStateColor
@@ -1005,7 +1009,7 @@ fun FastingLogItem(
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Share,
-                            contentDescription = "Share",
+                            contentDescription = stringResource(R.string.share_fast_title),
                             tint = fastingStateColor
                         )
                     }
@@ -1016,7 +1020,7 @@ fun FastingLogItem(
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Edit,
-                            contentDescription = "Edit",
+                            contentDescription = stringResource(R.string.action_edit),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -1027,7 +1031,7 @@ fun FastingLogItem(
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Delete,
-                            contentDescription = "Delete",
+                            contentDescription = stringResource(R.string.action_delete),
                             tint = MaterialTheme.colorScheme.error
                         )
                     }
@@ -1043,6 +1047,7 @@ fun FastDetailsDialog(
     preferences: DateTimePreferences,
     onDismiss: () -> Unit
 ) {
+    val context = LocalContext.current
     val fastingStateColor = getColorForFastingState(fast.maxFastingState)
     
     AlertDialog(
@@ -1060,57 +1065,67 @@ fun FastDetailsDialog(
                 
                 Spacer(modifier = Modifier.width(8.dp))
                             
-                            Text(
-                    text = "Fasting Details",
+                Text(
+                    text = stringResource(R.string.fasting_log_details_title),
                     style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    },
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        },
         text = {
             Column(
-                    modifier = Modifier
+                modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp)
             ) {
                 DetailItem(
-                    label = "Started",
+                    label = stringResource(R.string.fasting_log_started),
                     value = DateTimeFormatter.formatDateTime(fast.startTimeMillis, preferences),
                     valueColor = MaterialTheme.colorScheme.onSurface
                 )
                 
                 DetailItem(
-                    label = "Ended",
+                    label = stringResource(R.string.fasting_log_ended),
                     value = DateTimeFormatter.formatDateTime(fast.endTimeMillis, preferences),
                     valueColor = MaterialTheme.colorScheme.onSurface
                 )
                 
                 DetailItem(
-                    label = "Duration",
-                    value = DateTimeFormatter.formatDuration(fast.durationMillis),
+                    label = stringResource(R.string.widget_hours_label),
+                    value = DateTimeFormatter.formatDuration(context, fast.durationMillis),
                     valueColor = fastingStateColor
                 )
                 
                 DetailItem(
-                    label = "Fasting State",
-                    value = fast.maxFastingState.displayName,
+                    label = stringResource(R.string.fasting_state_not_fasting_name),
+                    value = fast.maxFastingState.getDisplayName(context),
                     valueColor = fastingStateColor
                 )
-                
-                // Display notes if they exist
+
+                // Display notes if available
                 if (fast.note.isNotBlank()) {
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
                     
                     Text(
-                        text = "Notes",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        text = stringResource(R.string.fasting_log_notes_label),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
+                    
+                    Spacer(modifier = Modifier.height(4.dp))
                     
                     Text(
                         text = fast.note,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurface
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(
+                                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f),
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .padding(12.dp)
                     )
                 }
             }
@@ -1118,11 +1133,11 @@ fun FastDetailsDialog(
         confirmButton = {
             Button(
                 onClick = onDismiss,
-                            colors = ButtonDefaults.buttonColors(
+                colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary
                 )
             ) {
-                Text("Close")
+                Text(stringResource(R.string.action_close))
             }
         }
     )
@@ -1288,7 +1303,7 @@ fun FastingLogSummary(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = "Fasting Summary",
+                text = stringResource(R.string.fasting_log_summary_title),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -1296,7 +1311,7 @@ fun FastingLogSummary(
             
             // Add informational note about 12+ hour requirement
             Text(
-                text = "Only fasts of 12+ hours are counted",
+                text = stringResource(R.string.fasting_log_summary_note),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                 modifier = Modifier.padding(top = 2.dp)
@@ -1313,19 +1328,19 @@ fun FastingLogSummary(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 StatisticItem(
-                    label = "Total Fasts",
+                    label = stringResource(R.string.fasting_log_sessions_count, 0).replace("0", ""),
                     value = totalFasts.toString(),
                     modifier = Modifier.weight(1f)
                 )
                 
                 StatisticItem(
-                    label = "Total Hours",
+                    label = stringResource(R.string.widget_hours_label),
                     value = "%.1f".format(totalHours),
                     modifier = Modifier.weight(1f)
                 )
                 
                 StatisticItem(
-                    label = "Average",
+                    label = stringResource(R.string.widget_hours_label),
                     value = "%.1f h".format(averageHours),
                     modifier = Modifier.weight(1f)
                 )
@@ -1336,14 +1351,14 @@ fun FastingLogSummary(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 StatisticItem(
-                    label = "Longest Fast",
+                    label = stringResource(R.string.widget_hours_label),
                     value = "%.1f h".format(longestFast),
                     modifier = Modifier.weight(1f)
                 )
                 
                 StatisticItem(
-                    label = "Best State",
-                    value = highestState.displayName,
+                    label = stringResource(R.string.fasting_state_not_fasting_name),
+                    value = highestState.getDisplayName(LocalContext.current),
                     valueColor = getColorForFastingState(highestState),
                     modifier = Modifier.weight(1f)
                 )
@@ -1356,7 +1371,7 @@ fun FastingLogSummary(
             
             // Achievements section
             Text(
-                text = "Achievements",
+                text = stringResource(R.string.fasting_log_achievements),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -1510,30 +1525,20 @@ fun AchievementItem(
 }
 
 fun shareFast(context: Context, fast: CompletedFast) {
-    val preferencesManager = PreferencesManager.getInstance(context)
-    val preferences = preferencesManager.dateTimePreferences
-    val shareText = fast.toShareText(preferences)
+    val shareText = fast.toShareText(context)
     val shareIntent = Intent().apply {
         action = Intent.ACTION_SEND
         putExtra(Intent.EXTRA_TEXT, shareText)
         type = "text/plain"
     }
-    context.startActivity(Intent.createChooser(shareIntent, "Share Fasting Achievement"))
+    context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.share_fast_title)))
 }
 
-fun CompletedFast.toShareText(preferences: DateTimePreferences): String {
-    val startDate = DateTimeFormatter.formatDateTime(startTimeMillis, preferences)
-    val duration = DateTimeFormatter.formatDuration(durationMillis)
-    val fastingStateName = maxFastingState.displayName
+fun CompletedFast.toShareText(context: Context): String {
+    val duration = DateTimeFormatter.formatDuration(context, durationMillis)
+    val fastingStateName = maxFastingState.getDisplayName(context)
     
-    return """
-        I completed a $duration fast with FastTrack! 🎉
-        
-        Started: $startDate
-        Achieved: $fastingStateName
-        
-        #FastTrack #Fasting #${fastingStateName.replace(" ", "")}
-    """.trimIndent()
+    return context.getString(R.string.share_fast_text, duration, fastingStateName)
 }
 
 @Composable
@@ -1543,6 +1548,7 @@ fun EditFastDialog(
     onSave: (CompletedFast) -> Unit,
     onDismiss: () -> Unit
 ) {
+    val context = LocalContext.current
     var note by remember { mutableStateOf(fast.note) }
     var startTimeMillis by remember { mutableStateOf(fast.startTimeMillis) }
     var endTimeMillis by remember { mutableStateOf(fast.endTimeMillis) }
@@ -1577,7 +1583,7 @@ fun EditFastDialog(
                 Spacer(modifier = Modifier.width(8.dp))
                 
                 Text(
-                    text = "Edit Fast",
+                    text = stringResource(R.string.dialog_title_edit_fast),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -1596,7 +1602,7 @@ fun EditFastDialog(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Started",
+                            text = stringResource(R.string.fasting_log_started),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                         )
@@ -1612,7 +1618,7 @@ fun EditFastDialog(
                     IconButton(onClick = { showStartDatePicker = true }) {
                         Icon(
                             imageVector = Icons.Filled.Edit,
-                            contentDescription = "Edit Start Time",
+                            contentDescription = stringResource(R.string.action_edit),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -1625,7 +1631,7 @@ fun EditFastDialog(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Ended",
+                            text = stringResource(R.string.fasting_log_ended),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                         )
@@ -1641,7 +1647,7 @@ fun EditFastDialog(
                     IconButton(onClick = { showEndDatePicker = true }) {
                         Icon(
                             imageVector = Icons.Filled.Edit,
-                            contentDescription = "Edit End Time",
+                            contentDescription = stringResource(R.string.action_edit),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -1649,15 +1655,15 @@ fun EditFastDialog(
                 
                 // Duration (calculated)
                 DetailItem(
-                    label = "Duration",
-                    value = DateTimeFormatter.formatDuration(durationMillis),
+                    label = stringResource(R.string.widget_hours_label),
+                    value = DateTimeFormatter.formatDuration(context, durationMillis),
                     valueColor = fastingStateColor
                 )
                 
                 // Fasting State (calculated)
                 DetailItem(
-                    label = "Fasting State",
-                    value = maxFastingState.displayName,
+                    label = stringResource(R.string.fasting_state_not_fasting_name),
+                    value = maxFastingState.getDisplayName(context),
                     valueColor = fastingStateColor
                 )
                 
@@ -1676,7 +1682,7 @@ fun EditFastDialog(
                 OutlinedTextField(
                     value = note,
                     onValueChange = { note = it },
-                    label = { Text("Notes") },
+                    label = { Text(stringResource(R.string.fasting_log_notes_label)) },
                     modifier = Modifier.fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = MaterialTheme.colorScheme.primary,
@@ -1711,14 +1717,14 @@ fun EditFastDialog(
                     containerColor = MaterialTheme.colorScheme.primary
                 )
             ) {
-                Text("Save")
+                Text(stringResource(R.string.action_save))
             }
         },
         dismissButton = {
             TextButton(
                 onClick = onDismiss
             ) {
-                Text("Cancel")
+                Text(stringResource(R.string.action_cancel))
             }
         }
     )
@@ -1825,7 +1831,7 @@ fun DatePickerDialog(
         onDismissRequest = onDismissRequest,
         title = { 
             Text(
-                text = "Select Date",
+                text = stringResource(R.string.date_format_dmy_slash),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
@@ -1842,7 +1848,7 @@ fun DatePickerDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Year:",
+                        text = stringResource(R.string.date_format_ymd_dash),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.width(80.dp)
                     )
@@ -1880,7 +1886,7 @@ fun DatePickerDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Month:",
+                        text = stringResource(R.string.date_format_mdy_text),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.width(80.dp)
                     )
@@ -1933,7 +1939,7 @@ fun DatePickerDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Day:",
+                        text = stringResource(R.string.date_format_dmy_slash),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.width(80.dp)
                     )
@@ -1999,14 +2005,14 @@ fun DatePickerDialog(
                     onDateSelected(resultCalendar.timeInMillis)
                 }
             ) {
-                Text("Select")
+                Text(stringResource(R.string.action_save))
             }
         },
         dismissButton = {
             TextButton(
                 onClick = onDismissRequest
             ) {
-                Text("Cancel")
+                Text(stringResource(R.string.action_cancel))
             }
         }
     )
@@ -2051,7 +2057,7 @@ fun TimePickerDialog(
         onDismissRequest = onDismissRequest,
         title = { 
             Text(
-                text = "Select Time",
+                text = stringResource(R.string.time_format_24h),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
@@ -2074,7 +2080,7 @@ fun TimePickerDialog(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Hour",
+                            text = stringResource(R.string.widget_hours_label),
                             style = MaterialTheme.typography.bodyMedium
                         )
                         
@@ -2144,7 +2150,7 @@ fun TimePickerDialog(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Minute",
+                            text = "Minutes",
                             style = MaterialTheme.typography.bodyMedium
                         )
                         
@@ -2181,14 +2187,14 @@ fun TimePickerDialog(
                     onTimeSelected(selectedHour, selectedMinute)
                 }
             ) {
-                Text("Select")
+                Text(stringResource(R.string.action_save))
             }
         },
         dismissButton = {
             TextButton(
                 onClick = onDismissRequest
             ) {
-                Text("Cancel")
+                Text(stringResource(R.string.action_cancel))
             }
         }
     )

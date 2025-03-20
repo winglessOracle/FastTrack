@@ -20,7 +20,8 @@ class LocaleHelper {
          */
         enum class AppLanguage(val code: String, val displayName: String) {
             SYSTEM("", "System Default"),
-            ENGLISH("en", "English");
+            ENGLISH("en", "English"),
+            SPANISH("es", "Español");
             
             companion object {
                 fun fromCode(code: String): AppLanguage {
@@ -64,21 +65,31 @@ class LocaleHelper {
             val localeList = LocaleListCompat.create(locale)
             AppCompatDelegate.setApplicationLocales(localeList)
             
-            // The above is the preferred method, but for older support, also
-            // update the configuration directly
+            // Set the default locale for the JVM (for formatting, etc.)
             Locale.setDefault(locale)
             
-            val resources = context.resources
-            val configuration = Configuration(resources.configuration)
+            // For older devices, update the configuration directly
+            val res = context.resources
+            val config = Configuration(res.configuration)
             
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                configuration.setLocale(locale)
-            } else {
-                @Suppress("DEPRECATION")
-                configuration.locale = locale
+            when {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.N -> {
+                    // Android N and above supports locale lists
+                    config.setLocales(android.os.LocaleList(locale))
+                }
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 -> {
+                    // Android 4.2+ supports setLocale
+                    config.setLocale(locale)
+                }
+                else -> {
+                    // Legacy support for older versions
+                    @Suppress("DEPRECATION")
+                    config.locale = locale
+                }
             }
             
-            return context.createConfigurationContext(configuration)
+            // Create a new context with the updated configuration
+            return context.createConfigurationContext(config)
         }
         
         /**

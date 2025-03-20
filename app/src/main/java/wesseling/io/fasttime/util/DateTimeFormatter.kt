@@ -5,6 +5,8 @@ import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 import wesseling.io.fasttime.model.DateTimePreferences
+import android.content.Context
+import wesseling.io.fasttime.R
 
 /**
  * Utility class for formatting dates and times
@@ -54,27 +56,27 @@ object DateTimeFormatter {
     /**
      * Format elapsed time in hours and minutes
      */
-    fun formatElapsedTime(elapsedTimeMillis: Long): String {
+    fun formatElapsedTime(context: Context, elapsedTimeMillis: Long): String {
         val hours = TimeUnit.MILLISECONDS.toHours(elapsedTimeMillis)
         val minutes = TimeUnit.MILLISECONDS.toMinutes(elapsedTimeMillis) % 60
         
         return if (hours > 0) {
-            String.format("%d h %02d min", hours, minutes)
+            context.getString(R.string.format_hours_minutes, hours, minutes)
         } else {
-            String.format("%d min", minutes)
+            context.getString(R.string.format_minutes_only, minutes)
         }
     }
     
     /**
-     * Format a time duration in a human-readable format
+     * Format duration in a compact format
      */
-    fun formatDuration(durationMillis: Long): String {
+    fun formatDuration(context: Context, durationMillis: Long): String {
         val hours = TimeUnit.MILLISECONDS.toHours(durationMillis)
         val minutes = TimeUnit.MILLISECONDS.toMinutes(durationMillis) % 60
         
         return when {
-            hours > 0 -> "$hours h $minutes min"
-            else -> "$minutes min"
+            hours > 0 -> context.getString(R.string.format_hours_minutes, hours, minutes)
+            else -> context.getString(R.string.format_minutes_only, minutes)
         }
     }
 } 

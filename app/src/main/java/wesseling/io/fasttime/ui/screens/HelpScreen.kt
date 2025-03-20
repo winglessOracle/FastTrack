@@ -35,6 +35,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -42,6 +43,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
+import wesseling.io.fasttime.R
 
 /**
  * Help screen that displays information about how to use the app.
@@ -57,7 +59,11 @@ import kotlinx.coroutines.launch
 fun HelpScreen(
     onBackPressed: () -> Unit
 ) {
-    val tabs = listOf("Basics", "Fasting Types", "Tips")
+    val tabs = listOf(
+        stringResource(R.string.help_tab_basics),
+        stringResource(R.string.help_tab_fasting_types),
+        stringResource(R.string.help_tab_tips)
+    )
     
     // Using Accompanist Pager
     @OptIn(ExperimentalPagerApi::class)
@@ -70,7 +76,7 @@ fun HelpScreen(
             TopAppBar(
                 title = { 
                     Text(
-                        text = "Help & Information",
+                        text = stringResource(R.string.help_title),
                         fontWeight = FontWeight.Bold
                     )
                 },
@@ -78,7 +84,7 @@ fun HelpScreen(
                     IconButton(onClick = onBackPressed) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(R.string.back_button_description)
                         )
                     }
                 },
@@ -139,7 +145,7 @@ fun BasicsTab() {
     ) {
         // Introduction
         Text(
-            text = "FastTrack helps you track your fasting time with precision",
+            text = stringResource(R.string.help_intro),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
@@ -149,85 +155,85 @@ fun BasicsTab() {
         
         // Individual Differences in Fasting
         HelpSection(
-            title = "Everyone's Fasting Journey is Unique",
-            content = "Fasting affects each person differently based on metabolism, body composition, activity level, and health history. What works for one person may not work for another. Listen to your body and adjust your fasting approach accordingly. Start slowly and gradually increase your fasting duration as your body adapts. Remember that consistency is more important than intensity, especially when beginning your fasting journey."
+            title = stringResource(R.string.help_unique_journey),
+            content = stringResource(R.string.help_unique_journey_content)
         )
         
         // Main App Usage
         HelpSectionWithItems(
-            title = "Using the Main App",
+            title = stringResource(R.string.help_using_app),
             items = listOf(
-                "Tap START to begin your fasting timer",
-                "The app tracks your fasting duration automatically",
-                "Your fasting state changes based on duration",
-                "Tap RESET to end your fast and save it to your log",
-                "View your fasting history in the Fasting Log"
+                stringResource(R.string.help_app_item_1),
+                stringResource(R.string.help_app_item_2),
+                stringResource(R.string.help_app_item_3),
+                stringResource(R.string.help_app_item_4),
+                stringResource(R.string.help_app_item_5)
             )
         )
         
         // Fasting Log Features
         HelpSectionWithItems(
-            title = "Fasting Log Features",
+            title = stringResource(R.string.help_fasting_log_features),
             items = listOf(
-                "View a summary of your fasting achievements",
-                "Only fasts of 12+ hours are saved to the log",
-                "Sort entries by date (newest/oldest first)",
-                "Sort entries by duration (longest/shortest first)",
-                "Filter entries by fasting state to find specific achievements",
-                "Tap on an entry to view detailed information",
-                "Edit or delete entries as needed"
+                stringResource(R.string.help_log_item_1),
+                stringResource(R.string.help_log_item_2),
+                stringResource(R.string.help_log_item_3),
+                stringResource(R.string.help_log_item_4),
+                stringResource(R.string.help_log_item_5),
+                stringResource(R.string.help_log_item_6),
+                stringResource(R.string.help_log_item_7)
             )
         )
         
         // Hydration Section
         HelpSectionWithItems(
-            title = "Importance of Hydration",
+            title = stringResource(R.string.help_hydration),
             items = listOf(
-                "Fasting concerns food, not water - stay hydrated!",
-                "Drink plenty of water throughout your fast",
-                "Hydration helps manage hunger and maintain energy",
-                "Consider electrolytes during longer fasts",
-                "Black coffee and unsweetened tea are also permitted"
+                stringResource(R.string.help_hydration_item_1),
+                stringResource(R.string.help_hydration_item_2),
+                stringResource(R.string.help_hydration_item_3),
+                stringResource(R.string.help_hydration_item_4),
+                stringResource(R.string.help_hydration_item_5)
             )
         )
         
         // Fasting States
         HelpSectionWithItems(
-            title = "Understanding Fasting States",
+            title = stringResource(R.string.help_fasting_states),
             items = listOf(
-                "Fed State (Gray): 0-4 hours, digestion & absorption",
-                "Early Fasting (Yellow): 4-12 hours, fat burning begins",
-                "Glycogen Depletion (Orange): 12-18 hours, fat metabolism increases (minimum for achievements)",
-                "Metabolic Shift (Blue): 18-24 hours, ketosis begins",
-                "Deep Ketosis (Green): 24-48 hours, autophagy peaks",
-                "Immune Reset (Purple): 48-72 hours, stem cell production",
-                "Extended Fast (Magenta): 72+ hours, cellular rejuvenation"
+                stringResource(R.string.help_states_item_1),
+                stringResource(R.string.help_states_item_2),
+                stringResource(R.string.help_states_item_3),
+                stringResource(R.string.help_states_item_4),
+                stringResource(R.string.help_states_item_5),
+                stringResource(R.string.help_states_item_6),
+                stringResource(R.string.help_states_item_7)
             )
         )
         
         // Add Achievement Tracking information section
         HelpSection(
-            title = "Achievement Tracking",
-            content = "FastTrack only counts fasts that reach at least the Glycogen Depletion state (12+ hours) toward your achievements and statistics. Shorter fasts will still be tracked during the timer and you'll still receive notifications for all fasting state changes, but shorter fasts won't be saved to your fasting log or included in your statistics. This encourages more meaningful fasting experiences while still providing feedback on all your fasting progress."
+            title = stringResource(R.string.help_achievement),
+            content = stringResource(R.string.help_achievement_content)
         )
         
         // Add Weekly Deep Fast Achievement section
         HelpSection(
-            title = "Weekly Deep Fast Achievement",
-            content = "FastTrack includes a special medal achievement that tracks your weekly deep fasts (24+ hours or better). This encourages regular deep fasting on a weekly basis. Bronze medal is earned for 1-9 deep fasts, Silver for 10-24, Gold for 25-49, and Legend status for 50+ weekly deep fasts. Aim for at least one deep fast per week to maximize your fasting benefits and achievement progress."
+            title = stringResource(R.string.help_weekly),
+            content = stringResource(R.string.help_weekly_content)
         )
         
         // Widget Usage
         HelpSectionWithItems(
-            title = "Widget Features",
+            title = stringResource(R.string.help_widget),
             items = listOf(
-                "Add the FastTrack widget to your home screen",
-                "Tap START to begin a fast directly from your home screen",
-                "Tap RESET to end your fast",
-                "Tap the hours to adjust the start time (when fasting) or open the app (when not fasting)",
-                "Tap the state pill (colored text showing your current fasting state) to view detailed information about that fasting state",
-                "The widget updates automatically to show your current fasting state",
-                "Energy-efficient design minimizes battery consumption"
+                stringResource(R.string.help_widget_item_1),
+                stringResource(R.string.help_widget_item_2),
+                stringResource(R.string.help_widget_item_3),
+                stringResource(R.string.help_widget_item_4),
+                stringResource(R.string.help_widget_item_5),
+                stringResource(R.string.help_widget_item_6),
+                stringResource(R.string.help_widget_item_7)
             )
         )
     }
@@ -245,7 +251,7 @@ fun FastingTypesTab() {
     ) {
         // Introduction
         Text(
-            text = "Common Fasting Protocols",
+            text = stringResource(R.string.help_fasting_protocols),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
@@ -255,92 +261,92 @@ fun FastingTypesTab() {
         
         // Detailed Introduction
         HelpSection(
-            title = "Finding Your Ideal Fasting Protocol",
-            content = "Fasting is not one-size-fits-all. Different protocols offer varying benefits and levels of difficulty. Consider your lifestyle, goals, and experience level when choosing a fasting method. You may need to experiment with several approaches before finding what works best for you. The protocols below range from beginner-friendly to advanced. Start with an easier protocol and gradually progress as your body adapts to fasting."
+            title = stringResource(R.string.help_ideal_protocol),
+            content = stringResource(R.string.help_ideal_protocol_content)
         )
         
         // 16:8 Method
         HelpSectionWithItems(
-            title = "16:8 Method (Leangains)",
+            title = stringResource(R.string.help_16_8),
             items = listOf(
-                "Fast for 16 hours, eat during an 8-hour window",
-                "Popular window: 12pm to 8pm",
-                "Suitable for beginners",
-                "Can be done daily",
-                "Good for weight management and metabolic health"
+                stringResource(R.string.help_16_8_item_1),
+                stringResource(R.string.help_16_8_item_2),
+                stringResource(R.string.help_16_8_item_3),
+                stringResource(R.string.help_16_8_item_4),
+                stringResource(R.string.help_16_8_item_5)
             )
         )
         
         // 18:6 Method
         HelpSectionWithItems(
-            title = "18:6 Method",
+            title = stringResource(R.string.help_18_6),
             items = listOf(
-                "Fast for 18 hours, eat during a 6-hour window",
-                "Popular window: 2pm to 8pm",
-                "Intermediate level",
-                "Enhanced fat burning and ketosis",
-                "May improve insulin sensitivity"
+                stringResource(R.string.help_18_6_item_1),
+                stringResource(R.string.help_18_6_item_2),
+                stringResource(R.string.help_18_6_item_3),
+                stringResource(R.string.help_18_6_item_4),
+                stringResource(R.string.help_18_6_item_5)
             )
         )
         
         // 20:4 Method (Warrior Diet)
         HelpSectionWithItems(
-            title = "20:4 Method (Warrior Diet)",
+            title = stringResource(R.string.help_20_4),
             items = listOf(
-                "Fast for 20 hours, eat during a 4-hour window",
-                "Popular window: 4pm to 8pm",
-                "Advanced level",
-                "Significant autophagy benefits",
-                "May enhance growth hormone production"
+                stringResource(R.string.help_20_4_item_1),
+                stringResource(R.string.help_20_4_item_2),
+                stringResource(R.string.help_20_4_item_3),
+                stringResource(R.string.help_20_4_item_4),
+                stringResource(R.string.help_20_4_item_5)
             )
         )
         
         // OMAD (One Meal A Day)
         HelpSectionWithItems(
-            title = "OMAD (One Meal A Day)",
+            title = stringResource(R.string.help_omad),
             items = listOf(
-                "23:1 ratio - eat just one meal per day",
-                "Advanced level",
-                "Maximum autophagy benefits",
-                "Significant metabolic benefits",
-                "Requires careful nutritional planning"
+                stringResource(R.string.help_omad_item_1),
+                stringResource(R.string.help_omad_item_2),
+                stringResource(R.string.help_omad_item_3),
+                stringResource(R.string.help_omad_item_4),
+                stringResource(R.string.help_omad_item_5)
             )
         )
         
         // 5:2 Diet
         HelpSectionWithItems(
-            title = "5:2 Diet",
+            title = stringResource(R.string.help_5_2),
             items = listOf(
-                "Eat normally 5 days a week",
-                "Restrict calories (500-600) on 2 non-consecutive days",
-                "Good for those who find daily fasting difficult",
-                "Flexible scheduling",
-                "Shown to improve metabolic markers"
+                stringResource(R.string.help_5_2_item_1),
+                stringResource(R.string.help_5_2_item_2),
+                stringResource(R.string.help_5_2_item_3),
+                stringResource(R.string.help_5_2_item_4),
+                stringResource(R.string.help_5_2_item_5)
             )
         )
         
         // Alternate Day Fasting
         HelpSectionWithItems(
-            title = "Alternate Day Fasting",
+            title = stringResource(R.string.help_alternate),
             items = listOf(
-                "Fast every other day",
-                "Advanced level",
-                "Significant weight loss potential",
-                "May improve cardiovascular health",
-                "Requires careful planning and adaptation"
+                stringResource(R.string.help_alternate_item_1),
+                stringResource(R.string.help_alternate_item_2),
+                stringResource(R.string.help_alternate_item_3),
+                stringResource(R.string.help_alternate_item_4),
+                stringResource(R.string.help_alternate_item_5)
             )
         )
         
         // Extended Fasting
         HelpSectionWithItems(
-            title = "Extended Fasting",
+            title = stringResource(R.string.help_extended),
             items = listOf(
-                "Fasts lasting 24-72+ hours",
-                "Expert level - not for beginners",
-                "Maximum autophagy and cellular rejuvenation",
-                "Significant immune system reset",
-                "Should be done under medical supervision",
-                "Not recommended for regular practice"
+                stringResource(R.string.help_extended_item_1),
+                stringResource(R.string.help_extended_item_2),
+                stringResource(R.string.help_extended_item_3),
+                stringResource(R.string.help_extended_item_4),
+                stringResource(R.string.help_extended_item_5),
+                stringResource(R.string.help_extended_item_6)
             )
         )
     }
@@ -358,7 +364,7 @@ fun TipsTab() {
     ) {
         // Introduction
         Text(
-            text = "Tips for Successful Fasting",
+            text = stringResource(R.string.help_fasting_tips),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
@@ -368,112 +374,112 @@ fun TipsTab() {
         
         // Battery Optimization & Energy Efficiency
         HelpSectionWithItems(
-            title = "Battery Optimization & Energy Efficiency",
+            title = stringResource(R.string.help_battery),
             items = listOf(
-                "FastTrack is designed to be energy-efficient and minimize battery consumption",
-                "The app and widget use optimized background processes",
-                "For best performance, ensure FastTrack is exempt from battery optimization settings on your device",
-                "Go to your device's Battery settings and add FastTrack to apps exempt from optimization",
-                "This ensures timers and notifications work correctly without excessive battery drain"
+                stringResource(R.string.help_battery_item_1),
+                stringResource(R.string.help_battery_item_2),
+                stringResource(R.string.help_battery_item_3),
+                stringResource(R.string.help_battery_item_4),
+                stringResource(R.string.help_battery_item_5)
             )
         )
         
         // Getting Started
         HelpSectionWithItems(
-            title = "Getting Started",
+            title = stringResource(R.string.help_getting_started),
             items = listOf(
-                "Start with shorter fasting windows (12-14 hours)",
-                "Gradually increase your fasting duration",
-                "Be consistent with your fasting schedule",
-                "Track your progress with FastTrack",
-                "Listen to your body and adjust as needed"
+                stringResource(R.string.help_getting_started_item_1),
+                stringResource(R.string.help_getting_started_item_2),
+                stringResource(R.string.help_getting_started_item_3),
+                stringResource(R.string.help_getting_started_item_4),
+                stringResource(R.string.help_getting_started_item_5)
             )
         )
         
         // Using the Fasting Log
         HelpSectionWithItems(
-            title = "Using the Fasting Log Effectively",
+            title = stringResource(R.string.help_using_log),
             items = listOf(
-                "Sort by date to track your recent progress",
-                "Sort by duration to identify your longest fasts",
-                "Filter by fasting state to see how often you reach specific milestones",
-                "Use the summary statistics to understand your overall progress",
-                "Review your log regularly to identify patterns and improvements"
+                stringResource(R.string.help_using_log_item_1),
+                stringResource(R.string.help_using_log_item_2),
+                stringResource(R.string.help_using_log_item_3),
+                stringResource(R.string.help_using_log_item_4),
+                stringResource(R.string.help_using_log_item_5)
             )
         )
         
-        // Electrolyte Management - New detailed section
+        // Electrolyte Management
         HelpSectionWithItems(
-            title = "Electrolyte Management",
+            title = stringResource(R.string.help_electrolytes),
             items = listOf(
-                "Sodium: Add a pinch of sea salt to water (1/4 tsp in 1L water)",
-                "Potassium: Consider potassium salt substitutes for fasts >24 hours",
-                "Magnesium: Magnesium glycinate or citrate supplements can help with muscle cramps",
-                "Balanced electrolyte mix: 1/2 tsp salt, 1/4 tsp potassium salt in 1L water",
-                "Signs of electrolyte imbalance: headaches, dizziness, muscle cramps",
-                "For extended fasts (>48h), consider commercial electrolyte supplements"
+                stringResource(R.string.help_electrolytes_item_1),
+                stringResource(R.string.help_electrolytes_item_2),
+                stringResource(R.string.help_electrolytes_item_3),
+                stringResource(R.string.help_electrolytes_item_4),
+                stringResource(R.string.help_electrolytes_item_5),
+                stringResource(R.string.help_electrolytes_item_6)
             )
         )
         
-        // Hydration - Keep existing section
+        // Hydration
         HelpSectionWithItems(
-            title = "Stay Hydrated",
+            title = stringResource(R.string.help_stay_hydrated),
             items = listOf(
-                "Drink plenty of water throughout your fast",
-                "Add electrolytes for longer fasts (24+ hours)",
-                "Black coffee and unsweetened tea are permitted",
-                "Avoid artificial sweeteners during fasting",
-                "Carbonated water can help with hunger pangs"
+                stringResource(R.string.help_stay_hydrated_item_1),
+                stringResource(R.string.help_stay_hydrated_item_2),
+                stringResource(R.string.help_stay_hydrated_item_3),
+                stringResource(R.string.help_stay_hydrated_item_4),
+                stringResource(R.string.help_stay_hydrated_item_5)
             )
         )
         
         // Managing Hunger
         HelpSectionWithItems(
-            title = "Managing Hunger",
+            title = stringResource(R.string.help_hunger),
             items = listOf(
-                "Hunger comes in waves and typically passes",
-                "Stay busy during peak hunger times",
-                "Drink water when hunger strikes",
-                "Light exercise can reduce hunger",
-                "Remember: hunger is not an emergency"
+                stringResource(R.string.help_hunger_item_1),
+                stringResource(R.string.help_hunger_item_2),
+                stringResource(R.string.help_hunger_item_3),
+                stringResource(R.string.help_hunger_item_4),
+                stringResource(R.string.help_hunger_item_5)
             )
         )
         
-        // Breaking Your Fast - Enhanced with more details
+        // Breaking Your Fast
         HelpSectionWithItems(
-            title = "Breaking Your Fast Properly",
+            title = stringResource(R.string.help_breaking_fast),
             items = listOf(
-                "For fasts <24h: Start with easily digestible foods like bone broth, avocado, or eggs",
-                "For fasts >24h: Begin with bone broth, then wait 30-60 minutes before eating solid food",
-                "For fasts >48h: Start with clear broth, wait 1 hour, then small protein/fat meal, wait 2-3 hours before normal eating",
-                "Avoid breaking fast with: processed carbs, large meals, dairy, nuts, or raw vegetables",
-                "Good first foods: bone broth, soft-boiled eggs, avocado, cooked leafy greens, fermented foods",
-                "Eat slowly and mindfully, chewing thoroughly",
-                "Listen to your body and stop eating if you feel discomfort"
+                stringResource(R.string.help_breaking_item_1),
+                stringResource(R.string.help_breaking_item_2),
+                stringResource(R.string.help_breaking_item_3),
+                stringResource(R.string.help_breaking_item_4),
+                stringResource(R.string.help_breaking_item_5),
+                stringResource(R.string.help_breaking_item_6),
+                stringResource(R.string.help_breaking_item_7)
             )
         )
         
         // Nutrition During Eating Windows
         HelpSectionWithItems(
-            title = "Nutrition During Eating Windows",
+            title = stringResource(R.string.help_nutrition),
             items = listOf(
-                "Focus on nutrient-dense whole foods",
-                "Include adequate protein (0.8-1g per lb of lean body mass)",
-                "Don't neglect healthy fats",
-                "Include plenty of vegetables and fiber",
-                "Consider your total caloric needs"
+                stringResource(R.string.help_nutrition_item_1),
+                stringResource(R.string.help_nutrition_item_2),
+                stringResource(R.string.help_nutrition_item_3),
+                stringResource(R.string.help_nutrition_item_4),
+                stringResource(R.string.help_nutrition_item_5)
             )
         )
         
         // When to Stop Fasting
         HelpSectionWithItems(
-            title = "When to Stop Fasting",
+            title = stringResource(R.string.help_when_stop),
             items = listOf(
-                "If you feel unwell beyond normal hunger",
-                "If you experience dizziness or weakness",
-                "If you have a medical condition that requires food",
-                "During illness or high stress periods",
-                "During pregnancy or breastfeeding"
+                stringResource(R.string.help_when_stop_item_1),
+                stringResource(R.string.help_when_stop_item_2),
+                stringResource(R.string.help_when_stop_item_3),
+                stringResource(R.string.help_when_stop_item_4),
+                stringResource(R.string.help_when_stop_item_5)
             )
         )
         
@@ -481,7 +487,7 @@ fun TipsTab() {
         
         // Disclaimer
         Text(
-            text = "Always consult with a healthcare professional before starting any fasting regimen",
+            text = stringResource(R.string.help_disclaimer),
             style = MaterialTheme.typography.bodySmall,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),

@@ -28,10 +28,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import wesseling.io.fasttime.R
 import wesseling.io.fasttime.model.FastingState
 import wesseling.io.fasttime.ui.theme.NotFastingGray
 import wesseling.io.fasttime.ui.theme.EarlyFastingYellow
@@ -76,14 +78,14 @@ fun FastingLegend(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                text = "Fasting Stages",
+                text = stringResource(R.string.help_fasting_protocols),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
             )
             
             Text(
-                text = "Tap on any stage to learn more about its scientific benefits",
+                text = stringResource(R.string.help_fasting_tips),
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(bottom = 8.dp)
@@ -97,49 +99,49 @@ fun FastingLegend(
             LegendItem(
                 state = FastingState.NOT_FASTING,
                 color = NotFastingGray,
-                timeRange = "0-4 hours",
+                timeRange = stringResource(R.string.fasting_time_range_0_4),
                 onClick = { selectedState = FastingState.NOT_FASTING }
             )
             
             LegendItem(
                 state = FastingState.EARLY_FAST,
                 color = EarlyFastingYellow,
-                timeRange = "4-12 hours",
+                timeRange = stringResource(R.string.fasting_time_range_4_12),
                 onClick = { selectedState = FastingState.EARLY_FAST }
             )
             
             LegendItem(
                 state = FastingState.GLYCOGEN_DEPLETION,
                 color = GlycogenDepletionOrange,
-                timeRange = "12-18 hours",
+                timeRange = stringResource(R.string.fasting_time_range_12_18),
                 onClick = { selectedState = FastingState.GLYCOGEN_DEPLETION }
             )
             
             LegendItem(
                 state = FastingState.METABOLIC_SHIFT,
                 color = MetabolicShiftBlue,
-                timeRange = "18-24 hours",
+                timeRange = stringResource(R.string.fasting_time_range_18_24),
                 onClick = { selectedState = FastingState.METABOLIC_SHIFT }
             )
             
             LegendItem(
                 state = FastingState.DEEP_KETOSIS,
                 color = DeepKetosisGreen,
-                timeRange = "24-48 hours",
+                timeRange = stringResource(R.string.fasting_time_range_24_48),
                 onClick = { selectedState = FastingState.DEEP_KETOSIS }
             )
             
             LegendItem(
                 state = FastingState.IMMUNE_RESET,
                 color = ImmuneResetPurple,
-                timeRange = "48-72 hours",
+                timeRange = stringResource(R.string.fasting_time_range_48_72),
                 onClick = { selectedState = FastingState.IMMUNE_RESET }
             )
             
             LegendItem(
                 state = FastingState.EXTENDED_FAST,
                 color = ExtendedFastMagenta,
-                timeRange = "72+ hours",
+                timeRange = stringResource(R.string.fasting_time_range_72_plus),
                 onClick = { selectedState = FastingState.EXTENDED_FAST }
             )
         }
@@ -175,8 +177,18 @@ private fun LegendItem(
         Spacer(modifier = Modifier.width(12.dp))
         
         Column {
+            val nameResId = when (state) {
+                FastingState.NOT_FASTING -> R.string.fasting_state_not_fasting_name
+                FastingState.EARLY_FAST -> R.string.fasting_state_early_fast_name
+                FastingState.GLYCOGEN_DEPLETION -> R.string.fasting_state_glycogen_depletion_name
+                FastingState.METABOLIC_SHIFT -> R.string.fasting_state_metabolic_shift_name
+                FastingState.DEEP_KETOSIS -> R.string.fasting_state_deep_ketosis_name
+                FastingState.IMMUNE_RESET -> R.string.fasting_state_immune_reset_name
+                FastingState.EXTENDED_FAST -> R.string.fasting_state_extended_fast_name
+            }
+            
             Text(
-                text = state.description,
+                text = stringResource(nameResId),
                 fontWeight = FontWeight.Medium,
                 fontSize = 16.sp,
                 color = MaterialTheme.colorScheme.onSurface

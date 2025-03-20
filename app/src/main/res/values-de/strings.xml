@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- German (Deutsch) translations -->
-<!-- To be filled in with actual translations when needed -->
-<resources>
-    <!-- This is just a placeholder file showing the structure for a German language -->
-    <!-- Actual translations would be placed here when implementing German support -->
-    <string name="app_name">FastTrack</string>
-    <!-- More strings would go here -->
-</resources> 

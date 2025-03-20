@@ -42,7 +42,18 @@ class FastTrackApplication : Application(), LifecycleEventObserver {
     private fun applyLanguageSettings() {
         val languageCode = LocaleHelper.getLanguageCode(this)
         Log.d(TAG, "Applying saved language: $languageCode")
+        
+        // First update the locale using LocaleHelper
         LocaleHelper.updateLocale(this, languageCode)
+        
+        // Also set the default locale for the JVM - this helps with formatting
+        if (languageCode.isNotEmpty()) {
+            val locale = java.util.Locale(languageCode)
+            java.util.Locale.setDefault(locale)
+            Log.d(TAG, "Default locale set to: $locale")
+        } else {
+            Log.d(TAG, "Using system default locale")
+        }
     }
     
     /**
