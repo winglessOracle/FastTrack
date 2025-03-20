@@ -2,6 +2,7 @@ package wesseling.io.fasttime
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Build
@@ -128,6 +129,19 @@ class MainActivity : ComponentActivity() {
         val languageCode = LocaleHelper.getLanguageCode(this)
         LocaleHelper.updateLocale(this, languageCode)
         
+        // Handle lingering instances of the same activity
+        if (!isTaskRoot) {
+            // Check if this activity is not at the root of the task (meaning there are other instances)
+            val launchIntent = intent
+            val action = launchIntent?.action
+            if (launchIntent?.hasCategory(Intent.CATEGORY_LAUNCHER) == true && 
+                (action == Intent.ACTION_MAIN || action == null)) {
+                Log.w(TAG, "Detected non-root MainActivity instance, finishing")
+                finish()
+                return
+            }
+        }
+        
         // Enable edge-to-edge display
         WindowCompat.setDecorFitsSystemWindows(window, false)
         
@@ -145,7 +159,13 @@ class MainActivity : ComponentActivity() {
                 // Attempt to clean up lingering state
                 try {
                     val fastingTimer = FastingTimer.getInstance(applicationContext)
-                    fastingTimer.stopTimer() // Stop any running timers from previous instances
+                    // Don't stop the timer, just ensure it's in a good state
+                    if (fastingTimer.isRunning) {
+                        // Update widgets to ensure UI is in sync
+                        val updateIntent = Intent("wesseling.io.fasttime.widget.ACTION_UPDATE_WIDGETS")
+                        updateIntent.setPackage(packageName)
+                        sendBroadcast(updateIntent)
+                    }
                 } catch (e: Exception) {
                     Log.e(TAG, "Error cleaning up after crash", e)
                 }

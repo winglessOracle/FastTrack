@@ -214,11 +214,21 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
             // Save state to preferences
             saveState()
             
-            // Update widgets
+            // SAFE: Update widgets first, then handle notifications and services
+            // This order prevents race conditions in UI updates
             updateWidgets()
             
-            // Start the widget update service
-            startWidgetUpdateService()
+            // Start widget update service on a separate thread with delay
+            Thread {
+                try {
+                    // Small delay to avoid overwhelming the UI thread
+                    Thread.sleep(1000)
+                    startWidgetUpdateService()
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error starting widget service in thread", e)
+                }
+            }.start()
+            
         } catch (e: Exception) {
             Log.e(TAG, "Error starting timer", e)
             resetToSafeState()
@@ -569,101 +579,85 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
     }
     
     /**
-     * Update the current fasting state based on elapsed time
-     * 
-     * This method is responsible for determining the current fasting state based on the elapsed time
-     * and managing state transitions. It performs several key functions:
-     * 
-     * 1. Calculates the appropriate fasting state based on elapsed time thresholds
-     * 2. Detects state changes and triggers notifications when appropriate
-     * 3. Updates the maximum fasting state achieved during the current fast
-     * 4. Triggers widget updates when the state changes
-     * 5. Implements error handling to prevent crashes
-     * 
-     * The fasting states follow a progression based on scientific research about the physiological
-     * changes that occur during fasting. Each state represents a different set of metabolic processes
-     * and health benefits.
+     * Update the fasting state based on elapsed time
      */
     private fun updateFastingState() {
-        try {
-            val previousState = currentFastingState
+        val hours = (elapsedTimeMillis / HOUR_IN_MILLIS).toInt()
+        val newState = FastingState.getStateForHours(hours)
+        
+        // Only process changes if there's an actual state change
+        if (newState != currentFastingState) {
+            // Update the current state
+            currentFastingState = newState
             
-            // Determine the current fasting state based on elapsed time
-            currentFastingState = when {
-                !isRunning -> FastingState.NOT_FASTING
-                elapsedTimeMillis < 4 * HOUR_IN_MILLIS -> FastingState.NOT_FASTING
-                elapsedTimeMillis < 12 * HOUR_IN_MILLIS -> FastingState.EARLY_FAST
-                elapsedTimeMillis < 18 * HOUR_IN_MILLIS -> FastingState.GLYCOGEN_DEPLETION
-                elapsedTimeMillis < 24 * HOUR_IN_MILLIS -> FastingState.METABOLIC_SHIFT
-                elapsedTimeMillis < 48 * HOUR_IN_MILLIS -> FastingState.DEEP_KETOSIS
-                elapsedTimeMillis < 72 * HOUR_IN_MILLIS -> FastingState.IMMUNE_RESET
-                else -> FastingState.EXTENDED_FAST
+            // Update max state if new state is higher
+            if (newState.hourThreshold > _maxFastingState.hourThreshold) {
+                _maxFastingState = newState
             }
             
-            // Check if the state has changed
-            val stateChanged = previousState != currentFastingState
-            
-            // Update max fasting state if current state is higher
-            if (currentFastingState.ordinal > _maxFastingState.ordinal) {
-                _maxFastingState = currentFastingState
-                saveState() // Save when max state changes
+            // Send a notification about the new fasting state (only if not initial update)
+            if (!isInitialStateUpdate) {
+                // Use safe notification handling to prevent crashes
+                safelyHandleStateChangeNotification(newState)
             }
-            
-            // Send notification when state changes to a new state (not NOT_FASTING)
-            if (stateChanged && currentFastingState != FastingState.NOT_FASTING) {
-                checkAndSendFastingStateNotification()
-            }
-            
-            // Only update widgets when necessary to save battery
-            if (stateChanged) {
-                // Always update widgets when state changes
-                Log.d(TAG, "Fasting state changed from ${previousState.name} to ${currentFastingState.name}, updating widgets")
-                updateWidgets(true) // Force update when state changes
-            } else if (isRunning) {
-                // For running timer, update widgets less frequently based on elapsed time
-                val updateIntervalMinutes = when {
-                    elapsedTimeMillis < HOUR_IN_MILLIS -> 1 // Update every minute in the first hour
-                    elapsedTimeMillis < 4 * HOUR_IN_MILLIS -> 2 // Every 2 minutes for 1-4 hours
-                    elapsedTimeMillis < 12 * HOUR_IN_MILLIS -> 5 // Every 5 minutes for 4-12 hours
-                    else -> 10 // Every 10 minutes after 12 hours
-                }
-                
-                // Only update if enough time has passed since the last update
-                val currentTimeMinutes = System.currentTimeMillis() / (60 * 1000)
-                if (currentTimeMinutes % updateIntervalMinutes == 0L) {
-                    updateWidgets(false)
-                }
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error updating fasting state", e)
         }
+        
+        // No longer initial update after first call
+        isInitialStateUpdate = false
     }
     
     /**
-     * Check if notifications are enabled and send a notification for the current fasting state
+     * Safely handle state change notifications in a way that won't crash the app
      */
-    private fun checkAndSendFastingStateNotification() {
+    private fun safelyHandleStateChangeNotification(newState: FastingState) {
         try {
-            // Don't send notifications if this is the initial state update during app startup
-            if (isInitialStateUpdate) {
-                Log.d(TAG, "Skipping notification during initial state update")
-                isInitialStateUpdate = false
+            // First check if notifications are enabled
+            val preferencesManager = PreferencesManager.getInstance(appContext)
+            if (!preferencesManager.dateTimePreferences.enableFastingStateNotifications) {
+                // Notifications disabled, skip
                 return
             }
             
-            // Get preferences manager to check if notifications are enabled
-            val preferencesManager = PreferencesManager.getInstance(appContext)
-            val notificationsEnabled = preferencesManager.dateTimePreferences.enableFastingStateNotifications
-            
-            if (notificationsEnabled) {
-                // Create and send notification - all fasting state changes get notifications
-                // even if the fast won't be saved to the log (less than 12 hours)
-                val notificationHelper = NotificationHelper(appContext)
-                notificationHelper.sendFastingStateNotification(currentFastingState)
-                Log.d(TAG, "Sent notification for fasting state: ${currentFastingState.name}")
-            }
+            // Use a separate thread for notification processing
+            Thread {
+                try {
+                    // Add a small delay to avoid overwhelming the system
+                    Thread.sleep(1500)
+                    
+                    // Use a Handler to get back to the main thread for notification
+                    Handler(Looper.getMainLooper()).post {
+                        try {
+                            // Create a notification helper with proper context
+                            val context = appContext.applicationContext
+                            val languageCode = try {
+                                context.resources.configuration.locales.get(0).language
+                            } catch (e: Exception) {
+                                ""
+                            }
+                            
+                            try {
+                                // Use context with correct locale for notifications
+                                val contextWithLocale = wesseling.io.fasttime.util.LocaleHelper.updateLocale(context, languageCode)
+                                
+                                // Create notification helper and send notification
+                                val notificationHelper = NotificationHelper(contextWithLocale)
+                                notificationHelper.sendFastingStateNotification(newState)
+                                
+                                Log.d(TAG, "Sent state change notification for ${newState.name}")
+                            } catch (e: Exception) {
+                                Log.e(TAG, "Error sending notification with localized context", e)
+                            }
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Error in notification handler", e)
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error in notification thread", e)
+                }
+            }.start()
         } catch (e: Exception) {
-            Log.e(TAG, "Error sending notification", e)
+            // Never let notification errors crash the app
+            Log.e(TAG, "Could not handle state change notification", e)
         }
     }
     
@@ -841,43 +835,59 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
         // Save state to preferences
         saveState()
         
-        // Update widgets
-        updateWidgets()
+        // SAFE: Update widgets but defer other operations
+        try {
+            updateWidgets()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error updating widgets in safeStartTimer", e)
+            // Continue anyway, don't allow this to crash
+        }
         
-        // IMPORTANT: Completely detach service starting from the UI thread to avoid crashes
-        // Also use context with correct locale to prevent localization issues
-        Thread {
+        // Use a fully detached background thread for services and notifications
+        val serviceThread = Thread {
             try {
-                Thread.sleep(500) // Small delay to ensure UI operations are complete
+                // Wait to ensure UI operations complete first
+                Thread.sleep(2000)
+                
+                // Use Handler to get back to main thread for any UI operations
                 Handler(Looper.getMainLooper()).post {
                     try {
-                        // Use applicationContext to avoid potential memory leaks
+                        // Get context with the correct locale for service
                         val context = appContext.applicationContext
-                        // Ensure we have a properly localized context
                         val languageCode = try {
-                            val locale = context.resources.configuration.locales.get(0)
-                            locale.language
+                            context.resources.configuration.locales.get(0).language
                         } catch (e: Exception) {
                             Log.e(TAG, "Error getting locale, using default", e)
                             ""
                         }
                         
-                        // Apply the locale explicitly to ensure consistent behavior
                         try {
+                            // Start service with properly localized context
                             val contextWithLocale = wesseling.io.fasttime.util.LocaleHelper.updateLocale(context, languageCode)
                             startWidgetUpdateServiceWithContext(contextWithLocale)
                         } catch (e: Exception) {
-                            Log.e(TAG, "Error updating locale, using original context", e)
-                            startWidgetUpdateService()
+                            Log.e(TAG, "Error starting service with locale, using fallback", e)
+                            // Wait another second before trying fallback
+                            Thread.sleep(1000)
+                            try {
+                                // Fallback to simple update without service
+                                updateWidgets(true)
+                            } catch (e2: Exception) {
+                                Log.e(TAG, "Even widget update fallback failed", e2)
+                            }
                         }
                     } catch (e: Exception) {
-                        Log.e(TAG, "Error starting widget service in handler", e)
+                        Log.e(TAG, "Error in service start handler", e)
                     }
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Error in service start thread", e)
+                Log.e(TAG, "Error in service thread", e)
             }
-        }.start()
+        }
+        
+        // Set to daemon thread so it doesn't prevent app from exiting
+        serviceThread.isDaemon = true
+        serviceThread.start()
     }
     
     /**

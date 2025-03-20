@@ -235,6 +235,10 @@ class FastingWidgetUpdateService : Service() {
                 return START_NOT_STICKY
             }
             
+            // Ensure we have the correct locale
+            val languageCode = LocaleHelper.getLanguageCode(this)
+            LocaleHelper.updateLocale(this, languageCode)
+            
             // Create a notification for the foreground service
             val notification = createNotification()
             
@@ -247,27 +251,36 @@ class FastingWidgetUpdateService : Service() {
             // Update service health timestamp
             updateServiceHealthTimestamp()
             
-            // Start the update loop with immediate first update
-            handler.removeCallbacks(updateRunnable) // Remove any existing callbacks
-            handler.post(updateRunnable)
-            
-            // Schedule backup alarm for recovery
-            scheduleBackupAlarm()
-            
-            // Schedule an immediate widget update
-            FastingWidgetProvider.updateAllWidgets(this)
+            // Start the update loop with immediate first update - protect from crashes
+            try {
+                // Remove any existing callbacks first
+                handler.removeCallbacks(updateRunnable)
+                
+                // Post the update runnable with a short delay
+                handler.postDelayed(updateRunnable, 1000)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error posting update runnable", e)
+                
+                // Try one more time with a fallback approach if first attempt fails
+                try {
+                    Thread.sleep(500)
+                    handler.post {
+                        try {
+                            updateRunnable.run()
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Error in fallback update", e)
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Complete failure in update scheduling", e)
+                }
+            }
         } catch (e: Exception) {
-            Log.e(TAG, "Error starting service", e)
-            
-            // Schedule a fallback update even on failure
-            handler.postDelayed(updateRunnable, FALLBACK_UPDATE_INTERVAL)
-            
-            // Set backup alarm as failsafe
-            scheduleBackupAlarm()
+            Log.e(TAG, "Error in onStartCommand", e)
         }
         
-        // Use START_REDELIVER_INTENT to have the system redeliver the intent if service is killed
-        return START_REDELIVER_INTENT
+        // If service is killed, restart it
+        return START_STICKY
     }
     
     override fun onBind(intent: Intent?): IBinder? {
