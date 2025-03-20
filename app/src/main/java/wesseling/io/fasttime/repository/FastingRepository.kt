@@ -14,6 +14,7 @@ import com.google.gson.JsonSerializer
 import com.google.gson.reflect.TypeToken
 import wesseling.io.fasttime.model.CompletedFast
 import wesseling.io.fasttime.model.FastingState
+import wesseling.io.fasttime.util.FastingValidator
 import java.lang.reflect.Type
 
 /**
@@ -33,14 +34,30 @@ class FastingRepository(private val context: Context) {
     
     /**
      * Save a completed fast to the repository
+     * 
+     * @param completedFast The fast to save
+     * @param skipValidation Whether to skip overlap validation (default: false)
+     * @throws IllegalArgumentException if fast validation fails
      */
-    fun saveFast(completedFast: CompletedFast) {
+    fun saveFast(completedFast: CompletedFast, skipValidation: Boolean = false) {
         try {
             Log.d(TAG, "Saving fast: id=${completedFast.id}, duration=${completedFast.durationMillis}, state=${completedFast.maxFastingState}")
             
+            // Get existing fasts
             val fasts = getAllFasts().toMutableList()
             Log.d(TAG, "Current fasts count: ${fasts.size}")
             
+            // Validate the fast entry for overlaps
+            if (!skipValidation) {
+                val validationResult = FastingValidator.checkForOverlappingFasts(completedFast, fasts)
+                if (!validationResult.isValid) {
+                    val errorMsg = validationResult.errorMessage ?: "Invalid fast entry"
+                    Log.e(TAG, "Validation failed: $errorMsg")
+                    throw IllegalArgumentException(errorMsg)
+                }
+            }
+            
+            // Add the fast
             fasts.add(completedFast)
             
             val json = gson.toJson(fasts)
@@ -143,8 +160,12 @@ class FastingRepository(private val context: Context) {
     
     /**
      * Update a completed fast
+     * 
+     * @param completedFast The fast to update
+     * @param skipValidation Whether to skip overlap validation (default: false)
+     * @throws IllegalArgumentException if fast validation fails
      */
-    fun updateFast(completedFast: CompletedFast) {
+    fun updateFast(completedFast: CompletedFast, skipValidation: Boolean = false) {
         try {
             Log.d(TAG, "Updating fast: id=${completedFast.id}")
             
@@ -152,6 +173,22 @@ class FastingRepository(private val context: Context) {
             val index = fasts.indexOfFirst { it.id == completedFast.id }
             
             if (index != -1) {
+                // Validate the fast entry for overlaps, skipping the current fast ID
+                if (!skipValidation) {
+                    val validationResult = FastingValidator.checkForOverlappingFasts(
+                        completedFast, 
+                        fasts,
+                        skipFastId = completedFast.id
+                    )
+                    
+                    if (!validationResult.isValid) {
+                        val errorMsg = validationResult.errorMessage ?: "Invalid fast entry"
+                        Log.e(TAG, "Validation failed during update: $errorMsg")
+                        throw IllegalArgumentException(errorMsg)
+                    }
+                }
+                
+                // Update the fast
                 fasts[index] = completedFast
                 val json = gson.toJson(fasts)
                 val editor = prefs.edit()
@@ -161,9 +198,11 @@ class FastingRepository(private val context: Context) {
                 Log.d(TAG, "Update result: $success")
             } else {
                 Log.e(TAG, "Fast not found for update: id=${completedFast.id}")
+                throw IllegalArgumentException("Fast not found for update")
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error updating fast: ${e.message}", e)
+            throw e
         }
     }
     

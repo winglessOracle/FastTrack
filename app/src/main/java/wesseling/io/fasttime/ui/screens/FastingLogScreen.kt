@@ -275,6 +275,9 @@ fun FastingLogScreen(
                 repository.updateFast(fast)
                 refreshData()
                 snackbarHostState.showSnackbar("Fast updated successfully")
+            } catch (e: IllegalArgumentException) {
+                Log.e("FastingLogScreen", "Validation error: ${e.message}", e)
+                snackbarHostState.showSnackbar("Error: ${e.message}")
             } catch (e: Exception) {
                 Log.e("FastingLogScreen", "Error updating fast", e)
                 snackbarHostState.showSnackbar("Failed to update fast")
@@ -308,6 +311,9 @@ fun FastingLogScreen(
                 
                 // Show a snackbar
                 snackbarHostState.showSnackbar("New fast entry created")
+            } catch (e: IllegalArgumentException) {
+                Log.e("FastingLogScreen", "Validation error: ${e.message}", e)
+                snackbarHostState.showSnackbar("Error: ${e.message}")
             } catch (e: Exception) {
                 Log.e("FastingLogScreen", "Error adding new fast entry", e)
                 snackbarHostState.showSnackbar("Failed to add fast entry")
@@ -1698,6 +1704,7 @@ fun EditFastDialog(
                             maxFastingState = maxFastingState,
                             note = note
                         )
+                        // Attempt to save, validation will happen in repository
                         onSave(updatedFast)
                     }
                 },
