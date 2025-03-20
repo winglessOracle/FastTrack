@@ -1,7 +1,6 @@
 package wesseling.io.fasttime.ui.components
 
 import android.content.Context
-import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -39,6 +38,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,22 +54,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import kotlinx.coroutines.launch
 import wesseling.io.fasttime.R
 import wesseling.io.fasttime.model.CompletedFast
 import wesseling.io.fasttime.model.FastingState
 import wesseling.io.fasttime.repository.FastingRepository
 import wesseling.io.fasttime.timer.FastingTimer
-import wesseling.io.fasttime.ui.theme.DeepKetosisGreen
-import wesseling.io.fasttime.ui.theme.EarlyFastingYellow
-import wesseling.io.fasttime.ui.theme.ExtendedFastMagenta
-import wesseling.io.fasttime.ui.theme.GlycogenDepletionOrange
-import wesseling.io.fasttime.ui.theme.ImmuneResetPurple
-import wesseling.io.fasttime.ui.theme.MetabolicShiftBlue
-import wesseling.io.fasttime.ui.theme.NotFastingGray
-import wesseling.io.fasttime.ui.theme.getColorForFastingState
 import wesseling.io.fasttime.ui.theme.BorderUtils
-import androidx.compose.runtime.rememberCoroutineScope
-import kotlinx.coroutines.launch
+import wesseling.io.fasttime.ui.theme.getColorForFastingState
 
 /**
  * A widget button that displays and controls a fasting timer
