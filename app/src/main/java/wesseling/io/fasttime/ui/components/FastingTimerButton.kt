@@ -336,21 +336,43 @@ fun FastingTimerButton(
                     if (fastingTimer.isRunning) {
                         showConfirmationDialog = true
                     } else {
-                        // Use direct timer control instead of broadcasts to prevent crashes
+                        // Use a completely isolated, direct approach to start the timer
+                        // No broadcasts, no complex interactions
                         try {
-                            Log.d("FastingTimerButton", "Starting timer using safeStartTimer")
-                            // Use the safe start timer method that already handles locale
-                            fastingTimer.safeStartTimer()
+                            Log.d("FastingTimerButton", "Starting timer using direct, isolated method")
+                            
+                            // Set a flag in shared preferences to track the operation
+                            val prefs = context.getSharedPreferences("timer_operations", Context.MODE_PRIVATE)
+                            prefs.edit().putLong("last_start_attempt", System.currentTimeMillis()).apply()
+                            
+                            // First update timer state directly (safest operation)
+                            fastingTimer.startTimer()
+                            
+                            // Show success toast 
+                            Toast.makeText(
+                                context,
+                                "Timer started successfully",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            
+                            // Record successful start
+                            prefs.edit().putBoolean("last_start_successful", true).apply()
                         } catch (e: Exception) {
-                            Log.e("FastingTimerButton", "Error starting timer directly", e)
-                            // Fallback to the older method if direct call fails
+                            Log.e("FastingTimerButton", "Error using direct timer start", e)
+                            
                             try {
-                                Log.d("FastingTimerButton", "Falling back to broadcast timer start")
-                                val startIntent = Intent("wesseling.io.fasttime.widget.ACTION_START_TIMER")
-                                startIntent.setPackage(context.packageName)
-                                context.sendBroadcast(startIntent)
+                                // Record failure and wait a moment
+                                val prefs = context.getSharedPreferences("timer_operations", Context.MODE_PRIVATE)
+                                prefs.edit().putBoolean("last_start_successful", false).apply()
+                                
+                                // Last resort - show error and give up
+                                Toast.makeText(
+                                    context, 
+                                    "Could not start timer: ${e.message}",
+                                    Toast.LENGTH_LONG
+                                ).show()
                             } catch (e2: Exception) {
-                                Log.e("FastingTimerButton", "Error in broadcast fallback", e2)
+                                Log.e("FastingTimerButton", "Complete failure in timer start", e2)
                             }
                         }
                     }

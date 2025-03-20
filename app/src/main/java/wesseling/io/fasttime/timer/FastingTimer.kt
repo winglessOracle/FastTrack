@@ -204,6 +204,9 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
         if (isRunning) return
         
         try {
+            // Log the start attempt
+            Log.d(TAG, "Starting timer, simple implementation to avoid crashes")
+            
             // Calculate new start time based on any existing elapsed time
             startTimeMillis = System.currentTimeMillis() - elapsedTimeMillis
             isRunning = true
@@ -214,24 +217,52 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
             // Save state to preferences
             saveState()
             
-            // SAFE: Update widgets first, then handle notifications and services
-            // This order prevents race conditions in UI updates
-            updateWidgets()
+            // Try to update widgets, but don't crash if it fails
+            try {
+                updateWidgets()
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to update widgets, but timer is still running", e)
+            }
             
-            // Start widget update service on a separate thread with delay
+            // Start widget update service on a completely separate thread
             Thread {
                 try {
-                    // Small delay to avoid overwhelming the UI thread
-                    Thread.sleep(1000)
-                    startWidgetUpdateService()
+                    // Long delay to allow UI to settle completely
+                    Thread.sleep(3000)
+                    
+                    try {
+                        // Simplest possible service start - focus on reliability
+                        val intent = Intent()
+                        intent.setClassName(appContext.packageName, 
+                                         "wesseling.io.fasttime.widget.FastingWidgetUpdateService")
+                        
+                        // Start the service based on API level
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            appContext.startForegroundService(intent)
+                        } else {
+                            appContext.startService(intent)
+                        }
+                        
+                        Log.d(TAG, "Widget update service started with simple approach")
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Failed to start widget service, but timer is running", e)
+                    }
                 } catch (e: Exception) {
-                    Log.e(TAG, "Error starting widget service in thread", e)
+                    Log.e(TAG, "Error in service start thread", e)
                 }
-            }.start()
+            }.apply {
+                isDaemon = true
+                priority = Thread.MIN_PRIORITY
+                start()
+            }
             
+            Log.d(TAG, "Timer started successfully")
         } catch (e: Exception) {
-            Log.e(TAG, "Error starting timer", e)
-            resetToSafeState()
+            Log.e(TAG, "Error in startTimer core functionality", e)
+            // Only reset if absolutely needed
+            if (!isRunning) {
+                resetToSafeState()
+            }
         }
     }
     

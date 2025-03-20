@@ -122,6 +122,31 @@ class MainActivity : ComponentActivity() {
     }
     
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Set up a global exception handler to track crashes related to the timer
+        val defaultExceptionHandler = Thread.getDefaultUncaughtExceptionHandler()
+        Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
+            try {
+                // Log the crash
+                Log.e(TAG, "Uncaught exception in thread ${thread.name}", throwable)
+                
+                // Save crash info to shared prefs
+                val prefs = getSharedPreferences("crash_recovery", Context.MODE_PRIVATE)
+                prefs.edit()
+                    .putLong("last_crash_time", System.currentTimeMillis())
+                    .putString("last_crash_thread", thread.name)
+                    .putString("last_crash_exception", throwable.javaClass.simpleName)
+                    .putString("last_crash_message", throwable.message ?: "")
+                    .apply()
+                
+                // Let the system handle the crash
+                defaultExceptionHandler?.uncaughtException(thread, throwable)
+            } catch (e: Exception) {
+                // If our handler crashes, use the default one
+                Log.e(TAG, "Error in custom exception handler", e)
+                defaultExceptionHandler?.uncaughtException(thread, throwable)
+            }
+        }
+        
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate")
         
@@ -129,11 +154,13 @@ class MainActivity : ComponentActivity() {
         val languageCode = LocaleHelper.getLanguageCode(this)
         LocaleHelper.updateLocale(this, languageCode)
         
-        // Handle lingering instances of the same activity
+        // Handle lingering instances of the same activity more aggressively
         if (!isTaskRoot) {
             // Check if this activity is not at the root of the task (meaning there are other instances)
             val launchIntent = intent
             val action = launchIntent?.action
+            
+            // If this is a launcher intent and we're not the root activity, finish immediately
             if (launchIntent?.hasCategory(Intent.CATEGORY_LAUNCHER) == true && 
                 (action == Intent.ACTION_MAIN || action == null)) {
                 Log.w(TAG, "Detected non-root MainActivity instance, finishing")
@@ -145,7 +172,7 @@ class MainActivity : ComponentActivity() {
         // Enable edge-to-edge display
         WindowCompat.setDecorFitsSystemWindows(window, false)
         
-        // Detect and recover from previous crashes
+        // Detect and recover from previous crashes - more aggressive cleanup
         try {
             // Check if a previous instance might have crashed
             val sharedPrefs = getSharedPreferences("crash_recovery", Context.MODE_PRIVATE)
@@ -154,25 +181,46 @@ class MainActivity : ComponentActivity() {
             
             // If there was a crash in the last 30 seconds, we might be in recovery mode
             if (currentTime - lastCrashTime < 30000) {
-                Log.w(TAG, "Detected recent crash, clearing any lingering state")
+                val crashThread = sharedPrefs.getString("last_crash_thread", "unknown")
+                val crashException = sharedPrefs.getString("last_crash_exception", "unknown")
                 
-                // Attempt to clean up lingering state
+                Log.w(TAG, "Detected recent crash in thread $crashThread: $crashException, performing recovery")
+                
+                // Cleanup any pending operations
                 try {
-                    val fastingTimer = FastingTimer.getInstance(applicationContext)
-                    // Don't stop the timer, just ensure it's in a good state
-                    if (fastingTimer.isRunning) {
-                        // Update widgets to ensure UI is in sync
-                        val updateIntent = Intent("wesseling.io.fasttime.widget.ACTION_UPDATE_WIDGETS")
-                        updateIntent.setPackage(packageName)
-                        sendBroadcast(updateIntent)
+                    // Clear any pending broadcasts
+                    val intent = Intent("wesseling.io.fasttime.widget.ACTION_UPDATE_WIDGETS")
+                    intent.setPackage(packageName)
+                    intent.putExtra("RECOVERY", true)
+                    sendBroadcast(intent)
+                    
+                    // Update any existing FastingTimer instance but don't create a new one
+                    val timer = FastingTimer.getInstance(applicationContext)
+                    if (timer.isRunning) {
+                        Log.d(TAG, "Timer is running, ensuring widget service is started")
+                        Intent().also { serviceIntent ->
+                            serviceIntent.setClassName(packageName, 
+                                "wesseling.io.fasttime.widget.FastingWidgetUpdateService")
+                            serviceIntent.putExtra("recovery", true)
+                            try {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    startForegroundService(serviceIntent)
+                                } else {
+                                    startService(serviceIntent)
+                                }
+                                Log.d(TAG, "Started widget service in recovery mode")
+                            } catch (e: Exception) {
+                                Log.e(TAG, "Failed to start widget service in recovery mode", e)
+                            }
+                        }
                     }
                 } catch (e: Exception) {
-                    Log.e(TAG, "Error cleaning up after crash", e)
+                    Log.e(TAG, "Error in crash recovery operations", e)
                 }
             }
             
             // Update last crash time to current time
-            sharedPrefs.edit().putLong("last_crash_time", currentTime).apply()
+            sharedPrefs.edit().putLong("last_activity_start", currentTime).apply()
         } catch (e: Exception) {
             Log.e(TAG, "Error in crash recovery logic", e)
         }

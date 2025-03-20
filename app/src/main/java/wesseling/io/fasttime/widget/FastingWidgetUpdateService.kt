@@ -194,93 +194,163 @@ class FastingWidgetUpdateService : Service() {
     }
     
     override fun onCreate() {
-        super.onCreate()
-        Log.d(TAG, "Service created")
-        
-        // Create notification channel for Android O and above
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                CHANNEL_ID,
-                getString(R.string.notification_channel_widget_updates),
-                NotificationManager.IMPORTANCE_LOW
-            ).apply {
-                description = getString(R.string.notification_channel_widget_updates_description)
-                setShowBadge(false)
+        try {
+            super.onCreate()
+            Log.d(TAG, "Service onCreate started")
+            
+            // Create notification channel for Android O and above
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                try {
+                    val channel = NotificationChannel(
+                        CHANNEL_ID,
+                        getString(R.string.notification_channel_widget_updates),
+                        NotificationManager.IMPORTANCE_LOW
+                    ).apply {
+                        description = getString(R.string.notification_channel_widget_updates_description)
+                        setShowBadge(false)
+                    }
+                    
+                    val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                    notificationManager.createNotificationChannel(channel)
+                    Log.d(TAG, "Notification channel created successfully")
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error creating notification channel", e)
+                    // Continue anyway - service can still work without the channel
+                }
             }
             
-            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
+            try {
+                // Register backup alarm receiver
+                val filter = IntentFilter().apply {
+                    addAction(ACTION_BACKUP_ALARM)
+                    addAction(ACTION_HEALTH_CHECK)
+                }
+                registerReceiver(alarmReceiver, filter)
+                Log.d(TAG, "Alarm receiver registered")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error registering receiver", e)
+                // Continue anyway - can work without the alarm
+            }
+            
+            try {
+                // Schedule health check
+                scheduleHealthCheck()
+                Log.d(TAG, "Health check scheduled")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error scheduling health check", e)
+                // Continue anyway - not critical
+            }
+            
+            Log.d(TAG, "Service onCreate completed successfully")
+        } catch (e: Exception) {
+            Log.e(TAG, "Fatal error in service onCreate", e)
+            // Nothing we can do here
         }
-        
-        // Register backup alarm receiver
-        val filter = IntentFilter().apply {
-            addAction(ACTION_BACKUP_ALARM)
-            addAction(ACTION_HEALTH_CHECK)
-        }
-        registerReceiver(alarmReceiver, filter)
-        
-        // Schedule health check
-        scheduleHealthCheck()
     }
     
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d(TAG, "Service started, flags=$flags, startId=$startId, recovery=${intent?.getBooleanExtra("recovery", false)}")
-        
         try {
-            // Check if timer is actually running; if not, stop the service to save battery
-            val fastingTimer = FastingTimer.getInstance(this)
-            if (!fastingTimer.isRunning) {
-                Log.d(TAG, "Timer not running, stopping service to save battery")
-                stopSelf()
-                return START_NOT_STICKY
+            Log.d(TAG, "Service onStartCommand invoked, startId=$startId")
+            
+            // First thing - make sure we have a notification to stay alive
+            try {
+                // Create a simple notification for the foreground service
+                val notification = NotificationCompat.Builder(this, CHANNEL_ID)
+                    .setContentTitle(getString(R.string.notification_widget_content_title))
+                    .setContentText(getString(R.string.notification_widget_content_text))
+                    .setSmallIcon(R.drawable.ic_play_arrow)
+                    .setPriority(NotificationCompat.PRIORITY_LOW)
+                    .build()
+                
+                // Start as a foreground service immediately
+                startForeground(NOTIFICATION_ID, notification)
+                Log.d(TAG, "Service started in foreground")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error starting service in foreground", e)
+                // Try to continue anyway
             }
             
-            // Ensure we have the correct locale
-            val languageCode = LocaleHelper.getLanguageCode(this)
-            LocaleHelper.updateLocale(this, languageCode)
+            // Check timer status - but don't stop immediately if not running
+            // This gives the timer a chance to start if it's in the process of starting
+            var timerRunning = false
+            try {
+                val fastingTimer = FastingTimer.getInstance(this)
+                timerRunning = fastingTimer.isRunning
+                Log.d(TAG, "Timer running status: $timerRunning")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error checking timer status", e)
+                // Assume timer is running to be safe
+                timerRunning = true
+            }
             
-            // Create a notification for the foreground service
-            val notification = createNotification()
-            
-            // Start as a foreground service with higher priority
-            startForeground(NOTIFICATION_ID, notification)
-            
-            // Reset health check count on successful start
-            resetHealthCheckCount()
+            // Apply locale - but don't fail if it doesn't work
+            try {
+                val languageCode = LocaleHelper.getLanguageCode(this)
+                LocaleHelper.updateLocale(this, languageCode)
+                Log.d(TAG, "Locale applied successfully")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error applying locale", e)
+                // Continue anyway
+            }
             
             // Update service health timestamp
-            updateServiceHealthTimestamp()
+            try {
+                updateServiceHealthTimestamp()
+                Log.d(TAG, "Service health timestamp updated")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error updating health timestamp", e)
+                // Continue anyway
+            }
             
-            // Start the update loop with immediate first update - protect from crashes
+            // Simplest possible approach - post delayed update
             try {
                 // Remove any existing callbacks first
                 handler.removeCallbacks(updateRunnable)
                 
-                // Post the update runnable with a short delay
-                handler.postDelayed(updateRunnable, 1000)
-            } catch (e: Exception) {
-                Log.e(TAG, "Error posting update runnable", e)
-                
-                // Try one more time with a fallback approach if first attempt fails
-                try {
-                    Thread.sleep(500)
-                    handler.post {
-                        try {
-                            updateRunnable.run()
-                        } catch (e: Exception) {
-                            Log.e(TAG, "Error in fallback update", e)
-                        }
+                // Post the update with a delay to allow system to stabilize
+                handler.postDelayed({
+                    try {
+                        Log.d(TAG, "Executing delayed first update")
+                        updateRunnable.run()
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error in delayed first update", e)
                     }
-                } catch (e: Exception) {
-                    Log.e(TAG, "Complete failure in update scheduling", e)
+                }, 5000) // Long delay for first update
+                
+                Log.d(TAG, "First update scheduled with delay")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error scheduling first update", e)
+                // Try alternative approach
+                try {
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        try {
+                            Log.d(TAG, "Executing alternative delayed update")
+                            FastingWidgetProvider.updateAllWidgets(applicationContext)
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Error in alternative update", e)
+                        }
+                    }, 10000) // Even longer delay for alternative
+                } catch (e2: Exception) {
+                    Log.e(TAG, "Complete failure in scheduling updates", e2)
                 }
             }
+            
+            Log.d(TAG, "Service onStartCommand completed successfully")
+            
+            // Only stop if timer definitely not running and this isn't a recovery attempt
+            if (!timerRunning && intent?.getBooleanExtra("recovery", false) != true) {
+                Log.d(TAG, "Timer not running, scheduling service stop")
+                // Don't stop immediately - give time for things to settle
+                handler.postDelayed({ stopSelf() }, 30000)
+                return START_NOT_STICKY
+            }
+            
+            // If service is killed, restart it
+            return START_STICKY
         } catch (e: Exception) {
-            Log.e(TAG, "Error in onStartCommand", e)
+            Log.e(TAG, "Fatal error in onStartCommand", e)
+            return START_STICKY // Try to restart anyway
         }
-        
-        // If service is killed, restart it
-        return START_STICKY
     }
     
     override fun onBind(intent: Intent?): IBinder? {
@@ -309,26 +379,6 @@ class FastingWidgetUpdateService : Service() {
             Log.e(TAG, "Error during service destruction", e)
         }
     }
-    
-    /**
-     * Create a notification for the foreground service
-     */
-    private fun createNotification() = NotificationCompat.Builder(this, CHANNEL_ID)
-        .setContentTitle(getString(R.string.notification_widget_content_title))
-        .setContentText(getString(R.string.notification_widget_content_text))
-        .setSmallIcon(R.drawable.ic_play_arrow)
-        .setPriority(NotificationCompat.PRIORITY_LOW)
-        .setOngoing(true)
-        .setCategory(NotificationCompat.CATEGORY_SERVICE)
-        .setContentIntent(
-            PendingIntent.getActivity(
-                this,
-                0,
-                Intent(this, MainActivity::class.java),
-                PendingIntent.FLAG_IMMUTABLE
-            )
-        )
-        .build()
     
     /**
      * Schedule the next update with an adaptive interval based on fasting state, battery level, and user preferences
