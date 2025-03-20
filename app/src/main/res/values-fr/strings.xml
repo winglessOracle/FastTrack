@@ -253,14 +253,14 @@
     <string name="fasting_state_warning_immune_reset_2">La supplémentation en électrolytes devient essentielle</string>
     <string name="fasting_state_warning_immune_reset_3">Rompre correctement le jeûne est crucial pour éviter des troubles digestifs</string>
     <string name="fasting_state_warning_immune_reset_4">Non recommandé pour les personnes souffrant de certaines conditions médicales</string>
-    <string name="fasting_state_warning_immune_reset_5">Devrait être fait sous supervision pour les personnes nouvelles au jeûne prolongé</string>
+    <string name="fasting_state_warning_immune_reset_5">Devrait être fait sous supervision pour les débutants au jeûne prolongé</string>
     
     <!-- Extended fast warnings -->
-    <string name="fasting_state_warning_extended_fast_1">Le risque de dégradation musculaire augmente légèrement, bien que les graisses restent le carburant principal</string>
-    <string name="fasting_state_warning_extended_fast_2">Le jeûne prolongé ne devrait être fait qu\'avec une supervision médicale appropriée</string>
+    <string name="fasting_state_warning_extended_fast_1">Le risque de décomposition musculaire augmente légèrement, bien que les graisses restent le carburant principal</string>
+    <string name="fasting_state_warning_extended_fast_2">Le jeûne prolongé ne devrait être fait que sous supervision médicale appropriée</string>
     <string name="fasting_state_warning_extended_fast_3">Non recommandé pour les personnes en sous-poids ou souffrant de troubles alimentaires</string>
-    <string name="fasting_state_warning_extended_fast_4">Nécessite un protocole de réalimentation soigneux lors de la rupture du jeûne</string>
-    <string name="fasting_state_warning_extended_fast_5">Potentiel de déséquilibres électrolytiques s\'ils ne sont pas correctement gérés</string>
+    <string name="fasting_state_warning_extended_fast_4">Nécessite un protocole soigneux de réalimentation lors de la rupture du jeûne</string>
+    <string name="fasting_state_warning_extended_fast_5">Potentiel de déséquilibres électrolytiques si non gérés correctement</string>
     <string name="fasting_state_warning_extended_fast_6">Consultez un professionnel de santé avant de tenter des jeûnes de plus de 72 heures</string>
     
     <!-- Plurals for fasting sessions -->
@@ -271,4 +271,248 @@
     
     <!-- UI Elements -->
     <string name="fasting_log_title">Journal de Jeûne</string>
+    
+    <!-- Help screen additional content -->
+    <string name="help_fasting_log_features">Fonctionnalités du Journal de Jeûne</string>
+    <string name="help_log_item_1">Voir un résumé de vos accomplissements de jeûne</string>
+    <string name="help_log_item_2">Seuls les jeûnes de 12+ heures sont enregistrés dans le journal</string>
+    <string name="help_log_item_3">Trier les entrées par date (plus récentes/plus anciennes d\'abord)</string>
+    <string name="help_log_item_4">Trier les entrées par durée (plus longues/plus courtes d\'abord)</string>
+    <string name="help_log_item_5">Filtrer les entrées par état de jeûne pour trouver des accomplissements spécifiques</string>
+    <string name="help_log_item_6">Appuyer sur une entrée pour voir des informations détaillées</string>
+    <string name="help_log_item_7">Modifier ou supprimer des entrées selon les besoins</string>
+    
+    <string name="help_using_log">Utilisation Efficace du Journal de Jeûne</string>
+    <string name="help_using_log_item_1">Triez par date pour suivre vos progrès récents</string>
+    <string name="help_using_log_item_2">Triez par durée pour identifier vos jeûnes les plus longs</string>
+    <string name="help_using_log_item_3">Filtrez par état de jeûne pour voir la fréquence à laquelle vous atteignez certains jalons</string>
+    <string name="help_using_log_item_4">Utilisez les statistiques récapitulatives pour comprendre votre progression globale</string>
+    <string name="help_using_log_item_5">Examinez régulièrement votre journal pour identifier les tendances et les améliorations</string>
+    
+    <string name="help_fasting_tips">Conseils pour un Jeûne Réussi</string>
+    <string name="help_fasting_protocols">Protocoles de Jeûne Communs</string>
+    
+    <string name="help_ideal_protocol">Trouver Votre Protocole de Jeûne Idéal</string>
+    <string name="help_ideal_protocol_content">Le jeûne n\'est pas une solution universelle. Différents protocoles offrent divers avantages et niveaux de difficulté. Tenez compte de votre style de vie, de vos objectifs et de votre niveau d\'expérience lors du choix d\'une méthode de jeûne. Vous devrez peut-être expérimenter plusieurs approches avant de trouver ce qui vous convient le mieux. Les protocoles ci-dessous vont du plus accessible au plus avancé. Commencez par un protocole plus facile et progressez graduellement à mesure que votre corps s\'adapte au jeûne.</string>
+    
+    <string name="help_16_8">Méthode 16:8 (Leangains)</string>
+    <string name="help_16_8_item_1">Jeûner pendant 16 heures, manger pendant une fenêtre de 8 heures</string>
+    <string name="help_16_8_item_2">Fenêtre populaire : 12h à 20h</string>
+    <string name="help_16_8_item_3">Adapté aux débutants</string>
+    <string name="help_16_8_item_4">Peut être fait quotidiennement</string>
+    <string name="help_16_8_item_5">Bon pour la gestion du poids et la santé métabolique</string>
+    
+    <string name="help_18_6">Méthode 18:6</string>
+    <string name="help_18_6_item_1">Jeûner pendant 18 heures, manger pendant une fenêtre de 6 heures</string>
+    <string name="help_18_6_item_2">Fenêtre populaire : 14h à 20h</string>
+    <string name="help_18_6_item_3">Niveau intermédiaire</string>
+    <string name="help_18_6_item_4">Combustion des graisses et cétose améliorées</string>
+    <string name="help_18_6_item_5">Peut améliorer la sensibilité à l\'insuline</string>
+    
+    <string name="help_20_4">Méthode 20:4 (Régime Guerrier)</string>
+    <string name="help_20_4_item_1">Jeûner pendant 20 heures, manger pendant une fenêtre de 4 heures</string>
+    <string name="help_20_4_item_2">Fenêtre populaire : 16h à 20h</string>
+    <string name="help_20_4_item_3">Niveau avancé</string>
+    <string name="help_20_4_item_4">Bénéfices significatifs d\'autophagie</string>
+    <string name="help_20_4_item_5">Peut améliorer la production d\'hormone de croissance</string>
+    
+    <string name="help_omad">OMAD (Un Repas Par Jour)</string>
+    <string name="help_omad_item_1">Ratio 23:1 - ne manger qu\'un seul repas par jour</string>
+    <string name="help_omad_item_2">Niveau avancé</string>
+    <string name="help_omad_item_3">Bénéfices maximaux d\'autophagie</string>
+    <string name="help_omad_item_4">Bénéfices métaboliques significatifs</string>
+    <string name="help_omad_item_5">Nécessite une planification nutritionnelle soigneuse</string>
+    
+    <string name="help_5_2">Régime 5:2</string>
+    <string name="help_5_2_item_1">Manger normalement 5 jours par semaine</string>
+    <string name="help_5_2_item_2">Restreindre les calories (500-600) sur 2 jours non consécutifs</string>
+    <string name="help_5_2_item_3">Bon pour ceux qui trouvent le jeûne quotidien difficile</string>
+    <string name="help_5_2_item_4">Planification flexible</string>
+    <string name="help_5_2_item_5">Démontré pour améliorer les marqueurs métaboliques</string>
+    
+    <string name="help_alternate">Jeûne Alterné</string>
+    <string name="help_alternate_item_1">Jeûner un jour sur deux</string>
+    <string name="help_alternate_item_2">Niveau avancé</string>
+    <string name="help_alternate_item_3">Potentiel significatif de perte de poids</string>
+    <string name="help_alternate_item_4">Peut améliorer la santé cardiovasculaire</string>
+    <string name="help_alternate_item_5">Nécessite une planification et une adaptation soigneuses</string>
+    
+    <string name="help_extended">Jeûne Prolongé</string>
+    <string name="help_extended_item_1">Jeûnes durant 24-72+ heures</string>
+    <string name="help_extended_item_2">Niveau expert - pas pour les débutants</string>
+    <string name="help_extended_item_3">Autophagie maximale et rajeunissement cellulaire</string>
+    <string name="help_extended_item_4">Réinitialisation immunitaire significative</string>
+    <string name="help_extended_item_5">Devrait être fait sous supervision médicale</string>
+    <string name="help_extended_item_6">Non recommandé pour une pratique régulière</string>
+    
+    <string name="help_getting_started">Commencer</string>
+    <string name="help_getting_started_item_1">Commencez par des fenêtres de jeûne plus courtes (12-14 heures)</string>
+    <string name="help_getting_started_item_2">Augmentez progressivement votre durée de jeûne</string>
+    <string name="help_getting_started_item_3">Soyez cohérent avec votre calendrier de jeûne</string>
+    <string name="help_getting_started_item_4">Suivez vos progrès avec FastTrack</string>
+    <string name="help_getting_started_item_5">Écoutez votre corps et ajustez si nécessaire</string>
+
+    <string name="help_electrolytes">Gestion des Électrolytes</string>
+    <string name="help_electrolytes_item_1">Sodium : Ajoutez une pincée de sel marin à l\'eau (1/4 c. à café dans 1L d\'eau)</string>
+    <string name="help_electrolytes_item_2">Potassium : Envisagez des substituts de sel de potassium pour les jeûnes &gt;24 heures</string>
+    <string name="help_electrolytes_item_3">Magnésium : Les suppléments de glycinate ou de citrate de magnésium peuvent aider avec les crampes musculaires</string>
+    <string name="help_electrolytes_item_4">Boissons électrolytiques : À considérer pendant les jeûnes prolongés, mais optez pour des versions sans sucre</string>
+    <string name="help_electrolytes_item_5">Surveillance : Soyez attentif aux signes de déséquilibre électrolytique (maux de tête, crampes, étourdissements)</string>
+    
+    <string name="help_achievement">Suivi des Accomplissements</string>
+    <string name="help_achievement_content">FastTrack ne compte que les jeûnes atteignant au moins l\'état d\'Épuisement du Glycogène (12+ heures) pour vos accomplissements et statistiques. Les jeûnes plus courts seront toujours suivis pendant le minuteur et vous recevrez toujours des notifications pour tous les changements d\'état de jeûne, mais les jeûnes plus courts ne seront pas sauvegardés dans votre journal de jeûne ni inclus dans vos statistiques. Cela encourage des expériences de jeûne plus significatives tout en fournissant un retour sur tous vos progrès de jeûne.</string>
+    
+    <string name="help_weekly">Accomplissement Hebdomadaire de Jeûne Profond</string>
+    <string name="help_weekly_content">FastTrack inclut un accomplissement spécial de médaille qui suit vos jeûnes profonds hebdomadaires (24+ heures ou mieux). Cela encourage le jeûne profond régulier sur une base hebdomadaire. La médaille de bronze est gagnée pour 1-9 jeûnes profonds, l\'argent pour 10-24, l\'or pour 25-49, et le statut Légende pour 50+ jeûnes profonds hebdomadaires. Visez au moins un jeûne profond par semaine pour maximiser vos bénéfices de jeûne et la progression de vos accomplissements.</string>
+    
+    <string name="sort_by_date_newest">Date (plus récentes d\'abord)</string>
+    <string name="sort_by_date_oldest">Date (plus anciennes d\'abord)</string>
+    <string name="sort_by_duration_longest">Durée (plus longues d\'abord)</string>
+    <string name="sort_by_duration_shortest">Durée (plus courtes d\'abord)</string>
+    
+    <string name="filter_all_states">Tous les États</string>
+    <string name="filter_by_state">Filtrer par État</string>
+    
+    <string name="timer_not_running">Le minuteur ne fonctionne pas</string>
+    <string name="timer_elapsed">Temps écoulé</string>
+    <string name="timer_hours">%d heures</string>
+    <string name="timer_starting_soon">Le minuteur démarre bientôt</string>
+
+    <string name="summary_longest_fast">Jeûne le plus long</string>
+    <string name="summary_total_fasts">Total des jeûnes</string>
+    <string name="summary_average_duration">Durée moyenne</string>
+    <string name="summary_week_deep_fast">Jeûnes profonds hebdomadaires</string>
+    <string name="summary_weekly_deep_badge">Médaille de jeûne profond hebdomadaire</string>
+    <string name="summary_24_plus_fasts">Jeûnes de 24+ heures</string>
+    <string name="summary_deep_ketosis">Cétose profonde atteinte</string>
+    <string name="summary_immune_reset">Réinitialisation immunitaire atteinte</string>
+    <string name="summary_extended_fasts">Jeûnes prolongés</string>
+    
+    <string name="badge_bronze">Bronze</string>
+    <string name="badge_silver">Argent</string>
+    <string name="badge_gold">Or</string>
+    <string name="badge_legend">Légende</string>
+    <string name="badge_none">Aucun encore</string>
+
+    <string name="fast_name_pattern">Jeûne %s</string>
+    <string name="fast_duration_pattern">%d heures</string>
+    <string name="fast_percentage_complete">%d%% complété</string>
+    <string name="fast_remaining_time">%s restant</string>
+    <string name="fast_time_until_next_state">%s jusqu\'à %s</string>
+
+    <string name="hours_format">%dh</string>
+    <string name="minutes_format">%dm</string>
+    <string name="hours_minutes_format">%dh %dm</string>
+    <string name="days_hours_format">%dj %dh</string>
+    <string name="days_format">%d jours</string>
+    
+    <string name="date_range_format">%s - %s</string>
+    <string name="date_time_format">%s à %s</string>
+    <string name="fast_details_title">Détails du Jeûne</string>
+    <string name="fast_details_duration">Durée</string>
+    <string name="fast_details_start">Début</string>
+    <string name="fast_details_end">Fin</string>
+    <string name="fast_details_state">État le plus élevé atteint</string>
+    
+    <string name="adjust_time_title">Ajuster l\'Heure de Début</string>
+    <string name="adjust_time_explanation">Ajustez l\'heure de début en sélectionnant l\'heure ou en utilisant les boutons de déplacement</string>
+    <string name="adjust_time_forward">Avancer</string>
+    <string name="adjust_time_backward">Reculer</string>
+    <string name="adjust_time_current">Actuel</string>
+    <string name="adjust_time_15_min">15 Min</string>
+    <string name="adjust_time_30_min">30 Min</string>
+    <string name="adjust_time_1_hour">1 Heure</string>
+    <string name="adjust_time_custom">Personnalisé</string>
+    
+    <string name="start_fasting">Commencer le jeûne</string>
+    <string name="stop_fasting">Arrêter le jeûne</string>
+    <string name="fasting_log">Journal de jeûne</string>
+    <string name="log_empty_message">Aucun journal de jeûne trouvé. Commencez à jeûner et terminez lorsque cela dure au moins 12 heures pour l\'afficher ici.</string>
+    <string name="clear_all_logs">Effacer tous les journaux</string>
+    
+    <!-- Additional UI elements -->
+    <string name="adjust_time_clock_icon">Icône d\'horloge</string>
+    <string name="adjust_time_error_too_large">L\'ajustement est trop grand (maximum 30 jours). Veuillez sélectionner une date plus récente.</string>
+    <string name="validation_date_invalid">Format de date invalide</string>
+    
+    <!-- Widget update notifications -->
+    <string name="notification_channel_widget_updates">Mises à jour du Widget de Jeûne</string>
+    <string name="notification_channel_widget_updates_description">Utilisé pour maintenir le widget de jeûne à jour</string>
+    <string name="notification_widget_content_text">Votre widget est en cours de mise à jour</string>
+    
+    <!-- Date picker -->
+    <string name="date_picker_title">Sélectionner la date</string>
+    <string name="time_picker_title">Sélectionner l\'heure</string>
+    
+    <!-- Fast detail view labels -->
+    <string name="fast_detail_view_title">Détails du Jeûne</string>
+    <string name="fast_detail_view_start_time">Heure de début :</string>
+    <string name="fast_detail_view_end_time">Heure de fin :</string>
+    <string name="fast_detail_view_duration">Durée :</string>
+    <string name="fast_detail_view_max_state">État maximal :</string>
+    <string name="fast_detail_view_notes">Notes :</string>
+    
+    <!-- Fasting log sorting and filtering -->
+    <string name="filter_all">Afficher tout</string>
+    <string name="sort_date_newest">Date (Plus récentes d\'abord)</string>
+    <string name="sort_date_oldest">Date (Plus anciennes d\'abord)</string>
+    <string name="sort_duration_longest">Durée (Plus longues d\'abord)</string>
+    <string name="sort_duration_shortest">Durée (Plus courtes d\'abord)</string>
+    
+    <!-- Fasting log additional translations -->
+    <string name="fasting_log_empty">Aucune session de jeûne enregistrée pour l\'instant</string>
+    <string name="fasting_log_empty_description">Terminez un jeûne pour le voir dans votre journal</string>
+    <string name="fasting_log_no_matches">Aucune session de jeûne correspondante</string>
+    <string name="fasting_log_no_matches_description">Essayez de modifier vos paramètres de filtre</string>
+    <string name="fasting_log_clear_filter">Effacer le filtre</string>
+    <string name="fasting_log_filtered_by">Filtré par : %s</string>
+    <string name="fasting_log_history_title">Historique de jeûne</string>
+    <string name="fasting_log_sessions_count">%d sessions</string>
+    <string name="fasting_log_delete_all">Tout supprimer</string>
+    <string name="fasting_log_details_title">Détails du jeûne</string>
+    <string name="fasting_log_notes_label">Notes</string>
+    <string name="fasting_log_summary_title">Résumé du jeûne</string>
+    <string name="fasting_log_summary_note">Seuls les jeûnes de 12+ heures sont comptés</string>
+    <string name="fasting_log_achievements">Accomplissements</string>
+    <string name="fasting_log_started">Commencé</string>
+    <string name="fasting_log_ended">Terminé</string>
+    <string name="fasting_log_time_separator"> → </string>
+    <string name="fasting_log_duration">Durée</string>
+    <string name="fasting_log_notes">Notes (optionnel)</string>
+    <string name="fasting_log_discard">Abandonner</string>
+    <string name="fasting_log_save">Enregistrer dans le journal</string>
+    <string name="fasting_log_achievement_reached">Vous avez atteint %s !</string>
+    <string name="fasting_log_longest_fast">Jeûne le plus long</string>
+    <string name="fasting_log_highest_state">État le plus élevé</string>
+    <string name="fasting_log_total_hours">Heures totales</string>
+    <string name="fasting_log_average_hours">Heures moyennes</string>
+    <string name="no_fasting_logs_to_export">Aucun journal de jeûne à exporter</string>
+    
+    <!-- Chart labels -->
+    <string name="chart_title_fasting_history">Historique de jeûne</string>
+    <string name="chart_axis_date">Date</string>
+    <string name="chart_axis_duration">Durée (heures)</string>
+    <string name="chart_label_average">Moyenne</string>
+    <string name="chart_label_trend">Tendance</string>
+    
+    <!-- Adjust time screen additional translations -->
+    <string name="adjust_time_new_elapsed">Nouveau temps écoulé</string>
+    <string name="adjust_time_current_elapsed">Temps écoulé actuel</string>
+    <string name="adjust_time_apply">Appliquer l\'ajustement</string>
+    <string name="adjust_time_day">Jour</string>
+    <string name="adjust_time_time">Heure</string>
+    <string name="adjust_time_date">Date</string>
+    <string name="adjust_time_hour">Heure</string>
+    <string name="adjust_time_minute">Minute</string>
+    <string name="adjust_time_preview">Aperçu</string>
+    <string name="adjust_time_original">Heure de début originale</string>
+    <string name="adjust_time_adjusted">Heure de début ajustée</string>
+    <string name="adjust_time_difference">Différence de temps</string>
+    <string name="adjust_time_instructions">Sélectionnez une nouvelle heure de début pour votre minuteur de jeûne</string>
+    <string name="adjust_time_pick_date">Sélectionner la date</string>
+    <string name="adjust_time_pick_time">Sélectionner l\'heure</string>
+    
+    <!-- Format strings for sharing -->
+    <string name="share_fast_text">J\'ai terminé un jeûne de %1$s heures avec FastTrack ! J\'ai atteint l\'état %2$s.</string>
+    <string name="share_fast_title">Partager le résultat du jeûne</string>
 </resources> 

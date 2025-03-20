@@ -249,18 +249,18 @@
     <string name="error_generic">Ein Fehler ist aufgetreten</string>
     <string name="error_save_failed">Daten konnten nicht gespeichert werden</string>
     <string name="error_load_failed">Daten konnten nicht geladen werden</string>
-    <string name="error_fast_overlap">Dieses Fasten überschneidet sich mit einem vorhandenen Fasten (%1$s - %2$s)</string>
-    <string name="error_start_before_end">Startzeit muss vor Endzeit liegen</string>
-    <string name="error_future_end_time">Endzeit kann nicht in der Zukunft liegen</string>
+    <string name="error_fast_overlap">Dieses Fasten überschneidet sich mit einem bestehenden Fasten (%1$s - %2$s)</string>
+    <string name="error_start_before_end">Die Startzeit muss vor der Endzeit liegen</string>
+    <string name="error_future_end_time">Die Endzeit kann nicht in der Zukunft liegen</string>
     <string name="error_invalid_fast">Ungültiger Fasteneintrag</string>
     <string name="error_fast_not_found">Fasten für Aktualisierung nicht gefunden</string>
     <string name="error_with_message">Fehler: %s</string>
     
     <!-- Widget text -->
-    <string name="widget_update_description">Widget wird aktualisiert</string>
+    <string name="widget_update_description">Widget-Aktualisierung</string>
     <string name="widget_state_label">Aktueller Fastenzustand</string>
-    <string name="widget_start_timer">Start</string>
-    <string name="widget_stop_timer">Stop</string>
+    <string name="widget_start_timer">Starten</string>
+    <string name="widget_stop_timer">Stoppen</string>
     <string name="widget_hours_label">Stunden</string>
     
     <!-- Plurals for fasting sessions -->
@@ -271,4 +271,284 @@
     
     <!-- UI Elements -->
     <string name="fasting_log_title">Fastenprotokoll</string>
+
+    <!-- Help screen additional content -->
+    <string name="help_fasting_log_features">Funktionen des Fastenprotokolls</string>
+    <string name="help_log_item_1">Übersicht über Ihre Fastenerfolge anzeigen</string>
+    <string name="help_log_item_2">Nur Fastenperioden von 12+ Stunden werden im Protokoll gespeichert</string>
+    <string name="help_log_item_3">Einträge nach Datum sortieren (neueste/älteste zuerst)</string>
+    <string name="help_log_item_4">Einträge nach Dauer sortieren (längste/kürzeste zuerst)</string>
+    <string name="help_log_item_5">Einträge nach Fastenzustand filtern, um bestimmte Erfolge zu finden</string>
+    <string name="help_log_item_6">Auf einen Eintrag tippen, um detaillierte Informationen anzuzeigen</string>
+    <string name="help_log_item_7">Einträge nach Bedarf bearbeiten oder löschen</string>
+    
+    <string name="help_hydration">Bedeutung der Hydratation</string>
+    <string name="help_hydration_item_1">Fasten betrifft Nahrung, nicht Wasser - bleiben Sie hydratisiert!</string>
+    <string name="help_hydration_item_2">Trinken Sie während des Fastens reichlich Wasser</string>
+    <string name="help_hydration_item_3">Hydratation hilft, Hunger zu bewältigen und Energie zu erhalten</string>
+    <string name="help_hydration_item_4">Ziehen Sie bei längerem Fasten Elektrolyte in Betracht</string>
+    <string name="help_hydration_item_5">Schwarzer Kaffee und ungesüßter Tee sind ebenfalls erlaubt</string>
+    
+    <string name="help_fasting_states">Verstehen der Fastenzustände</string>
+    <string name="help_states_item_1">Ernährter Zustand (Grau): 0-4 Stunden, Verdauung und Absorption</string>
+    <string name="help_states_item_2">Frühes Fasten (Gelb): 4-12 Stunden, Fettverbrennung beginnt</string>
+    <string name="help_states_item_3">Glykogenabbau (Orange): 12-18 Stunden, erhöhter Fettstoffwechsel (Minimum für Erfolge)</string>
+    <string name="help_states_item_4">Stoffwechselumstellung (Blau): 18-24 Stunden, Ketose beginnt</string>
+    <string name="help_states_item_5">Tiefe Ketose (Grün): 24-48 Stunden, Autophagie erreicht ihren Höhepunkt</string>
+    <string name="help_states_item_6">Immunsystem-Reset (Lila): 48-72 Stunden, Stammzellenproduktion</string>
+    <string name="help_states_item_7">Verlängertes Fasten (Magenta): 72+ Stunden, zelluläre Verjüngung</string>
+    
+    <string name="help_achievement">Erfolgsverfolgung</string>
+    <string name="help_achievement_content">FastTrack zählt nur Fastenperioden, die mindestens den Glykogenabbau-Zustand (12+ Stunden) erreichen, für Ihre Erfolge und Statistiken. Kürzere Fastenperioden werden während des Timers weiterhin verfolgt, und Sie erhalten weiterhin Benachrichtigungen über alle Änderungen des Fastenzustands, aber kürzere Fastenperioden werden nicht in Ihrem Fastenprotokoll gespeichert oder in Ihre Statistiken aufgenommen. Dies fördert bedeutungsvollere Fastenerfahrungen und bietet gleichzeitig Feedback zu allen Ihren Fastenfortschritten.</string>
+    
+    <string name="help_weekly">Wöchentlicher Tiefer-Fasten-Erfolg</string>
+    <string name="help_weekly_content">FastTrack enthält einen speziellen Medaillenerfolg, der Ihre wöchentlichen tiefen Fastenperioden (24+ Stunden oder besser) verfolgt. Dies fördert regelmäßiges tiefes Fasten auf wöchentlicher Basis. Die Bronzemedaille wird für 1-9 tiefe Fastenperioden vergeben, Silber für 10-24, Gold für 25-49 und der Legendenstatus für 50+ wöchentliche tiefe Fastenperioden. Streben Sie mindestens eine tiefe Fastenperiode pro Woche an, um Ihre Fastenvorteile und Erfolgsfortschritte zu maximieren.</string>
+    
+    <string name="help_widget">Widget-Funktionen</string>
+    <string name="help_widget_item_1">Fügen Sie das FastTrack-Widget zu Ihrem Startbildschirm für einfachen Zugriff hinzu</string>
+    <string name="help_widget_item_2">Tippen Sie auf START, um direkt von Ihrem Startbildschirm aus mit dem Fasten zu beginnen</string>
+    <string name="help_widget_item_3">Tippen Sie auf STOPP, um Ihr Fasten zu beenden (einzelner Bestätigungsdialog)</string>
+    <string name="help_widget_item_4">Tippen Sie auf die Stunden, um die Startzeit anzupassen (während des Fastens) oder die App zu öffnen (wenn Sie nicht fasten)</string>
+    <string name="help_widget_item_5">Tippen Sie auf die Zustandspille (farbiger Text, der Ihren aktuellen Fastenzustand anzeigt), um detaillierte Informationen zu diesem Fastenzustand anzuzeigen</string>
+    <string name="help_widget_item_6">Das Widget wird automatisch aktualisiert und unterstützt vollständig Ihre bevorzugte Sprache</string>
+    <string name="help_widget_item_7">Verbesserte Zuverlässigkeit mit mehreren Wiederherstellungsmechanismen sorgt für einen konsistenten Betrieb</string>
+    <string name="help_widget_item_8">Adaptive Aktualisierungsintervalle sorgen für ein Gleichgewicht zwischen häufigen Aktualisierungen und Batterieerhaltung</string>
+    
+    <!-- Fasting Types tab -->
+    <string name="help_ideal_protocol">Das ideale Fastenprotokoll finden</string>
+    <string name="help_ideal_protocol_content">Fasten ist nicht gleich Fasten. Verschiedene Protokolle bieten unterschiedliche Vorteile und Schwierigkeitsgrade. Berücksichtigen Sie Ihren Lebensstil, Ihre Ziele und Ihren Erfahrungsgrad bei der Auswahl einer Fastenmethode. Möglicherweise müssen Sie mit mehreren Ansätzen experimentieren, bevor Sie herausfinden, was für Sie am besten funktioniert. Die unten aufgeführten Protokolle reichen von anfängerfreundlich bis fortgeschritten. Beginnen Sie mit einem einfacheren Protokoll und steigern Sie sich allmählich, wenn sich Ihr Körper an das Fasten gewöhnt.</string>
+    
+    <string name="help_16_8">16:8-Methode (Leangains)</string>
+    <string name="help_16_8_item_1">16 Stunden fasten, 8 Stunden essen</string>
+    <string name="help_16_8_item_2">Beliebtes Zeitfenster: 12 - 20 Uhr</string>
+    <string name="help_16_8_item_3">Geeignet für Anfänger</string>
+    <string name="help_16_8_item_4">Kann täglich durchgeführt werden</string>
+    <string name="help_16_8_item_5">Gut für Gewichtsmanagement und Stoffwechselgesundheit</string>
+    
+    <string name="help_18_6">18:6-Methode</string>
+    <string name="help_18_6_item_1">18 Stunden fasten, 6 Stunden essen</string>
+    <string name="help_18_6_item_2">Beliebtes Zeitfenster: 14 - 20 Uhr</string>
+    <string name="help_18_6_item_3">Fortgeschrittenes Niveau</string>
+    <string name="help_18_6_item_4">Verbesserte Fettverbrennung und Ketose</string>
+    <string name="help_18_6_item_5">Kann die Insulinsensitivität verbessern</string>
+    
+    <string name="help_20_4">20:4-Methode (Warrior-Diät)</string>
+    <string name="help_20_4_item_1">20 Stunden fasten, 4 Stunden essen</string>
+    <string name="help_20_4_item_2">Beliebtes Zeitfenster: 16 - 20 Uhr</string>
+    <string name="help_20_4_item_3">Fortgeschrittenes Niveau</string>
+    <string name="help_20_4_item_4">Signifikante Autophagievorteile</string>
+    <string name="help_20_4_item_5">Kann die Produktion von Wachstumshormonen steigern</string>
+    
+    <string name="help_omad">OMAD (One Meal A Day)</string>
+    <string name="help_omad_item_1">23:1-Verhältnis - nur eine Mahlzeit pro Tag</string>
+    <string name="help_omad_item_2">Fortgeschrittenes Niveau</string>
+    <string name="help_omad_item_3">Maximale Autophagievorteile</string>
+    <string name="help_omad_item_4">Signifikante Stoffwechselvorteile</string>
+    <string name="help_omad_item_5">Erfordert sorgfältige Ernährungsplanung</string>
+    
+    <string name="help_5_2">5:2-Diät</string>
+    <string name="help_5_2_item_1">An 5 Tagen pro Woche normal essen</string>
+    <string name="help_5_2_item_2">An 2 nicht aufeinanderfolgenden Tagen Kalorien einschränken (500-600)</string>
+    <string name="help_5_2_item_3">Gut für diejenigen, die tägliches Fasten schwierig finden</string>
+    <string name="help_5_2_item_4">Flexible Planung</string>
+    <string name="help_5_2_item_5">Es wurde gezeigt, dass es Stoffwechselmarker verbessert</string>
+    
+    <string name="help_alternate">Alternierendes Fasten</string>
+    <string name="help_alternate_item_1">Jeden zweiten Tag fasten</string>
+    <string name="help_alternate_item_2">Fortgeschrittenes Niveau</string>
+    <string name="help_alternate_item_3">Signifikantes Gewichtsverlustpotenzial</string>
+    <string name="help_alternate_item_4">Kann die kardiovaskuläre Gesundheit verbessern</string>
+    <string name="help_alternate_item_5">Erfordert sorgfältige Planung und Anpassung</string>
+    
+    <string name="help_extended">Verlängertes Fasten</string>
+    <string name="help_extended_item_1">Fasten für 24-72+ Stunden</string>
+    <string name="help_extended_item_2">Experten-Niveau - nicht für Anfänger</string>
+    <string name="help_extended_item_3">Maximale Autophagievorteile und zelluläre Verjüngung</string>
+    <string name="help_extended_item_4">Signifikante Immunsystem-Reset</string>
+    <string name="help_extended_item_5">Sollte unter medizinischer Aufsicht durchgeführt werden</string>
+    <string name="help_extended_item_6">Nicht für regelmäßige Praxis empfohlen</string>
+    
+    <!-- Tips tab -->
+    <string name="help_battery">Batterieoptimierung &amp; Energieeffizienz</string>
+    <string name="help_battery_item_1">FastTrack ist darauf ausgelegt, energieeffizient zu sein und den Batterieverbrauch zu minimieren</string>
+    <string name="help_battery_item_2">Die App und das Widget verwenden optimierte Hintergrundprozesse mit mehreren Zuverlässigkeitssicherungen</string>
+    <string name="help_battery_item_3">Für beste Leistung stellen Sie sicher, dass FastTrack von den Batterieoptimierungseinstellungen auf Ihrem Gerät ausgenommen ist</string>
+    <string name="help_battery_item_4">Die App implementiert adaptive Aktualisierungsintervalle basierend auf Ihrem Fastenzustand und Batteriestand</string>
+    <string name="help_battery_item_5">Mehrere Wiederherstellungsmechanismen stellen sicher, dass Timer und Benachrichtigungen auch bei vorübergehender Unterbrechung korrekt funktionieren</string>
+    <string name="help_battery_item_6">Die App balanciert intelligent die Aktualisierungshäufigkeit mit der Batterieerhaltung</string>
+    
+    <string name="help_getting_started">Erste Schritte</string>
+    <string name="help_getting_started_item_1">Beginnen Sie mit kürzeren Fastenfenstern (12-14 Stunden)</string>
+    <string name="help_getting_started_item_2">Erhöhen Sie allmählich Ihre Fastendauer</string>
+    <string name="help_getting_started_item_3">Seien Sie konsequent mit Ihrem Fastenplan</string>
+    <string name="help_getting_started_item_4">Verfolgen Sie Ihren Fortschritt mit FastTrack</string>
+    <string name="help_getting_started_item_5">Hören Sie auf Ihren Körper und passen Sie bei Bedarf an</string>
+    
+    <string name="help_using_log">Effektive Nutzung des Fastenprotokolls</string>
+    <string name="help_using_log_item_1">Nach Datum sortieren, um Ihren aktuellen Fortschritt zu verfolgen</string>
+    <string name="help_using_log_item_2">Nach Dauer sortieren, um Ihre längsten Fastenperioden zu identifizieren</string>
+    <string name="help_using_log_item_3">Nach Fastenzustand filtern, um zu sehen, wie oft Sie bestimmte Meilensteine erreichen</string>
+    <string name="help_using_log_item_4">Verwenden Sie die Zusammenfassungsstatistiken, um Ihren Gesamtfortschritt zu verstehen</string>
+    <string name="help_using_log_item_5">Überprüfen Sie Ihr Protokoll regelmäßig, um Muster und Verbesserungen zu identifizieren</string>
+    
+    <string name="help_electrolytes">Elektrolytmanagement</string>
+    <string name="help_electrolytes_item_1">Natrium: Eine Prise Meersalz zum Wasser hinzufügen (1/4 TL in 1L Wasser)</string>
+    <string name="help_electrolytes_item_2">Kalium: Für Fastenperioden &gt;24 Stunden Kaliumsalzersatz in Betracht ziehen</string>
+    <string name="help_electrolytes_item_3">Magnesium: Magnesiumglycinat- oder Citrat-Supplemente können bei Muskelkrämpfen helfen</string>
+    <string name="help_electrolytes_item_4">Elektrolytgetränke: Während längerer Fastenperioden in Betracht ziehen, aber auf zuckerfreie Optionen achten</string>
+    <string name="help_electrolytes_item_5">Überwachung: Auf Anzeichen von Elektrolytungleichgewicht achten (Kopfschmerzen, Muskelkrämpfe, Schwindel)</string>
+
+    <string name="help_fasting_tips">Tipps für erfolgreiches Fasten</string>
+    <string name="help_fasting_protocols">Häufige Fastenprotokolle</string>
+    
+    <string name="sort_by_date_newest">Datum (neueste zuerst)</string>
+    <string name="sort_by_date_oldest">Datum (älteste zuerst)</string>
+    <string name="sort_by_duration_longest">Dauer (längste zuerst)</string>
+    <string name="sort_by_duration_shortest">Dauer (kürzeste zuerst)</string>
+    
+    <string name="filter_all_states">Alle Zustände</string>
+    <string name="filter_by_state">Nach Zustand filtern</string>
+    
+    <string name="timer_not_running">Timer läuft nicht</string>
+    <string name="timer_elapsed">Verstrichene Zeit</string>
+    <string name="timer_hours">%d Stunden</string>
+    <string name="timer_starting_soon">Timer startet bald</string>
+
+    <string name="summary_longest_fast">Längstes Fasten</string>
+    <string name="summary_total_fasts">Gesamte Fastenperioden</string>
+    <string name="summary_average_duration">Durchschnittliche Dauer</string>
+    <string name="summary_week_deep_fast">Wöchentliche tiefe Fastenperioden</string>
+    <string name="summary_weekly_deep_badge">Medaille für wöchentliches tiefes Fasten</string>
+    <string name="summary_24_plus_fasts">24+ Stunden Fastenperioden</string>
+    <string name="summary_deep_ketosis">Tiefe Ketose erreicht</string>
+    <string name="summary_immune_reset">Immunsystem-Reset erreicht</string>
+    <string name="summary_extended_fasts">Erweiterte Fastenperioden</string>
+    
+    <string name="badge_bronze">Bronze</string>
+    <string name="badge_silver">Silber</string>
+    <string name="badge_gold">Gold</string>
+    <string name="badge_legend">Legende</string>
+    <string name="badge_none">Noch keine</string>
+
+    <string name="fast_name_pattern">%s Fasten</string>
+    <string name="fast_duration_pattern">%d Stunden</string>
+    <string name="fast_percentage_complete">%d%% abgeschlossen</string>
+    <string name="fast_remaining_time">%s verbleibend</string>
+    <string name="fast_time_until_next_state">%s bis %s</string>
+
+    <string name="hours_format">%dh</string>
+    <string name="minutes_format">%dm</string>
+    <string name="hours_minutes_format">%dh %dm</string>
+    <string name="days_hours_format">%dd %dh</string>
+    <string name="days_format">%d Tage</string>
+    
+    <string name="date_range_format">%s - %s</string>
+    <string name="date_time_format">%s um %s</string>
+    <string name="fast_details_title">Fastendetails</string>
+    <string name="fast_details_duration">Dauer</string>
+    <string name="fast_details_start">Start</string>
+    <string name="fast_details_end">Ende</string>
+    <string name="fast_details_state">Höchster erreichter Zustand</string>
+    
+    <string name="adjust_time_title">Startzeit anpassen</string>
+    <string name="adjust_time_explanation">Passen Sie die Startzeit an, indem Sie die Uhrzeit auswählen oder mit den Schaltflächen verschieben</string>
+    <string name="adjust_time_forward">Vorwärts</string>
+    <string name="adjust_time_backward">Rückwärts</string>
+    <string name="adjust_time_current">Aktuell</string>
+    <string name="adjust_time_15_min">15 Min</string>
+    <string name="adjust_time_30_min">30 Min</string>
+    <string name="adjust_time_1_hour">1 Std</string>
+    <string name="adjust_time_custom">Benutzerdefiniert</string>
+    
+    <string name="start_fasting">Fasten starten</string>
+    <string name="stop_fasting">Fasten stoppen</string>
+    <string name="fasting_log">Fastenprotokoll</string>
+    <string name="log_empty_message">Keine Fastenprotokolle gefunden. Starten Sie das Fasten und beenden Sie es, wenn es mindestens 12 Stunden dauert, um es hier anzuzeigen.</string>
+    <string name="clear_all_logs">Alle Protokolle löschen</string>
+    
+    <!-- Additional UI elements -->
+    <string name="adjust_time_clock_icon">Uhr-Symbol</string>
+    <string name="adjust_time_error_too_large">Die Anpassung ist zu groß (maximal 30 Tage). Bitte wählen Sie ein aktuelleres Datum.</string>
+    <string name="validation_date_invalid">Ungültiges Datumsformat</string>
+    
+    <!-- Widget update notifications -->
+    <string name="notification_channel_widget_updates">Fasten-Widget-Aktualisierungen</string>
+    <string name="notification_channel_widget_updates_description">Wird verwendet, um das Fasten-Widget aktuell zu halten</string>
+    <string name="notification_widget_content_text">Ihr Widget wird aktualisiert</string>
+    
+    <!-- Date picker -->
+    <string name="date_picker_title">Datum auswählen</string>
+    <string name="time_picker_title">Zeit auswählen</string>
+    
+    <!-- Fast detail view labels -->
+    <string name="fast_detail_view_title">Fastendetails</string>
+    <string name="fast_detail_view_start_time">Startzeit:</string>
+    <string name="fast_detail_view_end_time">Endzeit:</string>
+    <string name="fast_detail_view_duration">Dauer:</string>
+    <string name="fast_detail_view_max_state">Maximaler Zustand:</string>
+    <string name="fast_detail_view_notes">Notizen:</string>
+    
+    <!-- Fasting log sorting and filtering -->
+    <string name="filter_all">Alle anzeigen</string>
+    <string name="sort_date_newest">Datum (Neueste zuerst)</string>
+    <string name="sort_date_oldest">Datum (Älteste zuerst)</string>
+    <string name="sort_duration_longest">Dauer (Längste zuerst)</string>
+    <string name="sort_duration_shortest">Dauer (Kürzeste zuerst)</string>
+    
+    <!-- Fasting log additional translations -->
+    <string name="fasting_log_empty">Noch keine Fastensitzungen aufgezeichnet</string>
+    <string name="fasting_log_empty_description">Beenden Sie ein Fasten, um es in Ihrem Protokoll zu sehen</string>
+    <string name="fasting_log_no_matches">Keine passenden Fastensitzungen</string>
+    <string name="fasting_log_no_matches_description">Versuchen Sie, Ihre Filtereinstellungen zu ändern</string>
+    <string name="fasting_log_clear_filter">Filter löschen</string>
+    <string name="fasting_log_filtered_by">Gefiltert nach: %s</string>
+    <string name="fasting_log_history_title">Fastenhistorie</string>
+    <string name="fasting_log_sessions_count">%d Sitzungen</string>
+    <string name="fasting_log_delete_all">Alle löschen</string>
+    <string name="fasting_log_details_title">Fastendetails</string>
+    <string name="fasting_log_notes_label">Notizen</string>
+    <string name="fasting_log_summary_title">Fastenzusammenfassung</string>
+    <string name="fasting_log_summary_note">Nur Fastenperioden von 12+ Stunden werden gezählt</string>
+    <string name="fasting_log_achievements">Erfolge</string>
+    <string name="fasting_log_started">Gestartet</string>
+    <string name="fasting_log_ended">Beendet</string>
+    <string name="fasting_log_time_separator"> → </string>
+    <string name="fasting_log_duration">Dauer</string>
+    <string name="fasting_log_notes">Notizen (optional)</string>
+    <string name="fasting_log_discard">Verwerfen</string>
+    <string name="fasting_log_save">Im Protokoll speichern</string>
+    <string name="fasting_log_achievement_reached">Sie haben %s erreicht!</string>
+    <string name="fasting_log_longest_fast">Längstes Fasten</string>
+    <string name="fasting_log_highest_state">Höchster Zustand</string>
+    <string name="fasting_log_total_hours">Gesamtstunden</string>
+    <string name="fasting_log_average_hours">Durchschnittliche Stunden</string>
+    <string name="no_fasting_logs_to_export">Keine Fastenprotokolle zum Exportieren</string>
+    
+    <!-- Chart labels -->
+    <string name="chart_title_fasting_history">Fastenhistorie</string>
+    <string name="chart_axis_date">Datum</string>
+    <string name="chart_axis_duration">Dauer (Stunden)</string>
+    <string name="chart_label_average">Durchschnitt</string>
+    <string name="chart_label_trend">Trend</string>
+
+    <!-- Adjust time screen additional translations -->
+    <string name="adjust_time_new_elapsed">Neue verstrichene Zeit</string>
+    <string name="adjust_time_current_elapsed">Aktuelle verstrichene Zeit</string>
+    <string name="adjust_time_apply">Anpassung anwenden</string>
+    <string name="adjust_time_day">Tag</string>
+    <string name="adjust_time_time">Zeit</string>
+    <string name="adjust_time_date">Datum</string>
+    <string name="adjust_time_hour">Stunde</string>
+    <string name="adjust_time_minute">Minute</string>
+    <string name="adjust_time_preview">Vorschau</string>
+    <string name="adjust_time_original">Originale Startzeit</string>
+    <string name="adjust_time_adjusted">Angepasste Startzeit</string>
+    <string name="adjust_time_difference">Zeitdifferenz</string>
+    <string name="adjust_time_instructions">Wählen Sie eine neue Startzeit für Ihren Fastentimer</string>
+    <string name="adjust_time_pick_date">Datum auswählen</string>
+    <string name="adjust_time_pick_time">Zeit auswählen</string>
+    
+    <!-- Format strings for sharing -->
+    <string name="share_fast_text">Ich habe ein %1$s-stündiges Fasten mit FastTrack abgeschlossen! Habe den Zustand %2$s erreicht.</string>
+    <string name="share_fast_title">Fastenergebnis teilen</string>
 </resources> 

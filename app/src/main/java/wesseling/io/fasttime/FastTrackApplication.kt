@@ -50,7 +50,18 @@ class FastTrackApplication : Application(), LifecycleEventObserver {
         if (languageCode.isNotEmpty()) {
             val locale = java.util.Locale(languageCode)
             java.util.Locale.setDefault(locale)
-            Log.d(TAG, "Default locale set to: $locale")
+            
+            // Create an ordered locale list with the selected language first, followed by English as fallback
+            val locales = arrayOfNulls<java.util.Locale>(2)
+            locales[0] = locale
+            locales[1] = java.util.Locale.ENGLISH  // Always use English as the fallback, not German
+            
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                java.util.Locale.setDefault(java.util.Locale.Category.DISPLAY, locale)
+                java.util.Locale.setDefault(java.util.Locale.Category.FORMAT, locale)
+            }
+            
+            Log.d(TAG, "Default locale set to: $locale with English fallback")
         } else {
             Log.d(TAG, "Using system default locale")
         }

@@ -232,6 +232,164 @@
     <string name="fasting_state_warning_extended_fast_5">Potenziale per squilibri elettrolitici se non gestiti adeguatamente</string>
     <string name="fasting_state_warning_extended_fast_6">Consulta un professionista della salute prima di tentare digiuni di più di 72 ore</string>
     
+    <!-- Help screen additional content -->
+    <string name="help_fasting_log_features">Funzionalità del Registro di Digiuno</string>
+    <string name="help_log_item_1">Visualizza un riepilogo dei tuoi successi di digiuno</string>
+    <string name="help_log_item_2">Solo i digiuni di 12+ ore vengono salvati nel registro</string>
+    <string name="help_log_item_3">Ordina le voci per data (più recenti/più vecchie prima)</string>
+    <string name="help_log_item_4">Ordina le voci per durata (più lunghe/più brevi prima)</string>
+    <string name="help_log_item_5">Filtra le voci per stato di digiuno per trovare successi specifici</string>
+    <string name="help_log_item_6">Tocca su una voce per visualizzare informazioni dettagliate</string>
+    <string name="help_log_item_7">Modifica o elimina le voci secondo necessità</string>
+    
+    <string name="help_using_log">Utilizzo Efficace del Registro di Digiuno</string>
+    <string name="help_using_log_item_1">Ordina per data per tenere traccia dei tuoi progressi recenti</string>
+    <string name="help_using_log_item_2">Ordina per durata per identificare i tuoi digiuni più lunghi</string>
+    <string name="help_using_log_item_3">Filtra per stato di digiuno per vedere quanto spesso raggiungi traguardi specifici</string>
+    <string name="help_using_log_item_4">Usa le statistiche di riepilogo per comprendere il tuo progresso complessivo</string>
+    <string name="help_using_log_item_5">Rivedi regolarmente il tuo registro per identificare modelli e miglioramenti</string>
+    
+    <string name="help_fasting_tips">Consigli per un Digiuno di Successo</string>
+    <string name="help_fasting_protocols">Protocolli di Digiuno Comuni</string>
+    
+    <string name="help_ideal_protocol">Trovare il Tuo Protocollo di Digiuno Ideale</string>
+    <string name="help_ideal_protocol_content">Il digiuno non è una soluzione universale. Diversi protocolli offrono vari benefici e livelli di difficoltà. Considera il tuo stile di vita, obiettivi e livello di esperienza quando scegli un metodo di digiuno. Potresti dover sperimentare diversi approcci prima di trovare quello che funziona meglio per te. I protocolli elencati di seguito vanno dal principiante all\'avanzato. Inizia con un protocollo più facile e progredisci gradualmente man mano che il tuo corpo si adatta al digiuno.</string>
+    
+    <string name="help_16_8">Metodo 16:8 (Leangains)</string>
+    <string name="help_16_8_item_1">Digiuna per 16 ore, mangia durante una finestra di 8 ore</string>
+    <string name="help_16_8_item_2">Finestra popolare: 12:00 alle 20:00</string>
+    <string name="help_16_8_item_3">Adatto ai principianti</string>
+    <string name="help_16_8_item_4">Può essere fatto quotidianamente</string>
+    <string name="help_16_8_item_5">Buono per la gestione del peso e la salute metabolica</string>
+    
+    <string name="help_18_6">Metodo 18:6</string>
+    <string name="help_18_6_item_1">Digiuna per 18 ore, mangia durante una finestra di 6 ore</string>
+    <string name="help_18_6_item_2">Finestra popolare: 14:00 alle 20:00</string>
+    <string name="help_18_6_item_3">Livello intermedio</string>
+    <string name="help_18_6_item_4">Combustione dei grassi e chetosi migliorate</string>
+    <string name="help_18_6_item_5">Può migliorare la sensibilità all\'insulina</string>
+    
+    <string name="help_20_4">Metodo 20:4 (Dieta Guerriero)</string>
+    <string name="help_20_4_item_1">Digiuna per 20 ore, mangia durante una finestra di 4 ore</string>
+    <string name="help_20_4_item_2">Finestra popolare: 16:00 alle 20:00</string>
+    <string name="help_20_4_item_3">Livello avanzato</string>
+    <string name="help_20_4_item_4">Benefici significativi di autofagia</string>
+    <string name="help_20_4_item_5">Può migliorare la produzione di ormone della crescita</string>
+    
+    <string name="help_omad">OMAD (Un Pasto Al Giorno)</string>
+    <string name="help_omad_item_1">Rapporto 23:1 - mangia solo un pasto al giorno</string>
+    <string name="help_omad_item_2">Livello avanzato</string>
+    <string name="help_omad_item_3">Massimi benefici di autofagia</string>
+    <string name="help_omad_item_4">Benefici metabolici significativi</string>
+    <string name="help_omad_item_5">Richiede una pianificazione nutrizionale attenta</string>
+    
+    <string name="help_5_2">Dieta 5:2</string>
+    <string name="help_5_2_item_1">Mangia normalmente 5 giorni alla settimana</string>
+    <string name="help_5_2_item_2">Limita le calorie (500-600) in 2 giorni non consecutivi</string>
+    <string name="help_5_2_item_3">Buono per chi trova difficile il digiuno quotidiano</string>
+    <string name="help_5_2_item_4">Programmazione flessibile</string>
+    <string name="help_5_2_item_5">Dimostrato miglioramento dei marcatori metabolici</string>
+    
+    <string name="help_alternate">Digiuno a Giorni Alterni</string>
+    <string name="help_alternate_item_1">Digiuna un giorno sì e un giorno no</string>
+    <string name="help_alternate_item_2">Livello avanzato</string>
+    <string name="help_alternate_item_3">Potenziale significativo di perdita di peso</string>
+    <string name="help_alternate_item_4">Può migliorare la salute cardiovascolare</string>
+    <string name="help_alternate_item_5">Richiede pianificazione e adattamento attenti</string>
+    
+    <string name="help_extended">Digiuno Prolungato</string>
+    <string name="help_extended_item_1">Digiuni che durano 24-72+ ore</string>
+    <string name="help_extended_item_2">Livello esperto - non per principianti</string>
+    <string name="help_extended_item_3">Massima autofagia e ringiovanimento cellulare</string>
+    <string name="help_extended_item_4">Reset immunitario significativo</string>
+    <string name="help_extended_item_5">Dovrebbe essere fatto sotto supervisione medica</string>
+    <string name="help_extended_item_6">Non raccomandato per pratica regolare</string>
+    
+    <string name="help_getting_started">Primi Passi</string>
+    <string name="help_getting_started_item_1">Inizia con finestre di digiuno più brevi (12-14 ore)</string>
+    <string name="help_getting_started_item_2">Aumenta gradualmente la durata del tuo digiuno</string>
+    <string name="help_getting_started_item_3">Sii coerente con il tuo programma di digiuno</string>
+    <string name="help_getting_started_item_4">Monitora i tuoi progressi con FastTrack</string>
+    <string name="help_getting_started_item_5">Ascolta il tuo corpo e regola secondo necessità</string>
+
+    <string name="help_electrolytes">Gestione degli Elettroliti</string>
+    <string name="help_electrolytes_item_1">Sodio: Aggiungi un pizzico di sale marino all\'acqua (1/4 cucchiaino in 1L d\'acqua)</string>
+    <string name="help_electrolytes_item_2">Potassio: Considera sostituti del sale al potassio per digiuni &gt;24 ore</string>
+    <string name="help_electrolytes_item_3">Magnesio: Gli integratori di glicinato o citrato di magnesio possono aiutare con i crampi muscolari</string>
+    <string name="help_electrolytes_item_4">Bevande elettrolitiche: Da considerare durante digiuni prolungati, ma opta per versioni senza zucchero</string>
+    <string name="help_electrolytes_item_5">Monitoraggio: Fai attenzione ai segni di squilibrio elettrolitico (mal di testa, crampi, vertigini)</string>
+    
+    <string name="help_achievement">Monitoraggio dei Successi</string>
+    <string name="help_achievement_content">FastTrack conta solo i digiuni che raggiungono almeno lo stato di Esaurimento del Glicogeno (12+ ore) per i tuoi successi e statistiche. I digiuni più brevi verranno comunque monitorati durante il timer e riceverai ancora notifiche per tutti i cambiamenti di stato del digiuno, ma i digiuni più brevi non verranno salvati nel tuo registro di digiuno né inclusi nelle tue statistiche. Questo incoraggia esperienze di digiuno più significative fornendo al contempo feedback su tutti i tuoi progressi di digiuno.</string>
+    
+    <string name="help_weekly">Successo di Digiuno Profondo Settimanale</string>
+    <string name="help_weekly_content">FastTrack include un successo speciale con medaglia che monitora i tuoi digiuni profondi settimanali (24+ ore o meglio). Questo incoraggia il digiuno profondo regolare su base settimanale. La medaglia di bronzo si guadagna per 1-9 digiuni profondi, l\'argento per 10-24, l\'oro per 25-49, e lo stato Leggenda per 50+ digiuni profondi settimanali. Punta ad almeno un digiuno profondo a settimana per massimizzare i benefici del digiuno e il progresso dei tuoi successi.</string>
+    
+    <string name="sort_by_date_newest">Data (più recenti prima)</string>
+    <string name="sort_by_date_oldest">Data (più vecchie prima)</string>
+    <string name="sort_by_duration_longest">Durata (più lunghe prima)</string>
+    <string name="sort_by_duration_shortest">Durata (più brevi prima)</string>
+    
+    <string name="filter_all_states">Tutti gli Stati</string>
+    <string name="filter_by_state">Filtra per Stato</string>
+    
+    <string name="timer_not_running">Timer non in esecuzione</string>
+    <string name="timer_elapsed">Tempo trascorso</string>
+    <string name="timer_hours">%d ore</string>
+    <string name="timer_starting_soon">Timer in avvio a breve</string>
+
+    <string name="summary_longest_fast">Digiuno più lungo</string>
+    <string name="summary_total_fasts">Totale digiuni</string>
+    <string name="summary_average_duration">Durata media</string>
+    <string name="summary_week_deep_fast">Digiuni profondi settimanali</string>
+    <string name="summary_weekly_deep_badge">Medaglia digiuno profondo settimanale</string>
+    <string name="summary_24_plus_fasts">Digiuni di 24+ ore</string>
+    <string name="summary_deep_ketosis">Chetosi profonda raggiunta</string>
+    <string name="summary_immune_reset">Reset immunitario raggiunto</string>
+    <string name="summary_extended_fasts">Digiuni prolungati</string>
+    
+    <string name="badge_bronze">Bronzo</string>
+    <string name="badge_silver">Argento</string>
+    <string name="badge_gold">Oro</string>
+    <string name="badge_legend">Leggenda</string>
+    <string name="badge_none">Ancora nessuno</string>
+
+    <string name="fast_name_pattern">Digiuno %s</string>
+    <string name="fast_duration_pattern">%d ore</string>
+    <string name="fast_percentage_complete">%d%% completato</string>
+    <string name="fast_remaining_time">%s rimanente</string>
+    <string name="fast_time_until_next_state">%s fino a %s</string>
+
+    <string name="hours_format">%dh</string>
+    <string name="minutes_format">%dm</string>
+    <string name="hours_minutes_format">%dh %dm</string>
+    <string name="days_hours_format">%dg %dh</string>
+    <string name="days_format">%d giorni</string>
+    
+    <string name="date_range_format">%s - %s</string>
+    <string name="date_time_format">%s alle %s</string>
+    <string name="fast_details_title">Dettagli Digiuno</string>
+    <string name="fast_details_duration">Durata</string>
+    <string name="fast_details_start">Inizio</string>
+    <string name="fast_details_end">Fine</string>
+    <string name="fast_details_state">Stato più alto raggiunto</string>
+    
+    <string name="adjust_time_title">Regola Ora di Inizio</string>
+    <string name="adjust_time_explanation">Regola l\'ora di inizio selezionando l\'orario o usando i pulsanti di spostamento</string>
+    <string name="adjust_time_forward">Avanti</string>
+    <string name="adjust_time_backward">Indietro</string>
+    <string name="adjust_time_current">Attuale</string>
+    <string name="adjust_time_15_min">15 Min</string>
+    <string name="adjust_time_30_min">30 Min</string>
+    <string name="adjust_time_1_hour">1 Ora</string>
+    <string name="adjust_time_custom">Personalizzato</string>
+    
+    <string name="start_fasting">Inizia digiuno</string>
+    <string name="stop_fasting">Ferma digiuno</string>
+    <string name="fasting_log">Registro digiuno</string>
+    <string name="log_empty_message">Nessun registro di digiuno trovato. Inizia a digiunare e termina quando dura almeno 12 ore per visualizzarlo qui.</string>
+    <string name="clear_all_logs">Cancella tutti i registri</string>
+
     <!-- Content descriptions -->
     <string name="back_button_description">Indietro</string>
     <string name="language_icon_description">Selezione lingua</string>
@@ -263,12 +421,98 @@
     <string name="widget_stop_timer">Ferma</string>
     <string name="widget_hours_label">Ore</string>
     
-    <!-- UI Elements -->
-    <string name="fasting_log_title">Registro Digiuno</string>
-    
     <!-- Plurals for fasting sessions -->
     <plurals name="fasting_sessions_count">
         <item quantity="one">%d sessione</item>
         <item quantity="other">%d sessioni</item>
     </plurals>
+    
+    <!-- UI Elements -->
+    <string name="fasting_log_title">Registro Digiuno</string>
+    
+    <!-- Additional UI elements -->
+    <string name="adjust_time_clock_icon">Icona Orologio</string>
+    <string name="adjust_time_error_too_large">La regolazione è troppo grande (massimo 30 giorni). Seleziona una data più recente.</string>
+    <string name="validation_date_invalid">Formato data non valido</string>
+    
+    <!-- Widget update notifications -->
+    <string name="notification_channel_widget_updates">Aggiornamenti Widget Digiuno</string>
+    <string name="notification_channel_widget_updates_description">Utilizzato per mantenere aggiornato il widget di digiuno</string>
+    <string name="notification_widget_content_text">Aggiornamento del widget in corso</string>
+    
+    <!-- Date picker -->
+    <string name="date_picker_title">Seleziona data</string>
+    <string name="time_picker_title">Seleziona ora</string>
+    
+    <!-- Fast detail view labels -->
+    <string name="fast_detail_view_title">Dettagli Digiuno</string>
+    <string name="fast_detail_view_start_time">Ora di inizio:</string>
+    <string name="fast_detail_view_end_time">Ora di fine:</string>
+    <string name="fast_detail_view_duration">Durata:</string>
+    <string name="fast_detail_view_max_state">Stato massimo:</string>
+    <string name="fast_detail_view_notes">Note:</string>
+    
+    <!-- Fasting log sorting and filtering -->
+    <string name="filter_all">Mostra tutti</string>
+    <string name="sort_date_newest">Data (Più recenti prima)</string>
+    <string name="sort_date_oldest">Data (Più vecchi prima)</string>
+    <string name="sort_duration_longest">Durata (Più lunghi prima)</string>
+    <string name="sort_duration_shortest">Durata (Più brevi prima)</string>
+    
+    <!-- Fasting log additional translations -->
+    <string name="fasting_log_empty">Nessuna sessione di digiuno registrata ancora</string>
+    <string name="fasting_log_empty_description">Completa un digiuno per vederlo nel tuo registro</string>
+    <string name="fasting_log_no_matches">Nessuna sessione di digiuno corrispondente</string>
+    <string name="fasting_log_no_matches_description">Prova a cambiare le tue impostazioni di filtro</string>
+    <string name="fasting_log_clear_filter">Cancella Filtro</string>
+    <string name="fasting_log_filtered_by">Filtrato per: %s</string>
+    <string name="fasting_log_history_title">Cronologia Digiuni</string>
+    <string name="fasting_log_sessions_count">%d sessioni</string>
+    <string name="fasting_log_delete_all">Elimina Tutto</string>
+    <string name="fasting_log_details_title">Dettagli Digiuno</string>
+    <string name="fasting_log_notes_label">Note</string>
+    <string name="fasting_log_summary_title">Riepilogo Digiuno</string>
+    <string name="fasting_log_summary_note">Solo i digiuni di 12+ ore vengono conteggiati</string>
+    <string name="fasting_log_achievements">Successi</string>
+    <string name="fasting_log_started">Iniziato</string>
+    <string name="fasting_log_ended">Terminato</string>
+    <string name="fasting_log_time_separator"> → </string>
+    <string name="fasting_log_duration">Durata</string>
+    <string name="fasting_log_notes">Note (opzionale)</string>
+    <string name="fasting_log_discard">Abbandona</string>
+    <string name="fasting_log_save">Salva nel Registro</string>
+    <string name="fasting_log_achievement_reached">Hai raggiunto %s!</string>
+    <string name="fasting_log_longest_fast">Digiuno più lungo</string>
+    <string name="fasting_log_highest_state">Stato più alto</string>
+    <string name="fasting_log_total_hours">Ore totali</string>
+    <string name="fasting_log_average_hours">Ore medie</string>
+    <string name="no_fasting_logs_to_export">Nessun registro di digiuno da esportare</string>
+    
+    <!-- Chart labels -->
+    <string name="chart_title_fasting_history">Cronologia Digiuni</string>
+    <string name="chart_axis_date">Data</string>
+    <string name="chart_axis_duration">Durata (ore)</string>
+    <string name="chart_label_average">Media</string>
+    <string name="chart_label_trend">Tendenza</string>
+    
+    <!-- Adjust time screen additional translations -->
+    <string name="adjust_time_new_elapsed">Nuovo tempo trascorso</string>
+    <string name="adjust_time_current_elapsed">Tempo trascorso attuale</string>
+    <string name="adjust_time_apply">Applica regolazione</string>
+    <string name="adjust_time_day">Giorno</string>
+    <string name="adjust_time_time">Ora</string>
+    <string name="adjust_time_date">Data</string>
+    <string name="adjust_time_hour">Ora</string>
+    <string name="adjust_time_minute">Minuto</string>
+    <string name="adjust_time_preview">Anteprima</string>
+    <string name="adjust_time_original">Ora di inizio originale</string>
+    <string name="adjust_time_adjusted">Ora di inizio regolata</string>
+    <string name="adjust_time_difference">Differenza di tempo</string>
+    <string name="adjust_time_instructions">Seleziona una nuova ora di inizio per il tuo timer di digiuno</string>
+    <string name="adjust_time_pick_date">Seleziona data</string>
+    <string name="adjust_time_pick_time">Seleziona ora</string>
+    
+    <!-- Format strings for sharing -->
+    <string name="share_fast_text">Ho completato un digiuno di %1$s ore usando FastTrack! Ho raggiunto lo stato %2$s.</string>
+    <string name="share_fast_title">Condividi risultato del digiuno</string>
 </resources> 

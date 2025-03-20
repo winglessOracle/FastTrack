@@ -65,11 +65,19 @@ class LocaleHelper {
          */
         private fun updateToSpecificLocale(context: Context, locale: Locale): Context {
             // Use AppCompat to handle locale changes
-            val localeList = LocaleListCompat.create(locale)
+            // Create a locale list with the primary locale first, then English as fallback
+            val localeArray = arrayOf(locale, Locale.ENGLISH)
+            val localeList = LocaleListCompat.create(*localeArray)
             AppCompatDelegate.setApplicationLocales(localeList)
             
             // Set the default locale for the JVM (for formatting, etc.)
             Locale.setDefault(locale)
+            
+            // For newer devices, set display and format locales separately
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                Locale.setDefault(Locale.Category.DISPLAY, locale)
+                Locale.setDefault(Locale.Category.FORMAT, locale)
+            }
             
             // For older devices, update the configuration directly
             val res = context.resources
@@ -78,7 +86,8 @@ class LocaleHelper {
             when {
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.N -> {
                     // Android N and above supports locale lists
-                    config.setLocales(android.os.LocaleList(locale))
+                    val localeList = android.os.LocaleList(*localeArray)
+                    config.setLocales(localeList)
                 }
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 -> {
                     // Android 4.2+ supports setLocale
