@@ -86,8 +86,8 @@ class LocaleHelper {
             when {
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.N -> {
                     // Android N and above supports locale lists
-                    val localeList = android.os.LocaleList(*localeArray)
-                    config.setLocales(localeList)
+                    val systemLocaleList = android.os.LocaleList(*localeArray)
+                    config.setLocales(systemLocaleList)
                 }
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 -> {
                     // Android 4.2+ supports setLocale
