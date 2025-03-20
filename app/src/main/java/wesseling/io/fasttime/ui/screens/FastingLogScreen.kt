@@ -215,13 +215,20 @@ fun FastingLogScreen(
                 
                 // Create CSV content
                 val csvContent = StringBuilder()
-                csvContent.append("Start Time,End Time,Duration,Max Fasting State\n")
+                csvContent.append("Start Time,End Time,Duration,Max Fasting State,Notes\n")
                 
                 fasts.forEach { fast ->
                     csvContent.append("${DateTimeFormatter.formatDateTime(fast.startTimeMillis, preferences)},")
                     csvContent.append("${DateTimeFormatter.formatDateTime(fast.endTimeMillis, preferences)},")
                     csvContent.append("${DateTimeFormatter.formatDuration(fast.durationMillis)},")
-                    csvContent.append("${fast.maxFastingState.displayName}\n")
+                    csvContent.append("${fast.maxFastingState.displayName},")
+                    // Properly escape notes for CSV format
+                    val escapedNotes = if (fast.note.isNotBlank()) {
+                        "\"${fast.note.replace("\"", "\"\"")}\""
+                    } else {
+                        ""
+                    }
+                    csvContent.append("$escapedNotes\n")
                 }
                 
                 val fullContent = csvContent.toString()
@@ -1520,7 +1527,7 @@ fun CompletedFast.toShareText(preferences: DateTimePreferences): String {
         Started: $startDate
         Achieved: $fastingStateName
         
-        #FastTrack #Fasting #IntermittentFasting #${fastingStateName.replace(" ", "")}
+        #FastTrack #Fasting #${fastingStateName.replace(" ", "")}
     """.trimIndent()
 }
 
