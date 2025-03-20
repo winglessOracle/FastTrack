@@ -12,6 +12,7 @@ FastTime is a simple yet powerful app designed to help you track your fasting ti
 - **Achievement System**: Track your fasting milestones with achievement circles
 - **Energy Efficient**: Optimized for minimal battery consumption
 - **Secret Achievement**: Discover a special achievement for completing weekly deep fasts (24+ hours)
+- **Clean Code Architecture**: Well-organized, maintainable code with minimal redundancy
 
 ## How to Use FastTime
 

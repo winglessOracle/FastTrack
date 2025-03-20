@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Green button style -->
+    <style name="WidgetButtonGreen">
+        <item name="colorStartGradient">#4CAF50</item>
+        <item name="colorEndGradient">#388E3C</item>
+        <item name="colorStroke">#1B5E20</item>
+    </style>
+    
+    <!-- Red button style -->
+    <style name="WidgetButtonRed">
+        <item name="colorStartGradient">#F44336</item>
+        <item name="colorEndGradient">#D32F2F</item>
+        <item name="colorStroke">#B71C1C</item>
+    </style>
+</resources> 

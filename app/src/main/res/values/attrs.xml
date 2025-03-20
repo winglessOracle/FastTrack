@@ -5,4 +5,9 @@
     <attr name="colorOnSurfaceVariant" format="color" />
     <attr name="colorOnSurface" format="color" />
     <attr name="colorOnError" format="color" />
+    
+    <!-- Widget button gradient colors -->
+    <attr name="colorStartGradient" format="color" />
+    <attr name="colorEndGradient" format="color" />
+    <attr name="colorStroke" format="color" />
 </resources> 

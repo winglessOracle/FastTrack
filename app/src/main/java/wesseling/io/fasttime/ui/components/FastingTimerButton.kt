@@ -8,9 +8,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -64,6 +62,7 @@ import wesseling.io.fasttime.ui.theme.ImmuneResetPurple
 import wesseling.io.fasttime.ui.theme.MetabolicShiftBlue
 import wesseling.io.fasttime.ui.theme.NotFastingGray
 import wesseling.io.fasttime.ui.theme.getColorForFastingState
+import wesseling.io.fasttime.ui.theme.BorderUtils
 
 /**
  * A widget button that displays and controls a fasting timer
@@ -329,10 +328,7 @@ fun FastingTimerButton(
                     contentColor = Color.White
                 ),
                 border = if (fastingTimer.isRunning) {
-                    androidx.compose.foundation.BorderStroke(
-                        width = 4.dp,
-                        color = Color(0xFF4CAF50) // Same green color as widget border
-                    )
+                    BorderUtils.createActiveTimerBorder()
                 } else {
                     null
                 }
