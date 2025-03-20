@@ -9,14 +9,7 @@ import wesseling.io.fasttime.model.ThemePreference
 import wesseling.io.fasttime.settings.PreferencesManager
 import androidx.compose.ui.platform.LocalContext
 
-// Dark theme colors - slightly brighter for better visibility
-private val NotFastingGrayDark = Color(0xFF9E9E9E)
-private val EarlyFastingYellowDark = Color(0xFFFFB74D)
-private val GlycogenDepletionOrangeDark = Color(0xFFFF9800)
-private val MetabolicShiftBlueDark = Color(0xFF64B5F6)
-private val DeepKetosisGreenDark = Color(0xFF4CAF50)
-private val ImmuneResetPurpleDark = Color(0xFFB39DDB)
-private val ExtendedFastMagentaDark = Color(0xFFEC4899)
+// Dark theme colors are now defined in Color.kt
 
 /**
  * Get the appropriate color for the current fasting state, adjusted for the current theme

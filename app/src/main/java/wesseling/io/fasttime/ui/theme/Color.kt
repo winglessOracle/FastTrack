@@ -1,6 +1,7 @@
 package wesseling.io.fasttime.ui.theme
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 
 // App brand color
 val AppPink = Color(0xFFE84999) // The app's main brand color
@@ -32,7 +33,7 @@ val TextDisabled = Color(0xFF9CA3AF)
 val TextDark = Color(0xFFE1E1E1) // Light text for dark theme
 val TextSecondaryDark = Color(0xFFAAAAAA) // Secondary text for dark theme
 
-// Fasting state colors - Updated for new states
+// Fasting state colors - Light theme
 val NotFastingGray = Color(0xFF757575) // Keeping gray for NOT_FASTING
 val EarlyFastingYellow = Color(0xFFF59E0B) // Amber for EARLY_FAST
 val GlycogenDepletionOrange = Color(0xFFEA580C) // Orange for GLYCOGEN_DEPLETION
@@ -41,8 +42,25 @@ val DeepKetosisGreen = Color(0xFF059669) // Green for DEEP_KETOSIS
 val ImmuneResetPurple = Color(0xFF8B5CF6) // Purple for IMMUNE_RESET
 val ExtendedFastMagenta = Color(0xFFDB2777) // Magenta for EXTENDED_FAST
 
+// Fasting state colors - Dark theme (slightly brighter for better visibility)
+val NotFastingGrayDark = Color(0xFF9E9E9E)
+val EarlyFastingYellowDark = Color(0xFFFFB74D)
+val GlycogenDepletionOrangeDark = Color(0xFFFF9800)
+val MetabolicShiftBlueDark = Color(0xFF64B5F6)
+val DeepKetosisGreenDark = Color(0xFF4CAF50)
+val ImmuneResetPurpleDark = Color(0xFFB39DDB)
+val ExtendedFastMagentaDark = Color(0xFFEC4899)
+
 // Error colors
 val ErrorLight = Color(0xFFBA1A1A)
 val ErrorDark = Color(0xFFFF5449)
 val ErrorContainerLight = Color(0xFFFFDAD6)
 val ErrorContainerDark = Color(0xFF680003)
+
+/**
+ * Extension function to convert Color to hex string
+ */
+fun Color.toHexString(): String {
+    val argb = this.toArgb()
+    return String.format("#%06X", 0xFFFFFF and argb)
+}
