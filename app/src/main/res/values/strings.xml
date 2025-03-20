@@ -310,6 +310,10 @@
     <string name="fasting_log_discard">Discard</string>
     <string name="fasting_log_save">Save to Log</string>
     <string name="fasting_log_achievement_reached">You reached %s!</string>
+    <string name="fasting_log_longest_fast">Longest Fast</string>
+    <string name="fasting_log_highest_state">Highest State</string>
+    <string name="fasting_log_total_hours">Total Hours</string>
+    <string name="fasting_log_average_hours">Average Hours</string>
     
     <!-- Notifications -->
     <string name="notification_channel_fasting_state">Fasting State Notifications</string>
@@ -452,10 +456,16 @@
     <string name="error_generic">An error occurred</string>
     <string name="error_save_failed">Could not save data</string>
     <string name="error_load_failed">Could not load data</string>
+    <string name="error_fast_overlap">This fast overlaps with an existing fast (%1$s - %2$s)</string>
+    <string name="error_start_before_end">Start time must be before end time</string>
+    <string name="error_future_end_time">End time cannot be in the future</string>
+    <string name="error_invalid_fast">Invalid fast entry</string>
+    <string name="error_fast_not_found">Fast not found for update</string>
+    <string name="error_with_message">Error: %s</string>
     
     <!-- Widget text -->
     <string name="widget_update_description">Updating widget</string>
-    <!-- IMPORTANT: For all translations, keep the Start/Stop button text as single words for proper UI layout -->
+    <string name="widget_state_label">Current fasting state</string>
     <string name="widget_start_timer">Start</string>
     <string name="widget_stop_timer">Stop</string>
     <string name="widget_hours_label">Hours</string>

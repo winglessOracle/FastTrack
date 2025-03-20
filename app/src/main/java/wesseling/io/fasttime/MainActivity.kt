@@ -131,6 +131,32 @@ class MainActivity : ComponentActivity() {
         // Enable edge-to-edge display
         WindowCompat.setDecorFitsSystemWindows(window, false)
         
+        // Detect and recover from previous crashes
+        try {
+            // Check if a previous instance might have crashed
+            val sharedPrefs = getSharedPreferences("crash_recovery", Context.MODE_PRIVATE)
+            val lastCrashTime = sharedPrefs.getLong("last_crash_time", 0)
+            val currentTime = System.currentTimeMillis()
+            
+            // If there was a crash in the last 30 seconds, we might be in recovery mode
+            if (currentTime - lastCrashTime < 30000) {
+                Log.w(TAG, "Detected recent crash, clearing any lingering state")
+                
+                // Attempt to clean up lingering state
+                try {
+                    val fastingTimer = FastingTimer.getInstance(applicationContext)
+                    fastingTimer.stopTimer() // Stop any running timers from previous instances
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error cleaning up after crash", e)
+                }
+            }
+            
+            // Update last crash time to current time
+            sharedPrefs.edit().putLong("last_crash_time", currentTime).apply()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error in crash recovery logic", e)
+        }
+        
         // Check and request notification permission for Android 13+ (API 33+)
         checkAndRequestNotificationPermission()
         

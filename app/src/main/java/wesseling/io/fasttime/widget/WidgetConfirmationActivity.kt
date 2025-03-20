@@ -69,10 +69,14 @@ class WidgetConfirmationActivity : ComponentActivity() {
                             }
                         } catch (e: Exception) {
                             Log.e("WidgetConfirmation", "Error resetting timer", e)
+                            // Make sure to finish even if there's an error
                             finish()
                         }
                     },
-                    onDismiss = { finish() }
+                    onDismiss = { 
+                        // Make sure to finish the activity
+                        finish() 
+                    }
                 )
                 
                 // Summary dialog

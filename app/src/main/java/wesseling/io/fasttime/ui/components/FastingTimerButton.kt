@@ -336,14 +336,22 @@ fun FastingTimerButton(
                     if (fastingTimer.isRunning) {
                         showConfirmationDialog = true
                     } else {
-                        // Use broadcast approach exactly like the widget does
+                        // Use direct timer control instead of broadcasts to prevent crashes
                         try {
-                            Log.d("FastingTimerButton", "Starting timer via broadcast")
-                            val startIntent = Intent("wesseling.io.fasttime.widget.ACTION_START_TIMER")
-                            startIntent.setPackage(context.packageName)
-                            context.sendBroadcast(startIntent)
+                            Log.d("FastingTimerButton", "Starting timer using safeStartTimer")
+                            // Use the safe start timer method that already handles locale
+                            fastingTimer.safeStartTimer()
                         } catch (e: Exception) {
-                            Log.e("FastingTimerButton", "Error starting timer via broadcast", e)
+                            Log.e("FastingTimerButton", "Error starting timer directly", e)
+                            // Fallback to the older method if direct call fails
+                            try {
+                                Log.d("FastingTimerButton", "Falling back to broadcast timer start")
+                                val startIntent = Intent("wesseling.io.fasttime.widget.ACTION_START_TIMER")
+                                startIntent.setPackage(context.packageName)
+                                context.sendBroadcast(startIntent)
+                            } catch (e2: Exception) {
+                                Log.e("FastingTimerButton", "Error in broadcast fallback", e2)
+                            }
                         }
                     }
                 },

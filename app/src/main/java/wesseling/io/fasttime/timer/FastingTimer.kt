@@ -251,7 +251,7 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
             var lastSaveTime = System.currentTimeMillis()
             
             timerJob = coroutineScope.launch {
-                var inBackground = false
+                var inBackground: Boolean
                 var updateInterval: Long
                 var consecutiveBackgroundUpdates = 0
                 
@@ -845,12 +845,31 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
         updateWidgets()
         
         // IMPORTANT: Completely detach service starting from the UI thread to avoid crashes
+        // Also use context with correct locale to prevent localization issues
         Thread {
             try {
                 Thread.sleep(500) // Small delay to ensure UI operations are complete
                 Handler(Looper.getMainLooper()).post {
                     try {
-                        startWidgetUpdateService()
+                        // Use applicationContext to avoid potential memory leaks
+                        val context = appContext.applicationContext
+                        // Ensure we have a properly localized context
+                        val languageCode = try {
+                            val locale = context.resources.configuration.locales.get(0)
+                            locale.language
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Error getting locale, using default", e)
+                            ""
+                        }
+                        
+                        // Apply the locale explicitly to ensure consistent behavior
+                        try {
+                            val contextWithLocale = wesseling.io.fasttime.util.LocaleHelper.updateLocale(context, languageCode)
+                            startWidgetUpdateServiceWithContext(contextWithLocale)
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Error updating locale, using original context", e)
+                            startWidgetUpdateService()
+                        }
                     } catch (e: Exception) {
                         Log.e(TAG, "Error starting widget service in handler", e)
                     }
@@ -859,6 +878,34 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
                 Log.e(TAG, "Error in service start thread", e)
             }
         }.start()
+    }
+    
+    /**
+     * Start the widget update service with a specific context that has the correct locale
+     */
+    private fun startWidgetUpdateServiceWithContext(context: Context) {
+        try {
+            Log.d(TAG, "Starting widget update service with localized context, timer running=$isRunning")
+            
+            // Determine the service class name
+            val serviceName = "wesseling.io.fasttime.widget.FastingWidgetUpdateService"
+            val intent = Intent()
+            intent.setClassName(context.packageName, serviceName)
+            intent.putExtra("source", "FastingTimer.localeAwareStart")
+            
+            // Use the appropriate method based on Android version
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(intent)
+            } else {
+                context.startService(intent)
+            }
+            
+            Log.d(TAG, "Started widget update service using locale-aware approach")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error in locale-aware service start, falling back", e)
+            // Fall back to the regular method if this fails
+            startWidgetUpdateService()
+        }
     }
     
     /**
@@ -874,7 +921,7 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
         var lastSaveTime = System.currentTimeMillis()
         
         timerJob = coroutineScope.launch {
-            var inBackground = false
+            var inBackground: Boolean
             var updateInterval: Long
             var consecutiveBackgroundUpdates = 0
             

@@ -22,6 +22,7 @@ import wesseling.io.fasttime.MainActivity
 import wesseling.io.fasttime.R
 import wesseling.io.fasttime.settings.PreferencesManager
 import wesseling.io.fasttime.timer.FastingTimer
+import wesseling.io.fasttime.util.LocaleHelper
 import java.util.concurrent.TimeUnit
 
 /**
@@ -36,8 +37,12 @@ class FastingWidgetUpdateService : Service() {
             try {
                 Log.d(TAG, "Running widget update")
                 
-                // Update all widgets
-                FastingWidgetProvider.updateAllWidgets(this@FastingWidgetUpdateService)
+                // Apply correct locale before updating widgets
+                val languageCode = LocaleHelper.getLanguageCode(this@FastingWidgetUpdateService)
+                val contextWithLocale = LocaleHelper.updateLocale(this@FastingWidgetUpdateService, languageCode)
+                
+                // Use the locale-aware context for the widget update
+                FastingWidgetProvider.updateAllWidgets(contextWithLocale)
                 
                 // Schedule next update with adaptive interval
                 scheduleNextUpdateWithAdaptiveInterval()
@@ -50,7 +55,7 @@ class FastingWidgetUpdateService : Service() {
                 
                 Log.d(TAG, "Widget update completed")
             } catch (e: Exception) {
-                Log.e(TAG, "Error in update runnable", e)
+                Log.e(TAG, "Error in widget update runnable", e)
                 // Try to recover by scheduling next update anyway
                 handler.postDelayed(this, FALLBACK_UPDATE_INTERVAL)
                 

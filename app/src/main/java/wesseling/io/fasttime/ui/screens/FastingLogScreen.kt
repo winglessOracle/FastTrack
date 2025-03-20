@@ -282,7 +282,7 @@ fun FastingLogScreen(
                 snackbarHostState.showSnackbar(context.getString(R.string.toast_time_adjusted))
             } catch (e: IllegalArgumentException) {
                 Log.e("FastingLogScreen", "Validation error: ${e.message}", e)
-                snackbarHostState.showSnackbar("Error: ${e.message}")
+                snackbarHostState.showSnackbar(context.getString(R.string.error_with_message, e.message ?: ""))
             } catch (e: Exception) {
                 Log.e("FastingLogScreen", "Error updating fast", e)
                 snackbarHostState.showSnackbar(context.getString(R.string.error_save_failed))
@@ -354,7 +354,7 @@ fun FastingLogScreen(
                                     snackbarHostState.showSnackbar(context.getString(R.string.toast_fast_saved))
                                 } catch (e: IllegalArgumentException) {
                                     Log.e("FastingLogScreen", "Validation error: ${e.message}", e)
-                                    snackbarHostState.showSnackbar("Error: ${e.message}")
+                                    snackbarHostState.showSnackbar(context.getString(R.string.error_with_message, e.message ?: ""))
                                 } catch (e: Exception) {
                                     Log.e("FastingLogScreen", "Error adding new fast entry", e)
                                     snackbarHostState.showSnackbar(context.getString(R.string.toast_fast_save_error))
@@ -1322,25 +1322,31 @@ fun FastingLogSummary(
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)
             )
             
+            // Total fasts counter
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                StatisticItem(
+                    label = stringResource(R.string.fasting_log_sessions_count, 0).replace("0", ""),
+                    value = totalFasts.toString(),
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+            }
+            
             // Statistics row
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 StatisticItem(
-                    label = stringResource(R.string.fasting_log_sessions_count, 0).replace("0", ""),
-                    value = totalFasts.toString(),
+                    label = stringResource(R.string.fasting_log_total_hours),
+                    value = "%.1f h".format(totalHours),
                     modifier = Modifier.weight(1f)
                 )
                 
                 StatisticItem(
-                    label = stringResource(R.string.widget_hours_label),
-                    value = "%.1f".format(totalHours),
-                    modifier = Modifier.weight(1f)
-                )
-                
-                StatisticItem(
-                    label = stringResource(R.string.widget_hours_label),
+                    label = stringResource(R.string.fasting_log_average_hours),
                     value = "%.1f h".format(averageHours),
                     modifier = Modifier.weight(1f)
                 )
@@ -1351,13 +1357,13 @@ fun FastingLogSummary(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 StatisticItem(
-                    label = stringResource(R.string.widget_hours_label),
+                    label = stringResource(R.string.fasting_log_longest_fast),
                     value = "%.1f h".format(longestFast),
                     modifier = Modifier.weight(1f)
                 )
                 
                 StatisticItem(
-                    label = stringResource(R.string.fasting_state_not_fasting_name),
+                    label = stringResource(R.string.fasting_log_highest_state),
                     value = highestState.getDisplayName(LocalContext.current),
                     valueColor = getColorForFastingState(highestState),
                     modifier = Modifier.weight(1f)
@@ -1399,7 +1405,7 @@ fun FastingLogSummary(
                     columns = GridCells.Fixed(rowSize),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(((totalItems / rowSize + (if (totalItems % rowSize > 0 || secretAchievement != null) 1 else 0) + 1) * 70).dp),
+                        .height(((totalItems / rowSize + (if (totalItems % rowSize > 0 || secretAchievement != null) 1 else 0)) * 60).dp),
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalArrangement = Arrangement.Center
                 ) {
@@ -1416,7 +1422,7 @@ fun FastingLogSummary(
                     // Add placeholders to position the secret achievement at the bottom right
                     items(placeholdersNeeded) {
                         // Empty placeholder
-                        Box(modifier = Modifier.size(72.dp))
+                        Box(modifier = Modifier.size(64.dp))
                     }
                     
                     // Add the secret achievement at the end (bottom right)
@@ -1467,6 +1473,7 @@ fun AchievementItem(
     state: Any,
     count: Int
 ) {
+    val context = LocalContext.current
     // Special handling for the secret achievement
     val isSecretAchievement = state.toString() == "SECRET_ACHIEVEMENT"
     
@@ -1484,18 +1491,18 @@ fun AchievementItem(
             else -> "🥉"        // Starting with deep fasts
         }
     } else {
-        (state as FastingState).displayName
+        (state as FastingState).getDisplayName(context)
     }
     
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .padding(horizontal = 4.dp, vertical = 4.dp)
-            .width(72.dp)
+            .padding(horizontal = 2.dp, vertical = 2.dp)
+            .width(64.dp)
     ) {
         Box(
             modifier = Modifier
-                .size(36.dp)
+                .size(32.dp)
                 .clip(CircleShape)
                 .background(
                     if (isSecretAchievement) 
@@ -1507,7 +1514,7 @@ fun AchievementItem(
         ) {
             Text(
                 text = count.toString(),
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 fontWeight = FontWeight.Bold,
                 color = if (isSecretAchievement) Color(0xFFFFD700) else stateColor
             )
@@ -1519,7 +1526,7 @@ fun AchievementItem(
             color = if (isSecretAchievement) Color(0xFFFFD700) else stateColor,
             textAlign = TextAlign.Center,
             maxLines = 1,
-            modifier = Modifier.padding(top = 2.dp)
+            modifier = Modifier.padding(top = 1.dp)
         )
     }
 }
@@ -1697,9 +1704,9 @@ fun EditFastDialog(
                 onClick = { 
                     // Validate times
                     if (endTimeMillis <= startTimeMillis) {
-                        errorMessage = "End time must be after start time"
+                        errorMessage = context.getString(R.string.error_start_before_end)
                     } else if (endTimeMillis > System.currentTimeMillis()) {
-                        errorMessage = "End time cannot be in the future"
+                        errorMessage = context.getString(R.string.error_future_end_time)
                     } else {
                         // Create updated fast with new times, duration and state
                         val updatedFast = fast.copy(

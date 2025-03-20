@@ -106,11 +106,14 @@ class FastingWidgetProvider : AppWidgetProvider() {
                         // Set hours text
                         views.setTextViewText(R.id.widget_hours, "${elapsedHours}")
                         
-                        // Set state text
-                        views.setTextViewText(R.id.widget_state, currentState.description)
+                        // Set hours label with localized string
+                        views.setTextViewText(R.id.widget_hours_label, context.getString(R.string.widget_hours_label))
+                        
+                        // Set state text - use localized text
+                        views.setTextViewText(R.id.widget_state, currentState.getDisplayName(context))
                         
                         // Set button visibility based on timer state
-                        updateWidgetButtons(views, isRunning)
+                        updateWidgetButtons(views, isRunning, context)
                         
                         // Set button click intents
                         setButtonClickIntents(context, views)
@@ -181,14 +184,18 @@ class FastingWidgetProvider : AppWidgetProvider() {
         /**
          * Update widget buttons based on timer state
          */
-        private fun updateWidgetButtons(views: RemoteViews, isRunning: Boolean) {
+        private fun updateWidgetButtons(views: RemoteViews, isRunning: Boolean, context: Context) {
             try {
                 if (isRunning) {
                     views.setViewVisibility(R.id.widget_start_button, android.view.View.GONE)
                     views.setViewVisibility(R.id.widget_reset_button, android.view.View.VISIBLE)
-            } else {
+                    // Set localized text for reset button
+                    views.setTextViewText(R.id.widget_reset_button, context.getString(R.string.widget_stop_timer))
+                } else {
                     views.setViewVisibility(R.id.widget_start_button, android.view.View.VISIBLE)
                     views.setViewVisibility(R.id.widget_reset_button, android.view.View.GONE)
+                    // Set localized text for start button
+                    views.setTextViewText(R.id.widget_start_button, context.getString(R.string.widget_start_timer))
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Error updating button visibility", e)
@@ -308,21 +315,46 @@ class FastingWidgetProvider : AppWidgetProvider() {
     override fun onReceive(context: Context, intent: Intent) {
         try {
             Log.d(TAG, "onReceive: ${intent.action}")
+            
+            // Apply locale settings before processing the intent
+            val languageCode = wesseling.io.fasttime.util.LocaleHelper.getLanguageCode(context)
+            val contextWithLocale = wesseling.io.fasttime.util.LocaleHelper.updateLocale(context, languageCode)
 
-        when (intent.action) {
-            ACTION_START_TIMER -> {
+            when (intent.action) {
+                ACTION_START_TIMER -> {
                     Log.d(TAG, "Starting timer from widget")
-                    val fastingTimer = FastingTimer.getInstance(context)
-                    fastingTimer.startTimer()
-                    updateAllWidgets(context)
-            }
-            ACTION_RESET_TIMER -> {
+                    try {
+                        // Use the safe start method that properly handles locale
+                        val fastingTimer = FastingTimer.getInstance(contextWithLocale)
+                        fastingTimer.safeStartTimer()
+                        
+                        // Update widgets after timer has started
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            try {
+                                updateAllWidgets(contextWithLocale)
+                            } catch (e: Exception) {
+                                Log.e(TAG, "Error updating widgets after timer start", e)
+                            }
+                        }, 500) // Short delay to ensure timer has started
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error with safe start timer, trying fallback", e)
+                        // Fallback to regular start if safe method fails
+                        try {
+                            val fastingTimer = FastingTimer.getInstance(contextWithLocale)
+                            fastingTimer.startTimer()
+                            updateAllWidgets(contextWithLocale)
+                        } catch (e2: Exception) {
+                            Log.e(TAG, "Error in timer start fallback", e2)
+                        }
+                    }
+                }
+                ACTION_RESET_TIMER -> {
                     Log.d(TAG, "Reset timer action received")
                     // Show confirmation dialog
-                val confirmIntent = Intent(context, WidgetConfirmationActivity::class.java)
-                confirmIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                context.startActivity(confirmIntent)
-            }
+                    val confirmIntent = Intent(contextWithLocale, WidgetConfirmationActivity::class.java)
+                    confirmIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    contextWithLocale.startActivity(confirmIntent)
+                }
                 ACTION_UPDATE_WIDGETS -> {
                     Log.d(TAG, "Updating widgets from broadcast")
                     // Extract state information if available (for debugging)
@@ -335,14 +367,14 @@ class FastingWidgetProvider : AppWidgetProvider() {
                     
                     // Force update to ensure background is refreshed
                     val forceUpdate = intent.getBooleanExtra("FORCE_UPDATE", false)
-                    updateAllWidgets(context, forceUpdate)
+                    updateAllWidgets(contextWithLocale, forceUpdate)
                 }
                 AppWidgetManager.ACTION_APPWIDGET_UPDATE -> {
                     Log.d(TAG, "Widget update requested")
                     super.onReceive(context, intent)
                     
                     // Also force update our widgets to ensure they have the correct background
-                    updateAllWidgets(context, true)
+                    updateAllWidgets(contextWithLocale, true)
                 }
                 else -> super.onReceive(context, intent)
             }

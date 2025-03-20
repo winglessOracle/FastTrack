@@ -1,6 +1,8 @@
 package wesseling.io.fasttime.util
 
+import android.content.Context
 import android.util.Log
+import wesseling.io.fasttime.R
 import wesseling.io.fasttime.model.CompletedFast
 
 /**
@@ -12,12 +14,14 @@ object FastingValidator {
     /**
      * Check if a fasting entry overlaps with any existing entries.
      * 
+     * @param context Context to get string resources
      * @param newFast The fast to check for overlaps
      * @param existingFasts List of existing fasting entries
      * @param skipFastId Optional ID of a fast to skip in the check (useful when updating an existing fast)
      * @return Result object containing validity status and error message if invalid
      */
     fun checkForOverlappingFasts(
+        context: Context,
         newFast: CompletedFast,
         existingFasts: List<CompletedFast>,
         skipFastId: String? = null
@@ -34,7 +38,7 @@ object FastingValidator {
         if (newStart >= newEnd) {
             return OverlapCheckResult(
                 isValid = false,
-                errorMessage = "Start time must be before end time"
+                errorMessage = context.getString(R.string.error_start_before_end)
             )
         }
         
@@ -43,7 +47,7 @@ object FastingValidator {
         if (newEnd > currentTime) {
             return OverlapCheckResult(
                 isValid = false,
-                errorMessage = "End time cannot be in the future"
+                errorMessage = context.getString(R.string.error_future_end_time)
             )
         }
         
@@ -61,8 +65,14 @@ object FastingValidator {
             // If new fast starts before existing fast ends AND 
             // new fast ends after existing fast starts
             if (newStart < existingEnd && newEnd > existingStart) {
-                val overlapMessage = "This fast overlaps with an existing fast " +
-                        "(${formatDateForLog(existingStart)} - ${formatDateForLog(existingEnd)})"
+                val startTimeFormatted = formatDateForLog(existingStart)
+                val endTimeFormatted = formatDateForLog(existingEnd)
+                
+                val overlapMessage = context.getString(
+                    R.string.error_fast_overlap, 
+                    startTimeFormatted, 
+                    endTimeFormatted
+                )
                 
                 Log.d(TAG, "Overlap detected: $overlapMessage")
                 return OverlapCheckResult(

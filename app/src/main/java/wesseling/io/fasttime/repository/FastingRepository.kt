@@ -12,30 +12,28 @@ import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import com.google.gson.reflect.TypeToken
+import wesseling.io.fasttime.R
 import wesseling.io.fasttime.model.CompletedFast
 import wesseling.io.fasttime.model.FastingState
 import wesseling.io.fasttime.util.FastingValidator
 import java.lang.reflect.Type
+import java.util.UUID
 
 /**
- * Repository for managing completed fasting sessions
+ * Repository for handling storage and retrieval of completed fast entries
  */
-class FastingRepository(private val context: Context) {
+class FastingRepository private constructor(private val context: Context) {
+    private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     
-    private val prefs: SharedPreferences = context.getSharedPreferences(
-        PREFS_NAME,
-        Context.MODE_PRIVATE
-    )
-    
-    // Create a custom Gson instance with type adapters for FastingState
+    // Set up Gson with a type adapter for FastingState
     private val gson: Gson = GsonBuilder()
         .registerTypeAdapter(FastingState::class.java, FastingStateTypeAdapter())
         .create()
     
     /**
-     * Save a completed fast to the repository
+     * Save a completed fast to storage
      * 
-     * @param completedFast The fast to save
+     * @param completedFast The fast entry to save
      * @param skipValidation Whether to skip overlap validation (default: false)
      * @throws IllegalArgumentException if fast validation fails
      */
@@ -49,9 +47,9 @@ class FastingRepository(private val context: Context) {
             
             // Validate the fast entry for overlaps
             if (!skipValidation) {
-                val validationResult = FastingValidator.checkForOverlappingFasts(completedFast, fasts)
+                val validationResult = FastingValidator.checkForOverlappingFasts(context, completedFast, fasts)
                 if (!validationResult.isValid) {
-                    val errorMsg = validationResult.errorMessage ?: "Invalid fast entry"
+                    val errorMsg = validationResult.errorMessage ?: context.getString(R.string.error_invalid_fast)
                     Log.e(TAG, "Validation failed: $errorMsg")
                     throw IllegalArgumentException(errorMsg)
                 }
@@ -88,82 +86,75 @@ class FastingRepository(private val context: Context) {
     }
     
     /**
-     * Get all completed fasts
+     * Get all saved fast entries
      */
     fun getAllFasts(): List<CompletedFast> {
-        try {
-            val json = prefs.getString(KEY_FASTS, null)
-            if (json == null) {
-                Log.d(TAG, "No fasts found in preferences")
-                return emptyList()
-            }
-            
-            Log.d(TAG, "Retrieved JSON size: ${json.length} characters")
-            
+        return try {
+            val json = prefs.getString(KEY_FASTS, "[]")
             val type = object : TypeToken<List<CompletedFast>>() {}.type
             val fasts = gson.fromJson<List<CompletedFast>>(json, type) ?: emptyList()
             
-            Log.d(TAG, "Retrieved ${fasts.size} fasts")
-            return fasts
+            // Sort by end time (newest first)
+            fasts.sortedByDescending { it.endTimeMillis }
         } catch (e: Exception) {
-            Log.e(TAG, "Error getting all fasts: ${e.message}", e)
-            return emptyList()
+            Log.e(TAG, "Error loading fasts: ${e.message}", e)
+            emptyList()
         }
     }
     
     /**
-     * Get a completed fast by ID
+     * Delete a fast entry by ID
      */
-    fun getFastById(id: String): CompletedFast? {
-        return getAllFasts().find { it.id == id }
-    }
-    
-    /**
-     * Delete a completed fast
-     */
-    fun deleteFast(id: String) {
+    fun deleteFast(fastId: String) {
         try {
-            Log.d(TAG, "Deleting fast with id: $id")
+            Log.d(TAG, "Deleting fast: id=$fastId")
             
             val fasts = getAllFasts().toMutableList()
             val initialSize = fasts.size
+            fasts.removeIf { it.id == fastId }
+            val finalSize = fasts.size
             
-            fasts.removeIf { it.id == id }
+            if (initialSize == finalSize) {
+                Log.w(TAG, "Fast not found for deletion: id=$fastId")
+                return
+            }
             
             val json = gson.toJson(fasts)
             val editor = prefs.edit()
             editor.putString(KEY_FASTS, json)
-            val success = editor.commit()
+            editor.apply()
             
-            Log.d(TAG, "Delete result: $success, removed ${initialSize - fasts.size} fasts")
+            Log.d(TAG, "Fast deleted successfully")
         } catch (e: Exception) {
             Log.e(TAG, "Error deleting fast: ${e.message}", e)
+            throw e
         }
     }
     
     /**
-     * Delete all completed fasts
+     * Delete all fast entries
      */
     fun deleteAllFasts() {
         try {
             Log.d(TAG, "Deleting all fasts")
             
             val editor = prefs.edit()
-            editor.remove(KEY_FASTS)
-            val success = editor.commit()
+            editor.putString(KEY_FASTS, "[]")
+            editor.apply()
             
-            Log.d(TAG, "Delete all result: $success")
+            Log.d(TAG, "All fasts deleted successfully")
         } catch (e: Exception) {
             Log.e(TAG, "Error deleting all fasts: ${e.message}", e)
+            throw e
         }
     }
     
     /**
-     * Update a completed fast
+     * Update an existing fast entry
      * 
-     * @param completedFast The fast to update
+     * @param completedFast The updated fast entry
      * @param skipValidation Whether to skip overlap validation (default: false)
-     * @throws IllegalArgumentException if fast validation fails
+     * @throws IllegalArgumentException if fast validation fails or fast not found
      */
     fun updateFast(completedFast: CompletedFast, skipValidation: Boolean = false) {
         try {
@@ -176,13 +167,14 @@ class FastingRepository(private val context: Context) {
                 // Validate the fast entry for overlaps, skipping the current fast ID
                 if (!skipValidation) {
                     val validationResult = FastingValidator.checkForOverlappingFasts(
+                        context,
                         completedFast, 
                         fasts,
                         skipFastId = completedFast.id
                     )
                     
                     if (!validationResult.isValid) {
-                        val errorMsg = validationResult.errorMessage ?: "Invalid fast entry"
+                        val errorMsg = validationResult.errorMessage ?: context.getString(R.string.error_invalid_fast)
                         Log.e(TAG, "Validation failed during update: $errorMsg")
                         throw IllegalArgumentException(errorMsg)
                     }
@@ -198,7 +190,7 @@ class FastingRepository(private val context: Context) {
                 Log.d(TAG, "Update result: $success")
             } else {
                 Log.e(TAG, "Fast not found for update: id=${completedFast.id}")
-                throw IllegalArgumentException("Fast not found for update")
+                throw IllegalArgumentException(context.getString(R.string.error_fast_not_found))
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error updating fast: ${e.message}", e)
@@ -218,26 +210,25 @@ class FastingRepository(private val context: Context) {
             return try {
                 FastingState.valueOf(json.asString)
             } catch (e: Exception) {
-                Log.e(TAG, "Error deserializing FastingState: ${json.asString}", e)
-                FastingState.NOT_FASTING // Default value if deserialization fails
+                Log.e(TAG, "Error deserializing FastingState: ${e.message}", e)
+                FastingState.NOT_FASTING
             }
         }
     }
     
     companion object {
         private const val TAG = "FastingRepository"
-        private const val PREFS_NAME = "wesseling.io.fasttime.fasting_repository_v2"
-        private const val KEY_FASTS = "completed_fasts_v2"
+        private const val PREFS_NAME = "wesseling.io.fasttime.fasting_prefs"
+        private const val KEY_FASTS = "fasts"
         
         @Volatile
-        private var instance: FastingRepository? = null
+        private var INSTANCE: FastingRepository? = null
         
-        /**
-         * Get the singleton instance of FastingRepository
-         */
         fun getInstance(context: Context): FastingRepository {
-            return instance ?: synchronized(this) {
-                instance ?: FastingRepository(context.applicationContext).also { instance = it }
+            return INSTANCE ?: synchronized(this) {
+                val instance = FastingRepository(context.applicationContext)
+                INSTANCE = instance
+                instance
             }
         }
     }

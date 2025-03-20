@@ -289,7 +289,7 @@
     
     <!-- Fasting log screen -->
     <string name="fasting_log_title">Registro de Ayuno</string>
-    <string name="fasting_log_empty">Aún no se han registrado sesiones de ayuno</string>
+    <string name="fasting_log_empty">Aún no hay sesiones de ayuno registradas</string>
     <string name="fasting_log_empty_description">Completa un ayuno para verlo en tu registro</string>
     <string name="fasting_log_no_matches">No hay sesiones de ayuno coincidentes</string>
     <string name="fasting_log_no_matches_description">Intenta cambiar tus ajustes de filtro</string>
@@ -301,9 +301,9 @@
     <string name="fasting_log_details_title">Detalles de Ayuno</string>
     <string name="fasting_log_notes_label">Notas</string>
     <string name="fasting_log_summary_title">Resumen de Ayuno</string>
-    <string name="fasting_log_summary_note">Solo se cuentan los ayunos de 12+ horas</string>
+    <string name="fasting_log_summary_note">Solo se cuentan ayunos de 12+ horas</string>
     <string name="fasting_log_achievements">Logros</string>
-    <string name="fasting_log_started">Comenzado</string>
+    <string name="fasting_log_started">Iniciado</string>
     <string name="fasting_log_ended">Finalizado</string>
     <string name="fasting_log_time_separator"> → </string>
     <string name="fasting_log_duration">Duración</string>
@@ -311,6 +311,10 @@
     <string name="fasting_log_discard">Descartar</string>
     <string name="fasting_log_save">Guardar en Registro</string>
     <string name="fasting_log_achievement_reached">¡Has alcanzado %s!</string>
+    <string name="fasting_log_longest_fast">Ayuno Más Largo</string>
+    <string name="fasting_log_highest_state">Estado Más Alto</string>
+    <string name="fasting_log_total_hours">Horas Totales</string>
+    <string name="fasting_log_average_hours">Horas Promedio</string>
     
     <!-- Notifications -->
     <string name="notification_channel_fasting_state">Notificaciones de Estado de Ayuno</string>
@@ -453,10 +457,16 @@
     <string name="error_generic">Ha ocurrido un error</string>
     <string name="error_save_failed">No se pudieron guardar los datos</string>
     <string name="error_load_failed">No se pudieron cargar los datos</string>
+    <string name="error_fast_overlap">Este ayuno se superpone con un ayuno existente (%1$s - %2$s)</string>
+    <string name="error_start_before_end">La hora de inicio debe ser anterior a la hora de finalización</string>
+    <string name="error_future_end_time">La hora de finalización no puede estar en el futuro</string>
+    <string name="error_invalid_fast">Entrada de ayuno no válida</string>
+    <string name="error_fast_not_found">Ayuno no encontrado para actualizar</string>
+    <string name="error_with_message">Error: %s</string>
     
     <!-- Widget text -->
     <string name="widget_update_description">Actualizando widget</string>
-    <!-- IMPORTANTE: Para todas las traducciones, mantener el texto de los botones Iniciar/Parar como palabras únicas para un diseño de UI adecuado -->
+    <string name="widget_state_label">Estado de ayuno actual</string>
     <string name="widget_start_timer">Iniciar</string>
     <string name="widget_stop_timer">Parar</string>
     <string name="widget_hours_label">Horas</string>
