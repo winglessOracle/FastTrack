@@ -2,6 +2,8 @@ package wesseling.io.fasttime
 
 import android.app.Application
 import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.os.Process
 import android.util.Log
 import androidx.lifecycle.Lifecycle
@@ -32,6 +34,13 @@ class FastTrackApplication : Application(), LifecycleEventObserver {
     override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
         Log.d(TAG, "Lifecycle event: $event")
         when (event) {
+            Lifecycle.Event.ON_START -> {
+                // App moved to foreground
+                Log.d(TAG, "App moved to foreground")
+                
+                // Check if widget service should be running and ensure it is
+                checkAndRestoreWidgetService()
+            }
             Lifecycle.Event.ON_STOP -> {
                 // App moved to background
                 Log.d(TAG, "App moved to background, saving state")
@@ -155,6 +164,54 @@ class FastTrackApplication : Application(), LifecycleEventObserver {
             Log.d(TAG, "Singletons cleaned up successfully")
         } catch (e: Exception) {
             Log.e(TAG, "Error cleaning up singletons", e)
+        }
+    }
+    
+    /**
+     * Check if the widget service should be running and restore it if needed
+     * This ensures widgets continue to update even if the service was killed
+     */
+    private fun checkAndRestoreWidgetService() {
+        try {
+            val fastingTimer = FastingTimer.getInstance(applicationContext)
+            
+            // Only start service if timer is running
+            if (fastingTimer.isRunning) {
+                Log.d(TAG, "Timer is running, ensuring widget update service is running")
+                
+                // Use service's recovery mechanism
+                val serviceClass = Class.forName("wesseling.io.fasttime.widget.FastingWidgetUpdateService")
+                val ensureRunningMethod = serviceClass.getMethod("ensureServiceRunning", Context::class.java)
+                ensureRunningMethod.invoke(null, applicationContext)
+                
+                Log.d(TAG, "Widget service recovery check complete")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error checking/restoring widget service", e)
+            
+            // Fallback to direct recovery if reflection fails
+            try {
+                val fastingTimer = FastingTimer.getInstance(applicationContext)
+                
+                if (fastingTimer.isRunning) {
+                    // Try to restart widget update service directly
+                    val serviceIntent = Intent()
+                    serviceIntent.setClassName(
+                        "wesseling.io.fasttime.widget",
+                        "wesseling.io.fasttime.widget.FastingWidgetUpdateService"
+                    )
+                    
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        applicationContext.startForegroundService(serviceIntent)
+                    } else {
+                        applicationContext.startService(serviceIntent)
+                    }
+                    
+                    Log.d(TAG, "Direct widget service restart attempted")
+                }
+            } catch (e2: Exception) {
+                Log.e(TAG, "Fallback widget service recovery also failed", e2)
+            }
         }
     }
     

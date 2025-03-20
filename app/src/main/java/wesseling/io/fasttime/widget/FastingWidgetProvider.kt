@@ -9,6 +9,8 @@ import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.RemoteViews
 import wesseling.io.fasttime.MainActivity
@@ -362,15 +364,32 @@ class FastingWidgetProvider : AppWidgetProvider() {
     private fun ensureUpdateServiceRunning(context: Context) {
         try {
             Log.d(TAG, "Ensuring widget update service is running")
-            val intent = Intent(context, FastingWidgetUpdateService::class.java)
             
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(intent)
-                } else {
-                context.startService(intent)
-            }
+            // Use the service's own recovery mechanism instead of directly starting it
+            FastingWidgetUpdateService.ensureServiceRunning(context)
+            
+            // Set a delayed check to verify service is running after 5 seconds
+            // This adds an extra layer of reliability
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (!FastingWidgetUpdateService.isServiceRunning(context)) {
+                    Log.w(TAG, "Service still not running after initial start attempt, retrying")
+                    FastingWidgetUpdateService.ensureServiceRunning(context)
+                }
+            }, 5000)
         } catch (e: Exception) {
             Log.e(TAG, "Error starting widget update service", e)
+            
+            // Fallback to direct service start if recovery mechanism fails
+            try {
+                val intent = Intent(context, FastingWidgetUpdateService::class.java)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    context.startForegroundService(intent)
+                } else {
+                    context.startService(intent)
+                }
+            } catch (e2: Exception) {
+                Log.e(TAG, "Fallback service start also failed", e2)
+            }
         }
     }
     

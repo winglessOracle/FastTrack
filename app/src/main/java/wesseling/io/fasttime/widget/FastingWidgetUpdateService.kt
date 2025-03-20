@@ -1,9 +1,11 @@
 package wesseling.io.fasttime.widget
 
+import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -13,6 +15,7 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.os.PowerManager
+import android.os.SystemClock
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import wesseling.io.fasttime.MainActivity
@@ -24,6 +27,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Service to update the fasting widget periodically
  * Implements battery-aware update intervals to conserve battery
+ * Includes fallback mechanisms to ensure service reliability
  */
 class FastingWidgetUpdateService : Service() {
     private val handler = Handler(Looper.getMainLooper())
@@ -38,11 +42,47 @@ class FastingWidgetUpdateService : Service() {
                 // Schedule next update with adaptive interval
                 scheduleNextUpdateWithAdaptiveInterval()
                 
+                // Set next backup alarm in case service is killed
+                scheduleBackupAlarm()
+                
+                // Update service health timestamp
+                updateServiceHealthTimestamp()
+                
                 Log.d(TAG, "Widget update completed")
             } catch (e: Exception) {
                 Log.e(TAG, "Error in update runnable", e)
                 // Try to recover by scheduling next update anyway
-                handler.postDelayed(this, TimeUnit.MINUTES.toMillis(5))
+                handler.postDelayed(this, FALLBACK_UPDATE_INTERVAL)
+                
+                // Ensure backup alarm is set in case of continued failures
+                scheduleBackupAlarm()
+            }
+        }
+    }
+    
+    // Broadcast receiver for alarm-based backup updates
+    private val alarmReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            Log.d(TAG, "Received backup alarm - attempting service recovery")
+            when (intent.action) {
+                ACTION_BACKUP_ALARM -> {
+                    // Check if service is healthy
+                    if (!isServiceHealthy()) {
+                        Log.w(TAG, "Service recovery triggered by backup alarm")
+                        // Start update now
+                        handler.removeCallbacks(updateRunnable)
+                        handler.post(updateRunnable)
+                    } else {
+                        Log.d(TAG, "Service is healthy, backup alarm not needed")
+                    }
+                    
+                    // Schedule next backup alarm regardless
+                    scheduleBackupAlarm()
+                }
+                ACTION_HEALTH_CHECK -> {
+                    // Perform service health check
+                    performHealthCheck()
+                }
             }
         }
     }
@@ -52,9 +92,100 @@ class FastingWidgetUpdateService : Service() {
         private const val NOTIFICATION_ID = 1001
         private const val CHANNEL_ID = "fasting_widget_channel"
         
+        // Service recovery constants
+        private const val ACTION_BACKUP_ALARM = "wesseling.io.fasttime.widget.ACTION_BACKUP_ALARM"
+        private const val ACTION_HEALTH_CHECK = "wesseling.io.fasttime.widget.ACTION_HEALTH_CHECK"
+        private const val BACKUP_ALARM_REQUEST_CODE = 1002
+        private const val HEALTH_CHECK_REQUEST_CODE = 1003
+        private const val PREFS_NAME = "widget_service_prefs"
+        private const val KEY_LAST_UPDATE_TIMESTAMP = "last_update_timestamp"
+        private const val KEY_HEALTH_CHECK_COUNT = "health_check_count"
+        private const val MAX_HEALTH_CHECK_FAILURES = 3
+        private const val FALLBACK_UPDATE_INTERVAL = 5 * 60 * 1000L // 5 minutes
+        private const val HEALTH_CHECK_INTERVAL = 15 * 60 * 1000L // 15 minutes
+        
         // Battery thresholds
         private const val BATTERY_LOW_THRESHOLD = 15 // 15%
         private const val BATTERY_MEDIUM_THRESHOLD = 30 // 30%
+        
+        /**
+         * Check if the service is running by checking a timestamp
+         * This can be called from outside the service to verify its health
+         */
+        fun isServiceRunning(context: Context): Boolean {
+            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            val lastTimestamp = prefs.getLong(KEY_LAST_UPDATE_TIMESTAMP, 0)
+            val currentTime = System.currentTimeMillis()
+            
+            // If last update was more than 15 minutes ago, consider service not running
+            val threshold = TimeUnit.MINUTES.toMillis(15)
+            return (currentTime - lastTimestamp) < threshold
+        }
+        
+        /**
+         * Ensure the service is running by starting it if needed
+         * This provides a safe way for other components to restart the service
+         */
+        fun ensureServiceRunning(context: Context) {
+            if (!isServiceRunning(context)) {
+                Log.d(TAG, "Service not running, attempting to start it")
+                try {
+                    val intent = Intent(context, FastingWidgetUpdateService::class.java)
+                    intent.putExtra("recovery", true)
+                    
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        context.startForegroundService(intent)
+                    } else {
+                        context.startService(intent)
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to restart service", e)
+                    // Set a backup alarm as last resort
+                    setImmediateBackupAlarm(context)
+                }
+            }
+        }
+        
+        /**
+         * Set an immediate backup alarm to recover service
+         * This is used as a last resort when direct service start fails
+         */
+        private fun setImmediateBackupAlarm(context: Context) {
+            try {
+                val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                val intent = Intent(context, FastingWidgetUpdateService::class.java).apply {
+                    action = ACTION_BACKUP_ALARM
+                }
+                
+                val pendingIntent = PendingIntent.getBroadcast(
+                    context, 
+                    BACKUP_ALARM_REQUEST_CODE,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
+                
+                // Set alarm to trigger in 30 seconds
+                val triggerTime = SystemClock.elapsedRealtime() + 30 * 1000
+                
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    alarmManager.setExactAndAllowWhileIdle(
+                        AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                        triggerTime,
+                        pendingIntent
+                    )
+                } else {
+                    alarmManager.setExact(
+                        AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                        triggerTime,
+                        pendingIntent
+                    )
+                }
+                
+                Log.d(TAG, "Immediate backup alarm set")
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to set immediate backup alarm", e)
+            }
+        }
     }
     
     override fun onCreate() {
@@ -75,10 +206,20 @@ class FastingWidgetUpdateService : Service() {
             val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
+        
+        // Register backup alarm receiver
+        val filter = IntentFilter().apply {
+            addAction(ACTION_BACKUP_ALARM)
+            addAction(ACTION_HEALTH_CHECK)
+        }
+        registerReceiver(alarmReceiver, filter)
+        
+        // Schedule health check
+        scheduleHealthCheck()
     }
     
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d(TAG, "Service started")
+        Log.d(TAG, "Service started, flags=$flags, startId=$startId, recovery=${intent?.getBooleanExtra("recovery", false)}")
         
         try {
             // Check if timer is actually running; if not, stop the service to save battery
@@ -95,17 +236,33 @@ class FastingWidgetUpdateService : Service() {
             // Start as a foreground service with higher priority
             startForeground(NOTIFICATION_ID, notification)
             
+            // Reset health check count on successful start
+            resetHealthCheckCount()
+            
+            // Update service health timestamp
+            updateServiceHealthTimestamp()
+            
             // Start the update loop with immediate first update
             handler.removeCallbacks(updateRunnable) // Remove any existing callbacks
             handler.post(updateRunnable)
+            
+            // Schedule backup alarm for recovery
+            scheduleBackupAlarm()
             
             // Schedule an immediate widget update
             FastingWidgetProvider.updateAllWidgets(this)
         } catch (e: Exception) {
             Log.e(TAG, "Error starting service", e)
+            
+            // Schedule a fallback update even on failure
+            handler.postDelayed(updateRunnable, FALLBACK_UPDATE_INTERVAL)
+            
+            // Set backup alarm as failsafe
+            scheduleBackupAlarm()
         }
         
-        return START_STICKY
+        // Use START_REDELIVER_INTENT to have the system redeliver the intent if service is killed
+        return START_REDELIVER_INTENT
     }
     
     override fun onBind(intent: Intent?): IBinder? {
@@ -116,8 +273,23 @@ class FastingWidgetUpdateService : Service() {
         super.onDestroy()
         Log.d(TAG, "Service destroyed")
         
-        // Remove callbacks
-        handler.removeCallbacks(updateRunnable)
+        try {
+            // Unregister receiver
+            unregisterReceiver(alarmReceiver)
+            
+            // Remove callbacks
+            handler.removeCallbacks(updateRunnable)
+            
+            // Set backup alarm to recover if the service was killed unexpectedly
+            // This helps in cases where the system kills the service due to resource constraints
+            val fastingTimer = FastingTimer.getInstance(this)
+            if (fastingTimer.isRunning) {
+                Log.d(TAG, "Timer still running, setting backup alarm before service destruction")
+                scheduleBackupAlarm()
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error during service destruction", e)
+        }
     }
     
     /**
@@ -234,8 +406,166 @@ class FastingWidgetUpdateService : Service() {
         } catch (e: Exception) {
             Log.e(TAG, "Error scheduling next update", e)
             // Fallback to a safe interval
-            handler.postDelayed(updateRunnable, TimeUnit.MINUTES.toMillis(10))
+            handler.postDelayed(updateRunnable, FALLBACK_UPDATE_INTERVAL)
+            
+            // Ensure backup alarm is set
+            scheduleBackupAlarm()
         }
+    }
+    
+    /**
+     * Schedule a backup alarm to ensure service continuity if killed
+     * This alarm acts as a failsafe mechanism to restart updates if the service dies
+     */
+    private fun scheduleBackupAlarm() {
+        try {
+            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val intent = Intent(this, FastingWidgetUpdateService::class.java).apply {
+                action = ACTION_BACKUP_ALARM
+            }
+            
+            val pendingIntent = PendingIntent.getBroadcast(
+                this, 
+                BACKUP_ALARM_REQUEST_CODE,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+            
+            // Set alarm for 10 minutes from now
+            // This is our safety net if the service gets killed
+            val triggerTime = SystemClock.elapsedRealtime() + TimeUnit.MINUTES.toMillis(10)
+            
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                    triggerTime,
+                    pendingIntent
+                )
+            } else {
+                alarmManager.setExact(
+                    AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                    triggerTime,
+                    pendingIntent
+                )
+            }
+            
+            Log.d(TAG, "Backup alarm scheduled")
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to schedule backup alarm", e)
+        }
+    }
+    
+    /**
+     * Schedule a periodic health check to verify service is running correctly
+     */
+    private fun scheduleHealthCheck() {
+        try {
+            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val intent = Intent(this, FastingWidgetUpdateService::class.java).apply {
+                action = ACTION_HEALTH_CHECK
+            }
+            
+            val pendingIntent = PendingIntent.getBroadcast(
+                this, 
+                HEALTH_CHECK_REQUEST_CODE,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+            
+            // Schedule health check every 15 minutes
+            val triggerTime = SystemClock.elapsedRealtime() + HEALTH_CHECK_INTERVAL
+            
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                    triggerTime,
+                    pendingIntent
+                )
+            } else {
+                alarmManager.setExact(
+                    AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                    triggerTime,
+                    pendingIntent
+                )
+            }
+            
+            Log.d(TAG, "Health check scheduled")
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to schedule health check", e)
+        }
+    }
+    
+    /**
+     * Perform a health check on the service
+     * If health checks repeatedly fail, it indicates the service is not updating properly
+     */
+    private fun performHealthCheck() {
+        try {
+            Log.d(TAG, "Performing service health check")
+            
+            if (!isServiceHealthy()) {
+                val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                var failureCount = prefs.getInt(KEY_HEALTH_CHECK_COUNT, 0) + 1
+                
+                prefs.edit().putInt(KEY_HEALTH_CHECK_COUNT, failureCount).apply()
+                Log.w(TAG, "Service health check failed ($failureCount/$MAX_HEALTH_CHECK_FAILURES)")
+                
+                if (failureCount >= MAX_HEALTH_CHECK_FAILURES) {
+                    Log.e(TAG, "Service health check failed repeatedly, attempting recovery")
+                    // Reset failure count
+                    resetHealthCheckCount()
+                    
+                    // Force update now
+                    handler.removeCallbacks(updateRunnable)
+                    handler.post(updateRunnable)
+                }
+            } else {
+                // Reset failure count on successful health check
+                resetHealthCheckCount()
+                Log.d(TAG, "Service health check passed")
+            }
+            
+            // Schedule next health check
+            scheduleHealthCheck()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error during health check", e)
+            
+            // Schedule next health check anyway
+            scheduleHealthCheck()
+        }
+    }
+    
+    /**
+     * Reset the health check failure count
+     */
+    private fun resetHealthCheckCount() {
+        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .edit()
+            .putInt(KEY_HEALTH_CHECK_COUNT, 0)
+            .apply()
+    }
+    
+    /**
+     * Update the timestamp indicating the service is healthy
+     */
+    private fun updateServiceHealthTimestamp() {
+        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .edit()
+            .putLong(KEY_LAST_UPDATE_TIMESTAMP, System.currentTimeMillis())
+            .apply()
+    }
+    
+    /**
+     * Check if the service is currently healthy based on the last update timestamp
+     */
+    private fun isServiceHealthy(): Boolean {
+        val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val lastTimestamp = prefs.getLong(KEY_LAST_UPDATE_TIMESTAMP, 0)
+        val currentTime = System.currentTimeMillis()
+        
+        // If last update was more than 15 minutes ago, service is not healthy
+        val maxGap = TimeUnit.MINUTES.toMillis(15)
+        return (currentTime - lastTimestamp) < maxGap
     }
     
     /**

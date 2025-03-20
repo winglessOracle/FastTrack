@@ -1,12 +1,16 @@
 package wesseling.io.fasttime.timer
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.os.BatteryManager
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,7 +30,7 @@ import wesseling.io.fasttime.notifications.NotificationHelper
 import wesseling.io.fasttime.settings.PreferencesManager
 import java.util.concurrent.TimeUnit
 import wesseling.io.fasttime.util.DateTimeFormatter
-import android.os.Build
+import wesseling.io.fasttime.widget.FastingWidgetProvider
 import wesseling.io.fasttime.widget.FastingWidgetUpdateService
 
 /**
@@ -770,7 +774,20 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
      */
     private fun startWidgetUpdateService() {
         try {
+            // Try to use the service's own recovery mechanism first
+            try {
+                val serviceClass = Class.forName("wesseling.io.fasttime.widget.FastingWidgetUpdateService")
+                val ensureRunningMethod = serviceClass.getMethod("ensureServiceRunning", Context::class.java)
+                ensureRunningMethod.invoke(null, appContext)
+                Log.d(TAG, "Started widget update service using recovery mechanism")
+                return
+            } catch (e: Exception) {
+                Log.w(TAG, "Could not use service recovery mechanism, using direct start", e)
+            }
+            
+            // Fallback to direct service start
             val intent = Intent(appContext, FastingWidgetUpdateService::class.java)
+            intent.putExtra("source", "FastingTimer")
             
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 appContext.startForegroundService(intent)
@@ -778,9 +795,83 @@ class FastingTimer private constructor(private val appContext: Context) : Defaul
                 appContext.startService(intent)
             }
             
+            // Verify service started after a delay
+            Handler(Looper.getMainLooper()).postDelayed({
+                verifyServiceRunning()
+            }, 5000) // 5 seconds
+            
             Log.d(TAG, "Started widget update service")
         } catch (e: Exception) {
             Log.e(TAG, "Error starting widget update service", e)
+            
+            // Try alternative approach as last resort
+            retryServiceStartWithAlarm()
+        }
+    }
+    
+    /**
+     * Verify that the service is actually running and retry if needed
+     */
+    private fun verifyServiceRunning() {
+        try {
+            // Try to check if service is running using reflection
+            val serviceClass = Class.forName("wesseling.io.fasttime.widget.FastingWidgetUpdateService")
+            val isRunningMethod = serviceClass.getMethod("isServiceRunning", Context::class.java)
+            val isRunning = isRunningMethod.invoke(null, appContext) as Boolean
+            
+            if (!isRunning) {
+                Log.w(TAG, "Widget service not running after start attempt, retrying")
+                retryServiceStartWithAlarm()
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Could not verify service state, assuming it may have failed", e)
+            retryServiceStartWithAlarm()
+        }
+    }
+    
+    /**
+     * Last resort approach to start service using AlarmManager
+     * This can help recover when normal service start fails
+     */
+    private fun retryServiceStartWithAlarm() {
+        try {
+            Log.d(TAG, "Attempting to start service using alarm fallback")
+            
+            // Create alarm that will trigger soon to start service
+            val alarmManager = appContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val intent = Intent("wesseling.io.fasttime.widget.ACTION_BACKUP_ALARM")
+            intent.setClassName(
+                "wesseling.io.fasttime.widget",
+                "wesseling.io.fasttime.widget.FastingWidgetUpdateService"
+            )
+            
+            val pendingIntent = PendingIntent.getBroadcast(
+                appContext,
+                1002, // Must match BACKUP_ALARM_REQUEST_CODE from service
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+            
+            // Schedule alarm in 10 seconds
+            val triggerTime = SystemClock.elapsedRealtime() + 10 * 1000
+            
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                    triggerTime,
+                    pendingIntent
+                )
+            } else {
+                alarmManager.setExact(
+                    AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                    triggerTime,
+                    pendingIntent
+                )
+            }
+            
+            Log.d(TAG, "Service start alarm set for 10 seconds from now")
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to set service start alarm", e)
         }
     }
     

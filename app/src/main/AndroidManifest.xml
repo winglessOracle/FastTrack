@@ -72,6 +72,8 @@
                 <action android:name="wesseling.io.fasttime.widget.ACTION_START_TIMER" />
                 <action android:name="wesseling.io.fasttime.widget.ACTION_RESET_TIMER" />
                 <action android:name="wesseling.io.fasttime.widget.ACTION_UPDATE_WIDGETS" />
+                <action android:name="wesseling.io.fasttime.widget.ACTION_BACKUP_ALARM" />
+                <action android:name="wesseling.io.fasttime.widget.ACTION_HEALTH_CHECK" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
