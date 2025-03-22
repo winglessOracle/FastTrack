@@ -370,18 +370,6 @@ fun TipsTab() {
         
         Divider()
         
-        // Battery Optimization & Energy Efficiency
-        HelpSectionWithItems(
-            title = stringResource(R.string.help_battery),
-            items = listOf(
-                stringResource(R.string.help_battery_item_1),
-                stringResource(R.string.help_battery_item_2),
-                stringResource(R.string.help_battery_item_3),
-                stringResource(R.string.help_battery_item_4),
-                stringResource(R.string.help_battery_item_5)
-            )
-        )
-        
         // Getting Started
         HelpSectionWithItems(
             title = stringResource(R.string.help_getting_started),
@@ -482,6 +470,18 @@ fun TipsTab() {
         )
         
         Spacer(modifier = Modifier.height(16.dp))
+        
+        // Battery Optimization & Energy Efficiency
+        HelpSectionWithItems(
+            title = stringResource(R.string.help_battery),
+            items = listOf(
+                stringResource(R.string.help_battery_item_1),
+                stringResource(R.string.help_battery_item_2),
+                stringResource(R.string.help_battery_item_3),
+                stringResource(R.string.help_battery_item_4),
+                stringResource(R.string.help_battery_item_5)
+            )
+        )
         
         // Disclaimer
         Text(

@@ -397,7 +397,45 @@
     <string name="help_electrolytes_item_3">Magnesium: Magnesiumglycinat- oder Citrat-Supplemente können bei Muskelkrämpfen helfen</string>
     <string name="help_electrolytes_item_4">Elektrolytgetränke: Während längerer Fastenperioden in Betracht ziehen, aber auf zuckerfreie Optionen achten</string>
     <string name="help_electrolytes_item_5">Überwachung: Auf Anzeichen von Elektrolytungleichgewicht achten (Kopfschmerzen, Muskelkrämpfe, Schwindel)</string>
-
+    <string name="help_electrolytes_item_6">Bei Fastenperioden über 48 Stunden wird eine angemessene Elektrolytzufuhr besonders wichtig</string>
+    
+    <string name="help_stay_hydrated">Hydratation während des Fastens</string>
+    <string name="help_stay_hydrated_item_1">Trinken Sie mindestens 2-3 Liter Wasser täglich während des Fastens</string>
+    <string name="help_stay_hydrated_item_2">Fügen Sie eine Prise Meersalz hinzu, um Elektrolyte zu erhalten</string>
+    <string name="help_stay_hydrated_item_3">Schwarzer Kaffee und ungesüßter Tee sind erlaubt und können helfen, Hunger zu unterdrücken</string>
+    <string name="help_stay_hydrated_item_4">Vermeiden Sie künstliche Süßstoffe, da diese Insulinreaktionen auslösen können</string>
+    <string name="help_stay_hydrated_item_5">Erhöhen Sie die Flüssigkeitszufuhr bei längeren Fastenperioden oder bei heißem Wetter</string>
+    
+    <string name="help_hunger">Umgang mit Hungergefühlen</string>
+    <string name="help_hunger_item_1">Hungergefühle kommen in Wellen und verschwinden normalerweise nach 20-30 Minuten</string>
+    <string name="help_hunger_item_2">Trinken Sie Wasser, schwarzen Kaffee oder ungesüßten Tee, um Hungergefühle zu lindern</string>
+    <string name="help_hunger_item_3">Leichte Aktivitäten wie Gehen können Hunger ablenken und Ketose fördern</string>
+    <string name="help_hunger_item_4">Nutzen Sie Atemübungen oder kurze Meditationen, um Hungergefühle zu überwinden</string>
+    <string name="help_hunger_item_5">Mit der Zeit wird Ihr Körper besser darin, zwischen echtem Hunger und Gewohnheit zu unterscheiden</string>
+    
+    <string name="help_breaking_fast">Das Fasten richtig beenden</string>
+    <string name="help_breaking_item_1">Beginnen Sie mit einer kleinen, leicht verdaulichen Mahlzeit</string>
+    <string name="help_breaking_item_2">Vermeiden Sie große, kohlenhydratreiche oder sehr fettige Mahlzeiten nach längerem Fasten</string>
+    <string name="help_breaking_item_3">Gute erste Optionen: Suppe, gekochte Eier, gedünstetes Gemüse oder eine kleine Portion Obst</string>
+    <string name="help_breaking_item_4">Nach längeren Fastenperioden (>48 Stunden) besonders vorsichtig beim Fastenbrechen sein</string>
+    <string name="help_breaking_item_5">Warten Sie 30-60 Minuten nach der ersten kleinen Mahlzeit, bevor Sie mehr essen</string>
+    <string name="help_breaking_item_6">Kauen Sie langsam und gründlich, um die Verdauung zu unterstützen</string>
+    <string name="help_breaking_item_7">Bei Verdauungsbeschwerden, konsultieren Sie einen Arzt und reduzieren Sie in Zukunft die Fastendauer</string>
+    
+    <string name="help_nutrition">Ernährung während der Essensfenster</string>
+    <string name="help_nutrition_item_1">Konzentrieren Sie sich auf nährstoffreiche Vollwertkost</string>
+    <string name="help_nutrition_item_2">Ausreichend Protein für die Muskelerhaltung einplanen (mindestens 0,8g pro kg Körpergewicht)</string>
+    <string name="help_nutrition_item_3">Gesunde Fette aus Olivenöl, Avocados, Nüssen und fettem Fisch integrieren</string>
+    <string name="help_nutrition_item_4">Komplexe Kohlenhydrate aus Gemüse, Vollkornprodukten und Hülsenfrüchten bevorzugen</string>
+    <string name="help_nutrition_item_5">Vermeiden Sie stark verarbeitete Lebensmittel, Zucker und raffinierte Kohlenhydrate</string>
+    
+    <string name="help_when_stop">Wann man das Fasten beenden sollte</string>
+    <string name="help_when_stop_item_1">Wenn Sie sich über normalen Hunger hinaus unwohl fühlen</string>
+    <string name="help_when_stop_item_2">Bei Schwindel oder Schwächegefühl</string>
+    <string name="help_when_stop_item_3">Wenn Sie einen medizinischen Zustand haben, der Nahrung erfordert</string>
+    <string name="help_when_stop_item_4">Während Krankheit oder Zeiten hoher Belastung</string>
+    <string name="help_when_stop_item_5">Während Schwangerschaft oder Stillzeit</string>
+    
     <string name="help_fasting_tips">Tipps für erfolgreiches Fasten</string>
     <string name="help_fasting_protocols">Häufige Fastenprotokolle</string>
     
@@ -516,7 +554,7 @@
     <string name="fasting_log_duration">Dauer</string>
     <string name="fasting_log_notes">Notizen (optional)</string>
     <string name="fasting_log_discard">Verwerfen</string>
-    <string name="fasting_log_save">Im Protokoll speichern</string>
+    <string name="fasting_log_save">Speichern</string>
     <string name="fasting_log_achievement_reached">Sie haben %s erreicht!</string>
     <string name="fasting_log_longest_fast">Längstes Fasten</string>
     <string name="fasting_log_highest_state">Höchster Zustand</string>
@@ -660,4 +698,6 @@
     
     <!-- Placeholder formats for all states -->
     <string name="notification_format_long_text">%1$s %2$s</string>
+
+    <string name="help_disclaimer">Konsultieren Sie immer einen Arzt, bevor Sie mit einer Fastenroutine beginnen</string>
 </resources> 

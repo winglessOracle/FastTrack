@@ -100,7 +100,7 @@
                     android:paddingTop="1dp"
                     android:paddingBottom="1dp"
                     android:gravity="center"
-                    android:maxLines="2"
+                    android:maxLines="1"
                     android:ellipsize="end"
                     android:contentDescription="@string/widget_state_label" />
             </LinearLayout>
@@ -123,13 +123,14 @@
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="3dp"
                 android:background="@drawable/widget_button"
-                android:minWidth="48dp"
+                android:minWidth="70dp"
                 style="@style/WidgetButtonGreen"
                 android:text="@string/widget_start_timer"
                 android:textSize="@dimen/widget_button_text_size"
                 android:textColor="@android:color/white"
                 android:padding="4dp"
                 android:gravity="center"
+                android:singleLine="true"
                 android:visibility="visible" />
 
             <!-- Reset button with red styling -->
@@ -141,13 +142,14 @@
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="3dp"
                 android:background="@drawable/widget_button"
-                android:minWidth="48dp"
+                android:minWidth="70dp"
                 style="@style/WidgetButtonRed"
                 android:text="@string/widget_stop_timer"
                 android:textSize="@dimen/widget_button_text_size"
                 android:textColor="@android:color/white"
                 android:padding="4dp"
                 android:gravity="center"
+                android:singleLine="true"
                 android:visibility="gone" />
         </LinearLayout>
     </LinearLayout>

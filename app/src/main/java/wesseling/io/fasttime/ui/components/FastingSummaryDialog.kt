@@ -223,9 +223,14 @@ fun FastingSummaryDialog(
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
                             contentColor = MaterialTheme.colorScheme.onPrimary
-                        )
+                        ),
+                        modifier = Modifier.fillMaxWidth(0.7f)
                     ) {
-                        Text(stringResource(R.string.fasting_log_save))
+                        Text(
+                            text = stringResource(R.string.fasting_log_save),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
                     }
                 }
             }

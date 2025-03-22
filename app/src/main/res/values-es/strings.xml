@@ -260,28 +260,28 @@
     <string name="help_stay_hydrated_item_4">Evita edulcorantes artificiales durante el ayuno</string>
     <string name="help_stay_hydrated_item_5">El agua carbonatada puede ayudar con la sensación de hambre</string>
     
-    <string name="help_hunger">Controlando el Hambre</string>
-    <string name="help_hunger_item_1">El hambre viene en oleadas y típicamente pasa</string>
-    <string name="help_hunger_item_2">Mantente ocupado durante los momentos de máximo hambre</string>
-    <string name="help_hunger_item_3">Bebe agua cuando sientas hambre</string>
-    <string name="help_hunger_item_4">El ejercicio ligero puede reducir el hambre</string>
-    <string name="help_hunger_item_5">Recuerda: el hambre no es una emergencia</string>
+    <string name="help_hunger">Manejando el Hambre</string>
+    <string name="help_hunger_item_1">El hambre viene en oleadas y normalmente desaparece después de 20-30 minutos</string>
+    <string name="help_hunger_item_2">Bebe agua, café negro o té sin endulzar para aliviar las sensaciones de hambre</string>
+    <string name="help_hunger_item_3">Actividades ligeras como caminar pueden distraer del hambre y promover la cetosis</string>
+    <string name="help_hunger_item_4">Utiliza ejercicios de respiración o meditaciones breves para superar las sensaciones de hambre</string>
+    <string name="help_hunger_item_5">Con el tiempo, tu cuerpo mejorará en distinguir entre el hambre real y el hábito</string>
     
-    <string name="help_breaking_fast">Rompiendo Tu Ayuno Adecuadamente</string>
-    <string name="help_breaking_item_1">Para ayunos &lt;24h: Comienza con alimentos fácilmente digeribles como caldo de hueso, aguacate o huevos</string>
-    <string name="help_breaking_item_2">Para ayunos &gt;24h: Comienza con caldo de hueso, luego espera 30-60 minutos antes de comer alimentos sólidos</string>
-    <string name="help_breaking_item_3">Para ayunos &gt;48h: Comienza con caldo claro, espera 1 hora, luego una pequeña comida de proteína/grasa, espera 2-3 horas antes de comer normalmente</string>
-    <string name="help_breaking_item_4">Evita romper el ayuno con: carbohidratos procesados, comidas grandes, lácteos, nueces o vegetales crudos</string>
-    <string name="help_breaking_item_5">Buenos primeros alimentos: caldo de hueso, huevos pasados por agua, aguacate, verduras de hoja cocidas, alimentos fermentados</string>
-    <string name="help_breaking_item_6">Come lentamente y con atención, masticando bien</string>
-    <string name="help_breaking_item_7">Escucha a tu cuerpo y deja de comer si sientes malestar</string>
+    <string name="help_breaking_fast">Rompiendo Tu Ayuno Correctamente</string>
+    <string name="help_breaking_item_1">Comienza con una comida pequeña y fácilmente digerible</string>
+    <string name="help_breaking_item_2">Evita comidas grandes, ricas en carbohidratos o muy grasas después de un ayuno prolongado</string>
+    <string name="help_breaking_item_3">Buenas primeras opciones: sopa, huevos cocidos, verduras al vapor o una pequeña porción de fruta</string>
+    <string name="help_breaking_item_4">Después de períodos de ayuno más largos (>48 horas), sé especialmente cuidadoso al romper el ayuno</string>
+    <string name="help_breaking_item_5">Espera 30-60 minutos después de la primera comida pequeña antes de comer más</string>
+    <string name="help_breaking_item_6">Mastica lenta y completamente para apoyar la digestión</string>
+    <string name="help_breaking_item_7">Si experimentas malestar digestivo, consulta a un médico y reduce la duración del ayuno en el futuro</string>
     
     <string name="help_nutrition">Nutrición Durante las Ventanas de Alimentación</string>
     <string name="help_nutrition_item_1">Enfócate en alimentos integrales ricos en nutrientes</string>
-    <string name="help_nutrition_item_2">Incluye proteína adecuada (0.8-1g por libra de masa corporal magra)</string>
-    <string name="help_nutrition_item_3">No descuides las grasas saludables</string>
-    <string name="help_nutrition_item_4">Incluye abundantes vegetales y fibra</string>
-    <string name="help_nutrition_item_5">Considera tus necesidades calóricas totales</string>
+    <string name="help_nutrition_item_2">Incluye proteínas adecuadas para el mantenimiento muscular (al menos 0,8g por kg de peso corporal)</string>
+    <string name="help_nutrition_item_3">Incorpora grasas saludables de aceite de oliva, aguacates, nueces y pescados grasos</string>
+    <string name="help_nutrition_item_4">Prefiere carbohidratos complejos de verduras, granos integrales y legumbres</string>
+    <string name="help_nutrition_item_5">Evita alimentos altamente procesados, azúcar y carbohidratos refinados</string>
     
     <string name="help_when_stop">Cuándo Detener el Ayuno</string>
     <string name="help_when_stop_item_1">Si te sientes mal más allá del hambre normal</string>
@@ -314,7 +314,7 @@
     <string name="fasting_log_duration">Duración</string>
     <string name="fasting_log_notes">Notas (opcional)</string>
     <string name="fasting_log_discard">Descartar</string>
-    <string name="fasting_log_save">Guardar en Registro</string>
+    <string name="fasting_log_save">Guardar</string>
     <string name="fasting_log_achievement_reached">¡Has alcanzado %s!</string>
     <string name="fasting_log_longest_fast">Ayuno Más Largo</string>
     <string name="fasting_log_highest_state">Estado Más Alto</string>

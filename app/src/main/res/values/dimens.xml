@@ -3,7 +3,7 @@
     <!-- Widget dimensions -->
     <dimen name="widget_button_height">32dp</dimen>
     <dimen name="widget_button_min_width">70dp</dimen>
-    <dimen name="widget_button_text_size">10sp</dimen>
+    <dimen name="widget_button_text_size">9sp</dimen>
     <dimen name="widget_hours_text_size">16sp</dimen>
     <dimen name="widget_label_text_size">10sp</dimen>
     <dimen name="widget_state_text_size">11sp</dimen>

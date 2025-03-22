@@ -313,7 +313,7 @@
     <string name="fasting_log_duration">Duration</string>
     <string name="fasting_log_notes">Notes (optional)</string>
     <string name="fasting_log_discard">Discard</string>
-    <string name="fasting_log_save">Save to Log</string>
+    <string name="fasting_log_save">Save</string>
     <string name="fasting_log_achievement_reached">You reached %s!</string>
     <string name="fasting_log_longest_fast">Longest Fast</string>
     <string name="fasting_log_highest_state">Highest State</string>

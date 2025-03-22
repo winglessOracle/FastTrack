@@ -480,7 +480,7 @@
     <string name="fasting_log_duration">Durata</string>
     <string name="fasting_log_notes">Note (opzionale)</string>
     <string name="fasting_log_discard">Abbandona</string>
-    <string name="fasting_log_save">Salva nel Registro</string>
+    <string name="fasting_log_save">Salva</string>
     <string name="fasting_log_achievement_reached">Hai raggiunto %s!</string>
     <string name="fasting_log_longest_fast">Digiuno più lungo</string>
     <string name="fasting_log_highest_state">Stato più alto</string>
@@ -624,4 +624,36 @@
     
     <!-- Placeholder formats for all states -->
     <string name="notification_format_long_text">%1$s %2$s</string>
+
+    <string name="help_hunger">Gestire la Fame</string>
+    <string name="help_hunger_item_1">La fame arriva a ondate e di solito scompare dopo 20-30 minuti</string>
+    <string name="help_hunger_item_2">Bevi acqua, caffè nero o tè non zuccherato per alleviare la sensazione di fame</string>
+    <string name="help_hunger_item_3">Attività leggere come camminare possono distrarre dalla fame e promuovere la chetosi</string>
+    <string name="help_hunger_item_4">Usa esercizi di respirazione o brevi meditazioni per superare le sensazioni di fame</string>
+    <string name="help_hunger_item_5">Col tempo, il tuo corpo diventerà migliore nel distinguere tra fame reale e abitudine</string>
+    
+    <string name="help_breaking_fast">Interrompere Correttamente il Digiuno</string>
+    <string name="help_breaking_item_1">Inizia con un pasto piccolo e facilmente digeribile</string>
+    <string name="help_breaking_item_2">Evita pasti abbondanti, ricchi di carboidrati o molto grassi dopo un digiuno prolungato</string>
+    <string name="help_breaking_item_3">Buone prime opzioni: zuppa, uova bollite, verdure cotte al vapore o una piccola porzione di frutta</string>
+    <string name="help_breaking_item_4">Dopo periodi di digiuno più lunghi (>48 ore), sii particolarmente cauto quando interrompi il digiuno</string>
+    <string name="help_breaking_item_5">Attendi 30-60 minuti dopo il primo piccolo pasto prima di mangiare di più</string>
+    <string name="help_breaking_item_6">Mastica lentamente e accuratamente per supportare la digestione</string>
+    <string name="help_breaking_item_7">In caso di disturbi digestivi, consulta un medico e riduci la durata del digiuno in futuro</string>
+    
+    <string name="help_nutrition">Nutrizione Durante le Finestre di Alimentazione</string>
+    <string name="help_nutrition_item_1">Concentrati su alimenti integrali ricchi di nutrienti</string>
+    <string name="help_nutrition_item_2">Includi proteine adeguate per il mantenimento muscolare (almeno 0,8g per kg di peso corporeo)</string>
+    <string name="help_nutrition_item_3">Incorpora grassi sani da olio d\'oliva, avocado, noci e pesce grasso</string>
+    <string name="help_nutrition_item_4">Preferisci carboidrati complessi da verdure, cereali integrali e legumi</string>
+    <string name="help_nutrition_item_5">Evita alimenti altamente processati, zucchero e carboidrati raffinati</string>
+    
+    <string name="help_when_stop">Quando Interrompere il Digiuno</string>
+    <string name="help_when_stop_item_1">Se ti senti male oltre la normale fame</string>
+    <string name="help_when_stop_item_2">Se avverti capogiri o debolezza</string>
+    <string name="help_when_stop_item_3">Se hai una condizione medica che richiede cibo</string>
+    <string name="help_when_stop_item_4">Durante malattie o periodi di elevato stress</string>
+    <string name="help_when_stop_item_5">Durante la gravidanza o l\'allattamento</string>
+    
+    <string name="help_disclaimer">Consulta sempre un professionista sanitario prima di iniziare qualsiasi regime di digiuno</string>
 </resources> 
